@@ -1,112 +1,28 @@
 Imports System.Text
 
 Public Class frmApplicantRecords
-    Inherits Form
-
-    Private dgv As DataGridView
-    Private txtSearchName As TextBox
-    Private txtSearchStudentNumber As TextBox
-    Private cmbFilterSport As ComboBox
-    Private cmbFilterStatus As ComboBox
 
     Public Sub New()
-        Me.Text = "Applicant Records"
-        Me.Dock = DockStyle.Fill
-        Me.BackColor = UIHelper.ColorBackground
-        BuildUI()
-        LoadSportsFilter()
-        LoadApplicants()
-    End Sub
-
-    Private Sub BuildUI()
+        InitializeComponent()
         Dim header As Panel = UIHelper.MakePanelHeader("Applicant Records", Me.Width)
         Me.Controls.Add(header)
+        header.SendToBack()
+        AddHandler Me.Shown, AddressOf OnFormShown
+    End Sub
 
-        ' ── Search & Filter card ──
-        Dim pnlFilter As New Panel()
-        pnlFilter.Location = New Point(30, 75)
-        pnlFilter.Size = New Size(950, 105)
-        pnlFilter.BackColor = Color.White
-        pnlFilter.BorderStyle = BorderStyle.None
-
-        Dim filterAccent As New Panel()
-        filterAccent.Dock = DockStyle.Top
-        filterAccent.Height = 3
-        filterAccent.BackColor = UIHelper.ColorGold
-        pnlFilter.Controls.Add(filterAccent)
-
-        Dim lblFilterTitle As New Label()
-        lblFilterTitle.Text = "🔍  Search & Filter"
-        lblFilterTitle.Font = UIHelper.FontSubHeader
-        lblFilterTitle.ForeColor = UIHelper.ColorPrimary
-        lblFilterTitle.Location = New Point(20, 10)
-        lblFilterTitle.AutoSize = True
-        pnlFilter.Controls.Add(lblFilterTitle)
-
-        Dim lblName As Label = UIHelper.MakeLabel("NAME", 20, 38, 100)
-        lblName.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblName.ForeColor = UIHelper.ColorTextSecondary
-        txtSearchName = UIHelper.MakeTextBox(20, 56, 180)
-
-        Dim lblId As Label = UIHelper.MakeLabel("STUDENT ID", 210, 38, 100)
-        lblId.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblId.ForeColor = UIHelper.ColorTextSecondary
-        txtSearchStudentNumber = UIHelper.MakeTextBox(210, 56, 160)
-
-        Dim lblSport As Label = UIHelper.MakeLabel("SPORT", 380, 38, 100)
-        lblSport.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblSport.ForeColor = UIHelper.ColorTextSecondary
-        cmbFilterSport = UIHelper.MakeComboBox(380, 56, 175)
-
-        Dim lblStatus As Label = UIHelper.MakeLabel("SELECTION STATUS", 565, 38, 130)
-        lblStatus.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblStatus.ForeColor = UIHelper.ColorTextSecondary
-        cmbFilterStatus = UIHelper.MakeComboBox(565, 56, 155)
-        cmbFilterStatus.Items.AddRange(New String() {"All", "Pending", "Selected", "NotSelected", "ForFurtherEvaluation"})
-        cmbFilterStatus.SelectedIndex = 0
-
-        Dim btnSearch As Button = UIHelper.MakeButton("Search", 730, 54, 100, "primary")
-        btnSearch.Height = 30
-        AddHandler btnSearch.Click, AddressOf BtnSearch_Click
-
-        Dim btnClearFilter As Button = UIHelper.MakeButton("Clear", 838, 54, 90, "secondary")
-        btnClearFilter.Height = 30
-        AddHandler btnClearFilter.Click, AddressOf BtnClearFilter_Click
-
-        pnlFilter.Controls.Add(lblName)
-        pnlFilter.Controls.Add(txtSearchName)
-        pnlFilter.Controls.Add(lblId)
-        pnlFilter.Controls.Add(txtSearchStudentNumber)
-        pnlFilter.Controls.Add(lblSport)
-        pnlFilter.Controls.Add(cmbFilterSport)
-        pnlFilter.Controls.Add(lblStatus)
-        pnlFilter.Controls.Add(cmbFilterStatus)
-        pnlFilter.Controls.Add(btnSearch)
-        pnlFilter.Controls.Add(btnClearFilter)
-
-        Me.Controls.Add(pnlFilter)
-
-        ' ── View Details button ──
-        Dim btnViewDetails As Button = UIHelper.MakeButton("📋 View Details", 30, 192, 160, "gold")
-        btnViewDetails.Height = 34
-        AddHandler btnViewDetails.Click, AddressOf BtnViewDetails_Click
-        Me.Controls.Add(btnViewDetails)
-
-        ' ── Data grid ──
-        dgv = UIHelper.MakeDataGridView(30, 235, 950, 345)
-        AddHandler dgv.CellDoubleClick, AddressOf Dgv_CellDoubleClick
-        Me.Controls.Add(dgv)
+    Private Sub OnFormShown(sender As Object, e As EventArgs)
+        Try
+            LoadSportsFilter()
+            LoadApplicants()
+        Catch ex As Exception
+            UIHelper.ShowError("Failed to initialize applicants list: " & ex.Message)
+        End Try
     End Sub
 
     Private Sub LoadSportsFilter()
         cmbFilterSport.Items.Clear()
         cmbFilterSport.Items.Add("All Sports")
-        Dim sql As String = "SELECT SportID, SportName FROM Sports WHERE 1=1 "
-        If SessionManager.IsCoach Then
-            sql &= " AND SportID IN (SELECT SportID FROM SportCoaches WHERE UserID=" & SessionManager.CurrentUserID & ") "
-        End If
-        sql &= " ORDER BY SportName"
-        Dim dt As DataTable = DatabaseHelper.GetDataTable(sql)
+        Dim dt As DataTable = DatabaseHelper.GetDataTable("SELECT SportID, SportName FROM Sports WHERE IsActive=1 ORDER BY SportName")
         For Each row As DataRow In dt.Rows
             cmbFilterSport.Items.Add(New SportItem(CInt(row("SportID")), row("SportName").ToString()))
         Next
@@ -114,66 +30,54 @@ Public Class frmApplicantRecords
     End Sub
 
     Private Sub LoadApplicants()
-        Dim sql As String =
-            "SELECT r.RegistrationID, s.StudentNumber, (s.FirstName || ' ' || s.LastName) AS FullName, s.CourseYear, " &
-            "sp.SportName AS Sport, r.RegistrationDate, r.SelectionStatus, r.SportID " &
-            "FROM Registrations r " &
-            "INNER JOIN Students s ON s.StudentID = r.StudentID " &
-            "INNER JOIN Sports sp ON sp.SportID = r.SportID WHERE 1=1 "
-        Dim params As New List(Of SQLiteParameter)
+        Try
+            Dim sql As String = "SELECT r.RegistrationID, s.StudentNumber, " &
+                                 "CONCAT(s.FirstName, ' ', s.LastName) AS [Full Name], " &
+                                 "s.CourseYear AS [Course/Grade], s.Gender, s.ContactNumber AS [Contact], " &
+                                 "sp.SportName AS [Sport], r.RegistrationDate AS [Reg Date], " &
+                                 "r.SelectionStatus AS [Status] " &
+                                 "FROM Registrations r " &
+                                 "INNER JOIN Students s ON s.StudentID = r.StudentID " &
+                                 "INNER JOIN Sports sp ON sp.SportID = r.SportID " &
+                                 "WHERE 1=1 "
 
-        If txtSearchName.Text.Trim() <> "" Then
-            sql &= " AND (s.FirstName LIKE @name OR s.LastName LIKE @name) "
-            params.Add(New SQLiteParameter("@name", "%" & txtSearchName.Text.Trim() & "%"))
-        End If
+            Dim params As New List(Of SQLiteParameter)
 
-        If txtSearchStudentNumber.Text.Trim() <> "" Then
-            sql &= " AND s.StudentNumber LIKE @sn "
-            params.Add(New SQLiteParameter("@sn", "%" & txtSearchStudentNumber.Text.Trim() & "%"))
-        End If
+            If txtSearchName.Text.Trim() <> "" Then
+                sql &= " AND (s.FirstName LIKE @name OR s.LastName LIKE @name) "
+                params.Add(New SQLiteParameter("@name", "%" & txtSearchName.Text.Trim() & "%"))
+            End If
 
-        If cmbFilterSport.SelectedItem IsNot Nothing AndAlso TypeOf cmbFilterSport.SelectedItem Is SportItem Then
-            sql &= " AND r.SportID=@sid "
-            params.Add(New SQLiteParameter("@sid", CType(cmbFilterSport.SelectedItem, SportItem).SportID))
-        End If
+            If txtSearchStudentNumber.Text.Trim() <> "" Then
+                sql &= " AND s.StudentNumber LIKE @snum "
+                params.Add(New SQLiteParameter("@snum", "%" & txtSearchStudentNumber.Text.Trim() & "%"))
+            End If
 
-        If cmbFilterStatus.Text <> "All" AndAlso cmbFilterStatus.Text <> "" Then
-            sql &= " AND r.SelectionStatus=@status "
-            params.Add(New SQLiteParameter("@status", cmbFilterStatus.Text))
-        End If
+            If cmbFilterSport.SelectedItem IsNot Nothing AndAlso TypeOf cmbFilterSport.SelectedItem Is SportItem Then
+                sql &= " AND r.SportID = @sport "
+                params.Add(New SQLiteParameter("@sport", CType(cmbFilterSport.SelectedItem, SportItem).SportID))
+            End If
 
-        If SessionManager.IsCoach Then
-            sql &= " AND r.SportID IN (SELECT SportID FROM SportCoaches WHERE UserID=@coachId) "
-            params.Add(New SQLiteParameter("@coachId", SessionManager.CurrentUserID))
-        End If
+            If cmbFilterStatus.SelectedItem IsNot Nothing AndAlso cmbFilterStatus.Text <> "All" Then
+                sql &= " AND r.SelectionStatus = @status "
+                params.Add(New SQLiteParameter("@status", cmbFilterStatus.Text))
+            End If
 
-        sql &= " ORDER BY r.RegistrationDate DESC"
+            sql &= " ORDER BY r.RegistrationDate DESC"
 
-        Dim dt As DataTable = DatabaseHelper.GetDataTable(sql, params.ToArray())
-        Dim display As New DataTable()
-        display.Columns.Add("RegistrationID", GetType(Integer))
-        display.Columns.Add("Student ID")
-        display.Columns.Add("Name")
-        display.Columns.Add("Course/Grade")
-        display.Columns.Add("Sport")
-        display.Columns.Add("Registration Date")
-        display.Columns.Add("Selection Status")
-
-        For Each row As DataRow In dt.Rows
-            display.Rows.Add(CInt(row("RegistrationID")), row("StudentNumber").ToString(), row("FullName").ToString(),
-                row("CourseYear").ToString(), row("Sport").ToString(), row("RegistrationDate").ToString(),
-                AppLogic.DisplaySelectionStatus(row("SelectionStatus").ToString()))
-        Next
-
-        dgv.DataSource = display
-        If dgv.Columns.Contains("RegistrationID") Then dgv.Columns("RegistrationID").Visible = False
+            Dim dt As DataTable = DatabaseHelper.GetDataTable(sql, params.ToArray())
+            dgv.DataSource = dt
+            If dgv.Columns.Contains("RegistrationID") Then dgv.Columns("RegistrationID").Visible = False
+        Catch ex As Exception
+            UIHelper.ShowError("Error loading applicants: " & ex.Message)
+        End Try
     End Sub
 
-    Private Sub BtnSearch_Click(sender As Object, e As EventArgs)
+    Private Sub BtnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
         LoadApplicants()
     End Sub
 
-    Private Sub BtnClearFilter_Click(sender As Object, e As EventArgs)
+    Private Sub BtnClearFilter_Click(sender As Object, e As EventArgs) Handles btnClearFilter.Click
         txtSearchName.Text = ""
         txtSearchStudentNumber.Text = ""
         cmbFilterSport.SelectedIndex = 0
@@ -181,65 +85,66 @@ Public Class frmApplicantRecords
         LoadApplicants()
     End Sub
 
-    Private Sub Dgv_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
-        BtnViewDetails_Click(sender, e)
+    Private Sub Dgv_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgv.CellDoubleClick
+        If e.RowIndex >= 0 Then ShowDetails()
     End Sub
 
-    Private Sub BtnViewDetails_Click(sender As Object, e As EventArgs)
+    Private Sub BtnViewDetails_Click(sender As Object, e As EventArgs) Handles btnViewDetails.Click
+        ShowDetails()
+    End Sub
+
+    Private Sub ShowDetails()
         If dgv.SelectedRows.Count = 0 Then
-            UIHelper.ShowError("Select an applicant row first.")
+            UIHelper.ShowError("Select an applicant from the list first.")
             Return
         End If
 
-        Dim regId As Integer = CInt(dgv.SelectedRows(0).Cells("RegistrationID").Value)
+        Dim row As DataGridViewRow = dgv.SelectedRows(0)
+        Dim regId As Integer = CInt(row.Cells("RegistrationID").Value)
+        Dim studentNo As String = row.Cells("StudentNumber").Value.ToString()
+        Dim fullName As String = row.Cells("Full Name").Value.ToString()
+        Dim sport As String = row.Cells("Sport").Value.ToString()
+        Dim status As String = row.Cells("Status").Value.ToString()
 
-        Dim details As DataTable = DatabaseHelper.GetDataTable(
-            "SELECT s.StudentNumber, s.FirstName, s.LastName, s.CourseYear, s.Gender, s.ContactNumber, s.Email, " &
-            "sp.SportName, r.RegistrationDate, r.SelectionStatus, r.SelectionRemarks " &
-            "FROM Registrations r " &
-            "INNER JOIN Students s ON s.StudentID = r.StudentID " &
-            "INNER JOIN Sports sp ON sp.SportID = r.SportID WHERE r.RegistrationID=@id",
-            New SQLiteParameter("@id", regId))
+        ' Query evaluation info if available
+        Dim evalDt As DataTable = DatabaseHelper.GetDataTable(
+            "SELECT e.EvaluationID, e.SkillScore, e.SpeedScore, e.AgilityScore, e.EnduranceScore, " &
+            "e.TeamworkScore, e.DisciplineScore, e.OverallPerformanceScore, e.FinalScore, " &
+            "e.Remarks, u.FullName AS Evaluator, e.EvaluationDate " &
+            "FROM Evaluations e " &
+            "LEFT JOIN Users u ON u.UserID = e.EvaluatorUserID " &
+            "WHERE e.RegistrationID = @rid", New SQLiteParameter("@rid", regId))
 
-        If details.Rows.Count = 0 Then Return
-        Dim d As DataRow = details.Rows(0)
+        Dim sb As New StringBuilder()
+        sb.AppendLine("=== APPLICANT DETAILS ===")
+        sb.AppendLine("Student ID : " & studentNo)
+        sb.AppendLine("Name       : " & fullName)
+        sb.AppendLine("Sport      : " & sport)
+        sb.AppendLine("Status     : " & AppLogic.DisplaySelectionStatus(status))
+        sb.AppendLine()
 
-        Dim evalInfo As DataTable = DatabaseHelper.GetDataTable(
-            "SELECT SkillScore, SpeedScore, AgilityScore, EnduranceScore, TeamworkScore, DisciplineScore, OverallPerformanceScore, FinalScore, Remarks " &
-            "FROM Evaluations WHERE RegistrationID=@id", New SQLiteParameter("@id", regId))
-
-        Dim msg As New StringBuilder()
-        msg.AppendLine("Student ID: " & d("StudentNumber").ToString())
-        msg.AppendLine("Name: " & d("FirstName").ToString() & " " & d("LastName").ToString())
-        msg.AppendLine("Course/Grade Level: " & d("CourseYear").ToString())
-        msg.AppendLine("Gender: " & d("Gender").ToString())
-        msg.AppendLine("Contact: " & d("ContactNumber").ToString())
-        msg.AppendLine("Email: " & d("Email").ToString())
-        msg.AppendLine("Sport: " & d("SportName").ToString())
-        msg.AppendLine("Registration Date: " & d("RegistrationDate").ToString())
-        msg.AppendLine("Selection Status: " & AppLogic.DisplaySelectionStatus(d("SelectionStatus").ToString()))
-        If Not IsDBNull(d("SelectionRemarks")) AndAlso d("SelectionRemarks").ToString() <> "" Then
-            msg.AppendLine("Selection Remarks: " & d("SelectionRemarks").ToString())
-        End If
-
-        If evalInfo.Rows.Count > 0 Then
-            Dim ev As DataRow = evalInfo.Rows(0)
-            msg.AppendLine("")
-            msg.AppendLine("--- Evaluation Scores ---")
-            msg.AppendLine("Skill: " & ev("SkillScore").ToString())
-            msg.AppendLine("Speed: " & ev("SpeedScore").ToString())
-            msg.AppendLine("Agility: " & ev("AgilityScore").ToString())
-            msg.AppendLine("Endurance: " & ev("EnduranceScore").ToString())
-            msg.AppendLine("Teamwork: " & ev("TeamworkScore").ToString())
-            msg.AppendLine("Discipline: " & ev("DisciplineScore").ToString())
-            msg.AppendLine("Overall Performance: " & ev("OverallPerformanceScore").ToString())
-            msg.AppendLine("Final Score: " & ev("FinalScore").ToString())
+        If evalDt.Rows.Count > 0 Then
+            Dim erow As DataRow = evalDt.Rows(0)
+            sb.AppendLine("=== EVALUATION SCORES ===")
+            sb.AppendLine("Skill               : " & erow("SkillScore").ToString() & " / 100")
+            sb.AppendLine("Speed               : " & erow("SpeedScore").ToString() & " / 100")
+            sb.AppendLine("Agility             : " & erow("AgilityScore").ToString() & " / 100")
+            sb.AppendLine("Endurance           : " & erow("EnduranceScore").ToString() & " / 100")
+            sb.AppendLine("Teamwork            : " & erow("TeamworkScore").ToString() & " / 100")
+            sb.AppendLine("Discipline          : " & erow("DisciplineScore").ToString() & " / 100")
+            sb.AppendLine("Overall Performance : " & erow("OverallPerformanceScore").ToString() & " / 100")
+            sb.AppendLine("------------------------------------")
+            sb.AppendLine("Final Weighted Score: " & erow("FinalScore").ToString() & " / 100")
+            sb.AppendLine("Evaluator           : " & erow("Evaluator").ToString())
+            sb.AppendLine("Date Evaluated      : " & erow("EvaluationDate").ToString())
+            If Not IsDBNull(erow("Remarks")) AndAlso erow("Remarks").ToString() <> "" Then
+                sb.AppendLine("Remarks             : " & erow("Remarks").ToString())
+            End If
         Else
-            msg.AppendLine("")
-            msg.AppendLine("Not yet evaluated.")
+            sb.AppendLine("Evaluation: Not yet evaluated.")
         End If
 
-        MessageBox.Show(msg.ToString(), "Applicant Details", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show(sb.ToString(), "Applicant Profile: " & fullName, MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
 End Class

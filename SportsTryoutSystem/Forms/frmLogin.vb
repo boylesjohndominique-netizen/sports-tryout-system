@@ -1,155 +1,257 @@
-Public Class frmLogin
-    Inherits Form
+Imports System.Drawing.Drawing2D
 
-    Private txtUsername As TextBox
-    Private txtPassword As TextBox
-    Private btnLogin As Button
-    Private lblStatus As Label
+Public Class frmLogin
 
     Public Sub New()
-        BuildUI()
+        InitializeComponent()
+        SetupEventHandlers()
     End Sub
 
-    Private Sub BuildUI()
-        Me.Text = "Sports Tryout Management System"
-        Me.Size = New Size(480, 560)
-        Me.StartPosition = FormStartPosition.CenterScreen
-        Me.FormBorderStyle = FormBorderStyle.FixedDialog
-        Me.MaximizeBox = False
-        Me.MinimizeBox = False
-        Me.BackColor = UIHelper.ColorPrimary
-
-        ' ── Left accent stripe ──
-        Dim pnlStripe As New Panel()
-        pnlStripe.Size = New Size(8, Me.ClientSize.Height)
-        pnlStripe.Location = New Point(0, 0)
-        pnlStripe.BackColor = UIHelper.ColorGold
-        Me.Controls.Add(pnlStripe)
-
-        ' ── Main card ──
-        Dim pnlCard As New Panel()
-        pnlCard.Size = New Size(400, 440)
-        pnlCard.Location = New Point(35, 45)
-        pnlCard.BackColor = Color.White
-        pnlCard.BorderStyle = BorderStyle.None
-
-        ' Gold top accent bar on card
-        Dim cardAccent As New Panel()
-        cardAccent.Size = New Size(400, 5)
-        cardAccent.Location = New Point(0, 0)
-        cardAccent.BackColor = UIHelper.ColorGold
-        pnlCard.Controls.Add(cardAccent)
-
-        ' ── Branding section ──
-        Dim lblIcon As New Label()
-        lblIcon.Text = "⚽"
-        lblIcon.Font = New Font("Segoe UI", 28, FontStyle.Regular)
-        lblIcon.ForeColor = UIHelper.ColorGold
-        lblIcon.TextAlign = ContentAlignment.MiddleCenter
-        lblIcon.Location = New Point(10, 28)
-        lblIcon.Size = New Size(380, 50)
-        pnlCard.Controls.Add(lblIcon)
-
-        Dim lblTitle As New Label()
-        lblTitle.Text = "Sports Tryout"
-        lblTitle.Font = New Font("Segoe UI Semibold", 20, FontStyle.Bold)
-        lblTitle.ForeColor = UIHelper.ColorPrimary
-        lblTitle.TextAlign = ContentAlignment.MiddleCenter
-        lblTitle.Location = New Point(10, 80)
-        lblTitle.Size = New Size(380, 34)
-        pnlCard.Controls.Add(lblTitle)
-
-        Dim lblSubtitle As New Label()
-        lblSubtitle.Text = "MANAGEMENT SYSTEM"
-        lblSubtitle.Font = New Font("Segoe UI", 9.5!, FontStyle.Bold)
-        lblSubtitle.ForeColor = UIHelper.ColorTextSecondary
-        lblSubtitle.TextAlign = ContentAlignment.MiddleCenter
-        lblSubtitle.Location = New Point(10, 114)
-        lblSubtitle.Size = New Size(380, 20)
-        pnlCard.Controls.Add(lblSubtitle)
-
-        ' Divider under title
-        Dim divider As New Panel()
-        divider.Size = New Size(80, 3)
-        divider.Location = New Point(160, 145)
-        divider.BackColor = UIHelper.ColorGold
-        pnlCard.Controls.Add(divider)
-
-        ' ── Form fields ──
-        Dim lblWelcome As New Label()
-        lblWelcome.Text = "Sign in to your account"
-        lblWelcome.Font = UIHelper.FontRegular
-        lblWelcome.ForeColor = UIHelper.ColorTextSecondary
-        lblWelcome.TextAlign = ContentAlignment.MiddleCenter
-        lblWelcome.Location = New Point(10, 162)
-        lblWelcome.Size = New Size(380, 24)
-        pnlCard.Controls.Add(lblWelcome)
-
-        Dim lblUser As New Label()
-        lblUser.Text = "USERNAME"
-        lblUser.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblUser.ForeColor = UIHelper.ColorTextSecondary
-        lblUser.Location = New Point(50, 200)
-        lblUser.Size = New Size(300, 16)
-        pnlCard.Controls.Add(lblUser)
-
-        txtUsername = New TextBox()
-        txtUsername.Location = New Point(50, 218)
-        txtUsername.Size = New Size(300, 32)
-        txtUsername.Font = New Font("Segoe UI", 11!)
-        txtUsername.BorderStyle = BorderStyle.FixedSingle
-        txtUsername.BackColor = Color.FromArgb(248, 250, 252)
-        txtUsername.ForeColor = UIHelper.ColorTextPrimary
-        pnlCard.Controls.Add(txtUsername)
-
-        Dim lblPass As New Label()
-        lblPass.Text = "PASSWORD"
-        lblPass.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblPass.ForeColor = UIHelper.ColorTextSecondary
-        lblPass.Location = New Point(50, 258)
-        lblPass.Size = New Size(300, 16)
-        pnlCard.Controls.Add(lblPass)
-
-        txtPassword = New TextBox()
-        txtPassword.Location = New Point(50, 276)
-        txtPassword.Size = New Size(300, 32)
-        txtPassword.Font = New Font("Segoe UI", 11!)
-        txtPassword.BorderStyle = BorderStyle.FixedSingle
-        txtPassword.BackColor = Color.FromArgb(248, 250, 252)
-        txtPassword.ForeColor = UIHelper.ColorTextPrimary
-        txtPassword.PasswordChar = CChar("●")
-        pnlCard.Controls.Add(txtPassword)
-
-        ' ── Login button ──
-        btnLogin = New Button()
-        btnLogin.Text = "SIGN IN"
-        btnLogin.Location = New Point(50, 330)
-        btnLogin.Size = New Size(300, 44)
-        btnLogin.Font = New Font("Segoe UI Semibold", 11!, FontStyle.Bold)
-        btnLogin.FlatStyle = FlatStyle.Flat
-        btnLogin.FlatAppearance.BorderSize = 0
-        btnLogin.BackColor = UIHelper.ColorGold
-        btnLogin.ForeColor = UIHelper.ColorPrimaryDark
-        btnLogin.Cursor = Cursors.Hand
-        btnLogin.FlatAppearance.MouseOverBackColor = UIHelper.ColorGoldDark
+    Private Sub SetupEventHandlers()
+        AddHandler Me.KeyDown, Sub(s, e)
+                                   If e.KeyCode = Keys.Escape Then Me.Close()
+                               End Sub
+        AddHandler btnMinimize.Click, Sub(s, e) Me.WindowState = FormWindowState.Minimized
+        AddHandler btnClose.Click, Sub(s, e) Me.Close()
+        AddHandler pnlLeft.Paint, AddressOf PaintLeftPanel
+        AddHandler txtUsername.KeyDown, AddressOf Input_KeyDown
+        AddHandler txtPassword.KeyDown, AddressOf Input_KeyDown
+        AddHandler chkShowPassword.CheckedChanged, Sub(s, e)
+                                                       txtPassword.PasswordChar = If(chkShowPassword.Checked, CChar(vbNullChar), CChar("●"))
+                                                   End Sub
+        AddHandler txtUsername.GotFocus, Sub(s, e)
+                                            pnlUserWrap.BackColor = Color.White
+                                            txtUsername.BackColor = Color.White
+                                        End Sub
+        AddHandler txtUsername.LostFocus, Sub(s, e)
+                                             pnlUserWrap.BackColor = Color.FromArgb(248, 250, 252)
+                                             txtUsername.BackColor = Color.FromArgb(248, 250, 252)
+                                         End Sub
+        AddHandler txtPassword.GotFocus, Sub(s, e)
+                                            pnlPassWrap.BackColor = Color.White
+                                            txtPassword.BackColor = Color.White
+                                        End Sub
+        AddHandler txtPassword.LostFocus, Sub(s, e)
+                                             pnlPassWrap.BackColor = Color.FromArgb(248, 250, 252)
+                                             txtPassword.BackColor = Color.FromArgb(248, 250, 252)
+                                         End Sub
         AddHandler btnLogin.Click, AddressOf BtnLogin_Click
-        pnlCard.Controls.Add(btnLogin)
-
-        ' ── Status label ──
-        lblStatus = New Label()
-        lblStatus.Location = New Point(50, 385)
-        lblStatus.Size = New Size(300, 36)
-        lblStatus.ForeColor = UIHelper.ColorDanger
-        lblStatus.Font = UIHelper.FontRegular
-        lblStatus.TextAlign = ContentAlignment.MiddleCenter
-        pnlCard.Controls.Add(lblStatus)
-
-        Me.Controls.Add(pnlCard)
-
-        AddHandler txtPassword.KeyDown, AddressOf TxtPassword_KeyDown
+        AddHandler Me.Resize, Sub(s, e) LayoutPanels()
+        AddHandler Me.Load, Sub(s, e) LayoutPanels()
+        AddHandler Me.Shown, Sub(s, e) LayoutPanels()
     End Sub
 
-    Private Sub TxtPassword_KeyDown(sender As Object, e As KeyEventArgs)
+    ''' <summary>
+    ''' Explicitly positions the left and right panels with 0% overlap,
+    ''' guaranteeing the login card is always centered in the right panel.
+    ''' </summary>
+    Private Sub LayoutPanels()
+        Dim totalW As Integer = Me.ClientSize.Width
+        Dim totalH As Integer = Me.ClientSize.Height
+
+        If totalW <= 0 OrElse totalH <= 0 Then Return
+
+        ' Left panel takes 52% of screen width, right takes remainder
+        Dim leftW As Integer = CInt(totalW * 0.52)
+        Dim rightW As Integer = totalW - leftW
+
+        pnlLeft.SetBounds(0, 0, leftW, totalH)
+        pnlRight.SetBounds(leftW, 0, rightW, totalH)
+
+        ' Position window controls in the top-right of the right panel
+        pnlWindowControls.Location = New Point(rightW - pnlWindowControls.Width - 10, 10)
+
+        ' Center login card inside the right panel
+        Dim cardX As Integer = (rightW - pnlCard.Width) \ 2
+        Dim cardY As Integer = (totalH - pnlCard.Height) \ 2
+        If cardX < 15 Then cardX = 15
+        If cardY < 20 Then cardY = 20
+
+        pnlCard.Location = New Point(cardX, cardY)
+    End Sub
+
+    ' ═══════════════════════════════════════════════════════════════
+    '  LEFT SHOWCASE PAINTING — High-Resolution, Zero-Flicker, Scaled
+    ' ═══════════════════════════════════════════════════════════════
+    Private Sub PaintLeftPanel(sender As Object, e As PaintEventArgs)
+        Dim pnl As Panel = DirectCast(sender, Panel)
+        Dim g As Graphics = e.Graphics
+        g.SmoothingMode = SmoothingMode.AntiAlias
+        g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
+
+        ' ── 1. Gradient Background ──
+        Using bgBrush As New LinearGradientBrush(
+            New Point(0, 0), New Point(pnl.Width, pnl.Height),
+            Color.FromArgb(10, 26, 50),
+            Color.FromArgb(22, 55, 100))
+            g.FillRectangle(bgBrush, pnl.ClientRectangle)
+        End Using
+
+        ' ── 2. Top Gold Accent Bar ──
+        Using goldBrush As New LinearGradientBrush(
+            New Rectangle(0, 0, pnl.Width, 4),
+            UIHelper.ColorGold,
+            UIHelper.ColorGoldLight,
+            LinearGradientMode.Horizontal)
+            g.FillRectangle(goldBrush, 0, 0, pnl.Width, 4)
+        End Using
+
+        ' ── 3. Geometric Background Accents ──
+        Using pGold As New Pen(Color.FromArgb(14, 234, 179, 8), 1.5!)
+            g.DrawEllipse(pGold, pnl.Width - 160, 40, 240, 240)
+        End Using
+        Using pWhite As New Pen(Color.FromArgb(10, 255, 255, 255), 1.5!)
+            g.DrawEllipse(pWhite, -60, pnl.Height - 260, 280, 280)
+        End Using
+
+        ' ── 4. Dynamic Vertical Spacing ──
+        Dim cardW As Integer = Math.Min(560, pnl.Width - 80)
+        If cardW < 300 Then cardW = Math.Max(260, pnl.Width - 40)
+        Dim startX As Integer = Math.Max(35, (pnl.Width - cardW) \ 2)
+
+        Dim totalBlockHeight As Integer = 500
+        Dim curY As Integer = Math.Max(25, (pnl.Height - totalBlockHeight - 35) \ 2)
+
+        ' Top Badge Pill
+        Dim badgeText As String = "⚽  OFFICIAL TRYOUT PLATFORM"
+        Using fntBadge As New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+            Dim szBadge = g.MeasureString(badgeText, fntBadge)
+            Dim badgeRect As New Rectangle(startX, curY, CInt(szBadge.Width) + 20, 28)
+            Using bBrush As New SolidBrush(Color.FromArgb(28, 234, 179, 8))
+                g.FillRectangle(bBrush, badgeRect)
+            End Using
+            Using bPen As New Pen(UIHelper.ColorGold, 1.2!)
+                g.DrawRectangle(bPen, badgeRect)
+            End Using
+            Using textBrush As New SolidBrush(UIHelper.ColorGoldLight)
+                g.DrawString(badgeText, fntBadge, textBrush, startX + 10, curY + 5)
+            End Using
+        End Using
+
+        curY += 40
+
+        ' Title
+        Using fntTitle As New Font("Segoe UI", 33.0!, FontStyle.Bold)
+            Using brushTitle As New SolidBrush(Color.White)
+                g.DrawString("Sports Tryout", fntTitle, brushTitle, startX, curY)
+            End Using
+        End Using
+
+        curY += 50
+
+        ' Subtitle
+        Using fntSub As New Font("Segoe UI Semibold", 12.5!, FontStyle.Bold)
+            Using brushGold As New SolidBrush(UIHelper.ColorGold)
+                g.DrawString("MANAGEMENT & EVALUATION SYSTEM", fntSub, brushGold, startX, curY)
+            End Using
+        End Using
+
+        curY += 26
+
+        ' Gold accent line
+        Using pLine As New Pen(UIHelper.ColorGold, 3.5!)
+            g.DrawLine(pLine, startX, curY, startX + 110, curY)
+        End Using
+
+        curY += 16
+
+        ' Description
+        Using fntDesc As New Font("Segoe UI", 10.5!, FontStyle.Regular)
+            Using brushDesc As New SolidBrush(Color.FromArgb(200, 220, 245))
+                Dim desc As String = "Digital evaluation portal for coaches and scouting staff to record" & vbCrLf &
+                                     "rubric scores, monitor leaderboards, and draft athlete rosters."
+                g.DrawString(desc, fntDesc, brushDesc, startX, curY)
+            End Using
+        End Using
+
+        curY += 50
+
+        ' Feature Cards
+        Dim cardH As Integer = 64
+        DrawFeatureCard(g, startX, curY, cardW, cardH, "🏅", "Objective Skill Rubrics", "Standardized physical, tactical, and game IQ criteria.")
+        curY += 76
+
+        DrawFeatureCard(g, startX, curY, cardW, cardH, "📊", "Real-Time Ranking & Analytics", "Instant calculation of coach scores, ranks, and percentiles.")
+        curY += 76
+
+        DrawFeatureCard(g, startX, curY, cardW, cardH, "📋", "Instant Roster Selection", "Filter qualified applicants and generate draft reports.")
+        curY += 82
+
+        ' Athletic Stats Strip (only if screen height allows)
+        If curY + 30 < pnl.Height - 35 Then
+            Using fntTag As New Font("Segoe UI Semibold", 9.0!, FontStyle.Bold)
+                Dim tags As String() = {"⚡ Fast Scoring", "🔒 Secure Database", "🎯 Objective Criteria"}
+                Dim tagX As Integer = startX
+                For i As Integer = 0 To tags.Length - 1
+                    Dim tagText As String = tags(i)
+                    Dim sz = g.MeasureString(tagText, fntTag)
+                    Dim tRect As New Rectangle(tagX, curY, CInt(sz.Width) + 16, 26)
+                    Using tbBrush As New SolidBrush(Color.FromArgb(24, 255, 255, 255))
+                        g.FillRectangle(tbBrush, tRect)
+                    End Using
+                    Using tbPen As New Pen(Color.FromArgb(60, 255, 255, 255), 1.0!)
+                        g.DrawRectangle(tbPen, tRect)
+                    End Using
+                    Using tBrush As New SolidBrush(Color.FromArgb(215, 230, 250))
+                        g.DrawString(tagText, fntTag, tBrush, tagX + 8, curY + 4)
+                    End Using
+                    tagX += CInt(sz.Width) + 22
+                Next
+            End Using
+        End If
+
+        ' Bottom Status Line
+        Using fntVer As New Font("Segoe UI", 8.5!, FontStyle.Regular)
+            Using brushVer As New SolidBrush(Color.FromArgb(130, 160, 200))
+                g.DrawString("● System Online  •  Version 2.0  •  Enterprise Ready", fntVer, brushVer, startX, pnl.Height - 28)
+            End Using
+        End Using
+    End Sub
+
+    Private Sub DrawFeatureCard(g As Graphics, x As Integer, y As Integer, w As Integer, h As Integer, icon As String, title As String, desc As String)
+        Dim rect As New Rectangle(x, y, w, h)
+
+        ' Card background
+        Using bBrush As New SolidBrush(Color.FromArgb(24, 255, 255, 255))
+            g.FillRectangle(bBrush, rect)
+        End Using
+
+        ' Left gold border accent
+        Using pGold As New Pen(UIHelper.ColorGold, 3.5!)
+            g.DrawLine(pGold, x, y, x, y + h)
+        End Using
+
+        ' Border
+        Using pBorder As New Pen(Color.FromArgb(45, 255, 255, 255), 1.0!)
+            g.DrawRectangle(pBorder, rect)
+        End Using
+
+        ' Icon
+        Using fntIcon As New Font("Segoe UI", 18.0!, FontStyle.Regular)
+            Using brushIcon As New SolidBrush(Color.White)
+                g.DrawString(icon, fntIcon, brushIcon, x + 12, y + 12)
+            End Using
+        End Using
+
+        ' Title
+        Using fntTitle As New Font("Segoe UI Semibold", 11.0!, FontStyle.Bold)
+            Using brushTitle As New SolidBrush(Color.White)
+                g.DrawString(title, fntTitle, brushTitle, x + 52, y + 10)
+            End Using
+        End Using
+
+        ' Description
+        Using fntDesc As New Font("Segoe UI", 9.0!, FontStyle.Regular)
+            Using brushDesc As New SolidBrush(Color.FromArgb(190, 215, 240))
+                g.DrawString(desc, fntDesc, brushDesc, x + 52, y + 34)
+            End Using
+        End Using
+    End Sub
+
+    ' ═══════════════════════════════════════════════════════════════
+    '  INPUT & LOGIN HANDLING
+    ' ═══════════════════════════════════════════════════════════════
+    Private Sub Input_KeyDown(sender As Object, e As KeyEventArgs)
         If e.KeyCode = Keys.Enter Then
             BtnLogin_Click(sender, e)
         End If
@@ -160,7 +262,7 @@ Public Class frmLogin
         Dim password As String = txtPassword.Text
 
         If username = "" OrElse password = "" Then
-            lblStatus.Text = "Please enter username and password."
+            lblStatus.Text = "Please enter both username and password."
             Return
         End If
 
@@ -176,8 +278,9 @@ Public Class frmLogin
 
             Dim storedHash As String = dt.Rows(0)("PasswordHash").ToString()
 
-            If Not SecurityHelper.VerifyPassword(password, storedHash) Then
-                lblStatus.Text = "Incorrect password."
+            If Not SecurityHelper.VerifyPassword(password, storedHash) AndAlso
+               Not SecurityHelper.VerifyPassword(password.Trim(), storedHash) Then
+                lblStatus.Text = "Incorrect password. Please try again."
                 Return
             End If
 
@@ -187,22 +290,8 @@ Public Class frmLogin
                 dt.Rows(0)("FullName").ToString(),
                 dt.Rows(0)("Role").ToString())
 
-            Dim main As New frmMain()
-            Me.Hide()
-            main.ShowDialog()
-
-            Dim wasLogout As Boolean = main.LoggedOut
-            SessionManager.ClearSession()
-
-            If wasLogout Then
-                txtUsername.Text = ""
-                txtPassword.Text = ""
-                lblStatus.Text = ""
-                Me.Show()
-            Else
-                Me.Close()
-            End If
-
+            Me.DialogResult = DialogResult.OK
+            Me.Close()
         Catch ex As Exception
             UIHelper.ShowError("Login failed: " & ex.Message)
         End Try

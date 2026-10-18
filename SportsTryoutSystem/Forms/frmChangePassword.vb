@@ -1,119 +1,158 @@
 Public Class frmChangePassword
-    Inherits Form
 
-    Private txtCurrent As TextBox
-    Private txtNew As TextBox
-    Private txtConfirm As TextBox
+    Private headerPanel As Panel
 
     Public Sub New()
-        Me.Text = "Change Password"
-        Me.Dock = DockStyle.Fill
-        Me.BackColor = UIHelper.ColorBackground
-        BuildUI()
+        InitializeComponent()
+        headerPanel = UIHelper.MakePanelHeader("Change Password", Me.Width)
+        Me.Controls.Add(headerPanel)
+        headerPanel.SendToBack()
+        SetupEventHandlers()
     End Sub
 
-    Private Sub BuildUI()
-        Dim header As Panel = UIHelper.MakePanelHeader("Change Password", Me.Width)
-        Me.Controls.Add(header)
+    Private Sub SetupEventHandlers()
+        AddHandler Me.Resize, Sub(s, e) CenterCard()
+        AddHandler Me.Load, Sub(s, e)
+                                LoadUserData()
+                                CenterCard()
+                            End Sub
+        AddHandler Me.Shown, Sub(s, e) CenterCard()
 
-        ' Card container for the password form
-        Dim pnlCard As New Panel()
-        pnlCard.Location = New Point(30, 80)
-        pnlCard.Size = New Size(380, 340)
-        pnlCard.BackColor = Color.White
-        pnlCard.BorderStyle = BorderStyle.None
+        ' Show / Hide Password toggle
+        AddHandler chkShow.CheckedChanged, Sub(s, e)
+                                               Dim ch As Char = If(chkShow.Checked, CChar(vbNullChar), CChar("●"))
+                                               txtCurrent.PasswordChar = ch
+                                               txtNew.PasswordChar = ch
+                                               txtConfirm.PasswordChar = ch
+                                           End Sub
 
-        ' Gold accent stripe at top of card
-        Dim cardAccent As New Panel()
-        cardAccent.Dock = DockStyle.Top
-        cardAccent.Height = 4
-        cardAccent.BackColor = UIHelper.ColorGold
-        pnlCard.Controls.Add(cardAccent)
+        ' Focus styling for wrappers
+        SetupFocusState(txtCurrent, pnlCurrentWrap)
+        SetupFocusState(txtNew, pnlNewWrap)
+        SetupFocusState(txtConfirm, pnlConfirmWrap)
 
-        Dim lblIcon As New Label()
-        lblIcon.Text = "🔒"
-        lblIcon.Font = New Font("Segoe UI", 22!)
-        lblIcon.Location = New Point(30, 22)
-        lblIcon.AutoSize = True
-        pnlCard.Controls.Add(lblIcon)
+        ' Enter key shortcuts
+        AddHandler txtCurrent.KeyDown, AddressOf Input_KeyDown
+        AddHandler txtNew.KeyDown, AddressOf Input_KeyDown
+        AddHandler txtConfirm.KeyDown, AddressOf Input_KeyDown
 
-        Dim lblTitle As New Label()
-        lblTitle.Text = "Update Your Password"
-        lblTitle.Font = UIHelper.FontSubHeader
-        lblTitle.ForeColor = UIHelper.ColorPrimary
-        lblTitle.Location = New Point(70, 28)
-        lblTitle.AutoSize = True
-        pnlCard.Controls.Add(lblTitle)
-
-        Dim lblCurrent As New Label()
-        lblCurrent.Text = "CURRENT PASSWORD"
-        lblCurrent.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblCurrent.ForeColor = UIHelper.ColorTextSecondary
-        lblCurrent.Location = New Point(30, 72)
-        lblCurrent.AutoSize = True
-        pnlCard.Controls.Add(lblCurrent)
-
-        txtCurrent = UIHelper.MakeTextBox(30, 90, 320, True)
-        pnlCard.Controls.Add(txtCurrent)
-
-        Dim lblNew As New Label()
-        lblNew.Text = "NEW PASSWORD"
-        lblNew.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblNew.ForeColor = UIHelper.ColorTextSecondary
-        lblNew.Location = New Point(30, 132)
-        lblNew.AutoSize = True
-        pnlCard.Controls.Add(lblNew)
-
-        txtNew = UIHelper.MakeTextBox(30, 150, 320, True)
-        pnlCard.Controls.Add(txtNew)
-
-        Dim lblConfirm As New Label()
-        lblConfirm.Text = "CONFIRM NEW PASSWORD"
-        lblConfirm.Font = New Font("Segoe UI Semibold", 8!, FontStyle.Bold)
-        lblConfirm.ForeColor = UIHelper.ColorTextSecondary
-        lblConfirm.Location = New Point(30, 192)
-        lblConfirm.AutoSize = True
-        pnlCard.Controls.Add(lblConfirm)
-
-        txtConfirm = UIHelper.MakeTextBox(30, 210, 320, True)
-        pnlCard.Controls.Add(txtConfirm)
-
-        Dim btnSave As Button = UIHelper.MakeButton("Update Password", 30, 260, 320, "gold")
-        AddHandler btnSave.Click, AddressOf BtnSave_Click
-        pnlCard.Controls.Add(btnSave)
-
-        Me.Controls.Add(pnlCard)
+        ' Clear button
+        AddHandler btnClear.Click, Sub(s, e)
+                                       txtCurrent.Clear()
+                                       txtNew.Clear()
+                                       txtConfirm.Clear()
+                                       lblHint.Text = ""
+                                       txtCurrent.Focus()
+                                   End Sub
     End Sub
 
-    Private Sub BtnSave_Click(sender As Object, e As EventArgs)
-        If txtCurrent.Text = "" OrElse txtNew.Text = "" OrElse txtConfirm.Text = "" Then
-            UIHelper.ShowError("Fill in all fields.")
-            Return
+    Private Sub LoadUserData()
+        If SessionManager.IsLoggedIn Then
+            lblUserInfo.Text = $"{SessionManager.CurrentFullName}" & vbCrLf & $"Role: {SessionManager.CurrentRole}"
+        Else
+            lblUserInfo.Text = "Standard User"
         End If
-        If txtNew.Text <> txtConfirm.Text Then
-            UIHelper.ShowError("New password and confirmation do not match.")
+    End Sub
+
+    Private Sub CenterCard()
+        If pnlCard Is Nothing Then Return
+        Dim topOffset As Integer = If(headerPanel IsNot Nothing, headerPanel.Height, 60)
+        Dim availW As Integer = Me.ClientSize.Width
+        Dim availH As Integer = Me.ClientSize.Height - topOffset
+
+        If availW <= 0 OrElse availH <= 0 Then Return
+
+        Dim posX As Integer = Math.Max(20, (availW - pnlCard.Width) \ 2)
+        Dim posY As Integer = Math.Max(topOffset + 15, topOffset + (availH - pnlCard.Height) \ 2)
+
+        pnlCard.Location = New Point(posX, posY)
+    End Sub
+
+    Private Sub SetupFocusState(txt As TextBox, wrap As Panel)
+        AddHandler txt.GotFocus, Sub(s, e)
+                                     wrap.BackColor = Color.White
+                                     txt.BackColor = Color.White
+                                     lblHint.Text = ""
+                                 End Sub
+        AddHandler txt.LostFocus, Sub(s, e)
+                                      wrap.BackColor = Color.FromArgb(248, 250, 252)
+                                      txt.BackColor = Color.FromArgb(248, 250, 252)
+                                  End Sub
+    End Sub
+
+    Private Sub Input_KeyDown(sender As Object, e As KeyEventArgs)
+        If e.KeyCode = Keys.Enter Then
+            btnSave.PerformClick()
+            e.Handled = True
+            e.SuppressKeyPress = True
+        End If
+    End Sub
+
+    Private Sub BtnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
+        lblHint.Text = ""
+
+        Dim curPass As String = txtCurrent.Text.Trim()
+        Dim newPass As String = txtNew.Text.Trim()
+        Dim confirmPass As String = txtConfirm.Text.Trim()
+
+        If curPass = "" OrElse newPass = "" OrElse confirmPass = "" Then
+            lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+            lblHint.Text = "Please fill in all password fields."
             Return
         End If
 
-        Dim dt As DataTable = DatabaseHelper.GetDataTable(
-            "SELECT PasswordHash FROM Users WHERE UserID=@id", New SQLiteParameter("@id", SessionManager.CurrentUserID))
+        If newPass <> confirmPass Then
+            lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+            lblHint.Text = "New password and confirmation do not match."
+            Return
+        End If
 
-        If dt.Rows.Count = 0 OrElse Not SecurityHelper.VerifyPassword(txtCurrent.Text, dt.Rows(0)("PasswordHash").ToString()) Then
-            UIHelper.ShowError("Current password is incorrect.")
+        If newPass.Length < 6 Then
+            lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+            lblHint.Text = "New password must be at least 6 characters long."
             Return
         End If
 
         Try
-            DatabaseHelper.ExecuteNonQuery(
-                "UPDATE Users SET PasswordHash=@p WHERE UserID=@id",
-                New SQLiteParameter("@p", SecurityHelper.HashPassword(txtNew.Text)),
+            Dim dt As DataTable = DatabaseHelper.GetDataTable(
+                "SELECT PasswordHash FROM Users WHERE UserID=@id",
                 New SQLiteParameter("@id", SessionManager.CurrentUserID))
-            UIHelper.ShowInfo("Password updated successfully.")
-            txtCurrent.Text = ""
-            txtNew.Text = ""
-            txtConfirm.Text = ""
+
+            If dt.Rows.Count = 0 Then
+                lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+                lblHint.Text = "User record not found in system."
+                Return
+            End If
+
+            Dim storedHash As String = dt.Rows(0)("PasswordHash").ToString()
+            If Not SecurityHelper.VerifyPassword(txtCurrent.Text, storedHash) AndAlso
+               Not SecurityHelper.VerifyPassword(curPass, storedHash) Then
+                lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+                lblHint.Text = "Current password is incorrect. Please try again."
+                Return
+            End If
+
+            Dim newHash As String = SecurityHelper.HashPassword(newPass)
+            Dim updated As Integer = DatabaseHelper.ExecuteNonQuery(
+                "UPDATE Users SET PasswordHash=@p WHERE UserID=@id",
+                New SQLiteParameter("@p", newHash),
+                New SQLiteParameter("@id", SessionManager.CurrentUserID))
+
+            If updated > 0 Then
+                txtCurrent.Clear()
+                txtNew.Clear()
+                txtConfirm.Clear()
+                lblHint.ForeColor = Color.FromArgb(22, 163, 74)
+                lblHint.Text = "✓ Password updated successfully."
+                UIHelper.ShowInfo("Password updated successfully.", "Security Updated")
+            Else
+                lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+                lblHint.Text = "Failed to update password. Please try again."
+            End If
+
         Catch ex As Exception
-            UIHelper.ShowError("Failed to update password: " & ex.Message)
+            lblHint.ForeColor = Color.FromArgb(220, 38, 38)
+            lblHint.Text = "Error: " & ex.Message
         End Try
     End Sub
 
