@@ -11,14 +11,14 @@ Public Class frmChangePassword
     End Sub
 
     Private Sub SetupEventHandlers()
-        AddHandler Me.Resize, Sub(s, e) CenterCard()
+        AddHandler Me.Resize, Sub(s, e) LayoutContent()
         AddHandler Me.Load, Sub(s, e)
                                 LoadUserData()
-                                CenterCard()
+                                LayoutContent()
                             End Sub
-        AddHandler Me.Shown, Sub(s, e) CenterCard()
+        AddHandler Me.Shown, Sub(s, e) LayoutContent()
 
-        ' Show / Hide Password toggle
+        ' Show / hide password toggle
         AddHandler chkShow.CheckedChanged, Sub(s, e)
                                                Dim ch As Char = If(chkShow.Checked, CChar(vbNullChar), CChar("●"))
                                                txtCurrent.PasswordChar = ch
@@ -46,26 +46,79 @@ Public Class frmChangePassword
                                    End Sub
     End Sub
 
+    ''' <summary>
+    ''' Fills the available window with a two-column card: a slim guidance
+    ''' panel on the left and the password form on the right. Recomputed on
+    ''' every resize so the layout has no dead space.
+    ''' </summary>
+    Private Sub LayoutContent()
+        If pnlCard Is Nothing Then Return
+
+        Dim margin As Integer = 24
+        Dim topOffset As Integer = If(headerPanel IsNot Nothing, headerPanel.Height, 60)
+        Dim availW As Integer = Me.ClientSize.Width - margin * 2
+        Dim availH As Integer = Me.ClientSize.Height - topOffset - margin * 2
+        If availW < 520 OrElse availH < 340 Then Return
+
+        pnlCard.SetBounds(margin, topOffset + margin, availW, availH)
+
+        Dim pad As Integer = 28
+        Dim cardW As Integer = pnlCard.Width
+        Dim cardH As Integer = pnlCard.Height
+
+        ' ── Left: guidance column ──
+        Dim guideW As Integer = Math.Min(340, Math.Max(230, CInt(cardW * 0.33)))
+        pnlLeftInfo.SetBounds(pad, pad, guideW, cardH - pad * 2)
+        pnlUserBadge.SetBounds(16, pnlLeftInfo.Height - 94, pnlLeftInfo.Width - 34, 78)
+
+        ' ── Right: form column ──
+        Dim formX As Integer = pad + guideW + 40
+        Dim formW As Integer = cardW - formX - pad
+        If formW < 260 Then formW = 260
+
+        Dim labelH As Integer = 18
+        Dim fieldH As Integer = 46
+        Dim y As Integer = pad + 4
+
+        lblCurrent.SetBounds(formX, y, formW, labelH)
+        y += labelH + 6
+        LayoutField(pnlCurrentWrap, lblCurIco, txtCurrent, formX, y, formW, fieldH)
+        y += fieldH + 22
+
+        lblNew.SetBounds(formX, y, formW, labelH)
+        y += labelH + 6
+        LayoutField(pnlNewWrap, lblNewIco, txtNew, formX, y, formW, fieldH)
+        y += fieldH + 22
+
+        lblConfirm.SetBounds(formX, y, formW, labelH)
+        y += labelH + 6
+        LayoutField(pnlConfirmWrap, lblConfirmIco, txtConfirm, formX, y, formW, fieldH)
+        y += fieldH + 16
+
+        chkShow.SetBounds(formX + 2, y, formW, 22)
+        y += 30
+
+        Dim saveW As Integer = CInt(formW * 0.6)
+        Dim clearW As Integer = formW - saveW - 12
+        btnSave.SetBounds(formX, y, saveW, 48)
+        btnClear.SetBounds(formX + saveW + 12, y, clearW, 48)
+        y += 48 + 14
+
+        lblHint.SetBounds(formX, y, formW, Math.Max(24, cardH - y - pad))
+    End Sub
+
+    Private Sub LayoutField(wrap As Panel, ico As Label, txt As TextBox, x As Integer, y As Integer, w As Integer, h As Integer)
+        wrap.SetBounds(x, y, w, h)
+        ico.SetBounds(8, 4, 34, h - 8)
+        txt.SetBounds(48, (h - 21) \ 2, w - 48 - 12, 21)
+    End Sub
+
     Private Sub LoadUserData()
         If SessionManager.IsLoggedIn Then
-            lblUserInfo.Text = $"{SessionManager.CurrentFullName}" & vbCrLf & $"Role: {SessionManager.CurrentRole}"
+            lblUserInfo.Text = SessionManager.CurrentFullName & vbCrLf & SessionManager.CurrentRole
         Else
             lblUserInfo.Text = "Standard User"
         End If
-    End Sub
-
-    Private Sub CenterCard()
-        If pnlCard Is Nothing Then Return
-        Dim topOffset As Integer = If(headerPanel IsNot Nothing, headerPanel.Height, 60)
-        Dim availW As Integer = Me.ClientSize.Width
-        Dim availH As Integer = Me.ClientSize.Height - topOffset
-
-        If availW <= 0 OrElse availH <= 0 Then Return
-
-        Dim posX As Integer = Math.Max(20, (availW - pnlCard.Width) \ 2)
-        Dim posY As Integer = Math.Max(topOffset + 15, topOffset + (availH - pnlCard.Height) \ 2)
-
-        pnlCard.Location = New Point(posX, posY)
     End Sub
 
     Private Sub SetupFocusState(txt As TextBox, wrap As Panel)
