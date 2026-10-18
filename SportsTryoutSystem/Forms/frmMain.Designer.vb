@@ -29,6 +29,7 @@ Partial Class frmMain
         Me.btnDashboard = New System.Windows.Forms.Button()
         Me.lblAdminSection = New System.Windows.Forms.Label()
         Me.btnUsers = New System.Windows.Forms.Button()
+        Me.btnCreateAccount = New System.Windows.Forms.Button()
         Me.btnSports = New System.Windows.Forms.Button()
         Me.lblOpsSection = New System.Windows.Forms.Label()
         Me.btnSchedules = New System.Windows.Forms.Button()
@@ -135,6 +136,7 @@ Partial Class frmMain
         Me.pnlNav.Controls.Add(Me.btnSchedules)
         Me.pnlNav.Controls.Add(Me.lblOpsSection)
         Me.pnlNav.Controls.Add(Me.btnSports)
+        Me.pnlNav.Controls.Add(Me.btnCreateAccount)
         Me.pnlNav.Controls.Add(Me.btnUsers)
         Me.pnlNav.Controls.Add(Me.lblAdminSection)
         Me.pnlNav.Controls.Add(Me.btnDashboard)
@@ -210,6 +212,23 @@ Partial Class frmMain
         Me.btnUsers.Text = "👥  User Accounts"
         Me.btnUsers.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.btnUsers.UseVisualStyleBackColor = False
+        '
+        'btnCreateAccount
+        '
+        Me.btnCreateAccount.BackColor = System.Drawing.Color.FromArgb(12, 32, 62)
+        Me.btnCreateAccount.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnCreateAccount.FlatAppearance.BorderSize = 0
+        Me.btnCreateAccount.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnCreateAccount.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnCreateAccount.ForeColor = System.Drawing.Color.FromArgb(190, 210, 235)
+        Me.btnCreateAccount.Location = New System.Drawing.Point(0, 169)
+        Me.btnCreateAccount.Name = "btnCreateAccount"
+        Me.btnCreateAccount.Padding = New System.Windows.Forms.Padding(18, 0, 0, 0)
+        Me.btnCreateAccount.Size = New System.Drawing.Size(240, 42)
+        Me.btnCreateAccount.TabIndex = 4
+        Me.btnCreateAccount.Text = "➕  Create Account"
+        Me.btnCreateAccount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.btnCreateAccount.UseVisualStyleBackColor = False
         '
         'btnSports
         '
@@ -398,6 +417,7 @@ Partial Class frmMain
     Friend WithEvents btnDashboard As System.Windows.Forms.Button
     Friend WithEvents lblAdminSection As System.Windows.Forms.Label
     Friend WithEvents btnUsers As System.Windows.Forms.Button
+    Friend WithEvents btnCreateAccount As System.Windows.Forms.Button
     Friend WithEvents btnSports As System.Windows.Forms.Button
     Friend WithEvents lblOpsSection As System.Windows.Forms.Label
     Friend WithEvents btnSchedules As System.Windows.Forms.Button

@@ -14,23 +14,28 @@ Public Class frmMain
         lblUser.Text = If(String.IsNullOrEmpty(SessionManager.CurrentFullName), "Administrator", SessionManager.CurrentFullName)
         lblRole.Text = " " & If(String.IsNullOrEmpty(SessionManager.CurrentRole), "ADMIN", SessionManager.CurrentRole.ToUpper()) & " "
 
-        ' Role based visibility
-        Dim isAdmin As Boolean = SessionManager.IsAdmin
-        Dim isStaffOrAdmin As Boolean = SessionManager.IsAdmin OrElse SessionManager.IsStaff
-        Dim isCoachOrAdmin As Boolean = SessionManager.IsAdmin OrElse SessionManager.IsCoach
+        ' Permission based visibility
+        Dim canManageUsers As Boolean = SessionManager.HasPermission(Permissions.ManageUsers)
+        Dim canManageSports As Boolean = SessionManager.HasPermission(Permissions.ManageSports)
+        Dim canManageSchedules As Boolean = SessionManager.HasPermission(Permissions.ManageSchedules)
+        Dim canManageRegistration As Boolean = SessionManager.HasPermission(Permissions.ManageRegistration)
+        Dim canViewApplicants As Boolean = SessionManager.HasPermission(Permissions.ViewApplicants)
+        Dim canEvaluate As Boolean = SessionManager.HasPermission(Permissions.Evaluate)
+        Dim canViewReports As Boolean = SessionManager.HasPermission(Permissions.ViewReports)
 
-        lblAdminSection.Visible = isAdmin
-        btnUsers.Visible = isAdmin
-        btnSports.Visible = isAdmin
+        lblAdminSection.Visible = canManageUsers OrElse canManageSports
+        btnUsers.Visible = canManageUsers
+        btnCreateAccount.Visible = canManageUsers
+        btnSports.Visible = canManageSports
 
-        lblOpsSection.Visible = isStaffOrAdmin
-        btnSchedules.Visible = isStaffOrAdmin
-        btnRegistration.Visible = isStaffOrAdmin
+        lblOpsSection.Visible = canManageSchedules OrElse canManageRegistration
+        btnSchedules.Visible = canManageSchedules
+        btnRegistration.Visible = canManageRegistration
 
-        lblRecordsSection.Visible = True
-        btnApplicants.Visible = True
-        btnEvaluation.Visible = isCoachOrAdmin
-        btnReports.Visible = True
+        lblRecordsSection.Visible = canViewApplicants OrElse canEvaluate OrElse canViewReports
+        btnApplicants.Visible = canViewApplicants
+        btnEvaluation.Visible = canEvaluate
+        btnReports.Visible = canViewReports
 
         ' Reflow nav layout based on visibility
         ReflowNavMenu()
@@ -46,6 +51,8 @@ Public Class frmMain
             lblAdminSection.Location = New Point(20, curY + 8)
             curY += 26
             btnUsers.Location = New Point(0, curY)
+            curY += 44
+            btnCreateAccount.Location = New Point(0, curY)
             curY += 44
             btnSports.Location = New Point(0, curY)
             curY += 44
@@ -86,6 +93,7 @@ Public Class frmMain
 
         AddNavClickHandler(btnDashboard, AddressOf BtnDashboard_Click)
         AddNavClickHandler(btnUsers, AddressOf BtnUsers_Click)
+        AddNavClickHandler(btnCreateAccount, AddressOf BtnCreateAccount_Click)
         AddNavClickHandler(btnSports, AddressOf BtnSports_Click)
         AddNavClickHandler(btnSchedules, AddressOf BtnSchedules_Click)
         AddNavClickHandler(btnRegistration, AddressOf BtnRegistration_Click)
@@ -116,7 +124,7 @@ Public Class frmMain
 
     Private Sub SetActiveNavButton(btn As Button)
         Try
-            Dim allNavBtns As Button() = {btnDashboard, btnUsers, btnSports, btnSchedules, btnRegistration, btnApplicants, btnEvaluation, btnReports, btnChangePassword}
+            Dim allNavBtns As Button() = {btnDashboard, btnUsers, btnCreateAccount, btnSports, btnSchedules, btnRegistration, btnApplicants, btnEvaluation, btnReports, btnChangePassword}
             For Each b In allNavBtns
                 If b IsNot Nothing Then
                     b.BackColor = Color.FromArgb(12, 32, 62)
@@ -192,6 +200,14 @@ Public Class frmMain
             OpenChild(New frmUserManagement())
         Catch ex As Exception
             UIHelper.ShowError("Could not open User Management: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub BtnCreateAccount_Click(sender As Object, e As EventArgs)
+        Try
+            OpenChild(New frmCreateAccount())
+        Catch ex As Exception
+            UIHelper.ShowError("Could not open Create Account: " & ex.Message)
         End Try
     End Sub
 

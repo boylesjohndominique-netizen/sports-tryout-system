@@ -40,7 +40,10 @@ you've explored the system — use User Account Management (Admin) or the
 ## Feature Overview
 
 - **A. User Login & Account Management** — role-based login (Admin, Coach,
-  Staff), user CRUD, password reset, self-service password change.
+  Evaluator, Staff), user CRUD, password reset, self-service password change.
+  Admins can create accounts and choose exactly which modules/permissions
+  (users, sports, schedules, registration, applicant records, evaluation,
+  reports) each account may access.
 - **B. Student Registration** — register applicants with student ID, name,
   course/grade level, preferred sport; blocks duplicate registrations for the
   same sport per student; look up an applicant's current status by ID.
