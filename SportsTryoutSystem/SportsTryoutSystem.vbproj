@@ -104,6 +104,7 @@
     <Compile Include="Data\DatabaseHelper.vb" />
     <Compile Include="Helpers\SecurityHelper.vb" />
     <Compile Include="Helpers\SessionManager.vb" />
+    <Compile Include="Helpers\Permissions.vb" />
     <Compile Include="Helpers\UIHelper.vb" />
     <Compile Include="Helpers\AppLogic.vb" />
     <Compile Include="Helpers\ComboItems.vb" />

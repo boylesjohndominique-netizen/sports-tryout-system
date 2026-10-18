@@ -288,7 +288,8 @@ Public Class frmLogin
                 CInt(dt.Rows(0)("UserID")),
                 dt.Rows(0)("Username").ToString(),
                 dt.Rows(0)("FullName").ToString(),
-                dt.Rows(0)("Role").ToString())
+                dt.Rows(0)("Role").ToString(),
+                GetPermissionsValue(dt.Rows(0)))
 
             Me.DialogResult = DialogResult.OK
             Me.Close()
@@ -296,5 +297,12 @@ Public Class frmLogin
             UIHelper.ShowError("Login failed: " & ex.Message)
         End Try
     End Sub
+
+    Private Function GetPermissionsValue(row As DataRow) As String
+        If row.Table.Columns.Contains("Permissions") AndAlso row("Permissions") IsNot DBNull.Value Then
+            Return row("Permissions").ToString()
+        End If
+        Return Nothing
+    End Function
 
 End Class

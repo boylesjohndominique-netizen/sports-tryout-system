@@ -206,6 +206,7 @@ Public Module DatabaseHelper
                  "PasswordHash VARCHAR(255) NOT NULL, " &
                  "FullName VARCHAR(100) NOT NULL, " &
                  "Role VARCHAR(20) NOT NULL, " &
+                 "Permissions VARCHAR(500) NULL, " &
                  "IsActive TINYINT(1) NOT NULL DEFAULT 1, " &
                  "DateCreated DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB;")
 
@@ -288,6 +289,15 @@ Public Module DatabaseHelper
         Catch
             ' Ignore if column already exists
         End Try
+
+        ' Run migration for existing databases to add Permissions if missing
+        Try
+            Using cmdCol As New MySqlCommand("ALTER TABLE Users ADD COLUMN Permissions VARCHAR(500) NULL;", conn)
+                cmdCol.ExecuteNonQuery()
+            End Using
+        Catch
+            ' Ignore if column already exists
+        End Try
     End Sub
 
     Public Sub EnsureStudentsMiddleNameColumn()
@@ -306,10 +316,10 @@ Public Module DatabaseHelper
     Private Sub SeedInitialData(conn As MySqlConnection)
         ' Seed default accounts
         Dim seedUsersSql As String =
-            "INSERT INTO Users (Username, PasswordHash, FullName, Role, IsActive) VALUES " &
-            "(@u1, @p1, @f1, @r1, 1), " &
-            "(@u2, @p2, @f2, @r2, 1), " &
-            "(@u3, @p3, @f3, @r3, 1) " &
+            "INSERT INTO Users (Username, PasswordHash, FullName, Role, Permissions, IsActive) VALUES " &
+            "(@u1, @p1, @f1, @r1, @perm1, 1), " &
+            "(@u2, @p2, @f2, @r2, @perm2, 1), " &
+            "(@u3, @p3, @f3, @r3, @perm3, 1) " &
             "ON DUPLICATE KEY UPDATE Username=Username;"
 
         Using cmd As New MySqlCommand(seedUsersSql, conn)
@@ -317,16 +327,19 @@ Public Module DatabaseHelper
             cmd.Parameters.AddWithValue("@p1", SecurityHelper.HashPassword("admin123"))
             cmd.Parameters.AddWithValue("@f1", "System Administrator")
             cmd.Parameters.AddWithValue("@r1", "Admin")
+            cmd.Parameters.AddWithValue("@perm1", Permissions.DefaultsForRole("Admin"))
 
             cmd.Parameters.AddWithValue("@u2", "coach")
             cmd.Parameters.AddWithValue("@p2", SecurityHelper.HashPassword("coach123"))
             cmd.Parameters.AddWithValue("@f2", "Sample Coach")
             cmd.Parameters.AddWithValue("@r2", "Coach")
+            cmd.Parameters.AddWithValue("@perm2", Permissions.DefaultsForRole("Coach"))
 
             cmd.Parameters.AddWithValue("@u3", "staff")
             cmd.Parameters.AddWithValue("@p3", SecurityHelper.HashPassword("staff123"))
             cmd.Parameters.AddWithValue("@f3", "Sample Registrar")
             cmd.Parameters.AddWithValue("@r3", "Staff")
+            cmd.Parameters.AddWithValue("@perm3", Permissions.DefaultsForRole("Staff"))
 
             cmd.ExecuteNonQuery()
         End Using

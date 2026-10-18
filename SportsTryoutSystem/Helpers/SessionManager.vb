@@ -9,11 +9,16 @@ Public Module SessionManager
     Public Property CurrentFullName As String = ""
     Public Property CurrentRole As String = ""
 
-    Public Sub SetSession(userId As Integer, username As String, fullName As String, role As String)
+    Private _permissions As HashSet(Of String) = New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
+
+    Public Sub SetSession(userId As Integer, username As String, fullName As String, role As String, Optional permissionKeys As String = Nothing)
         CurrentUserID = userId
         CurrentUsername = username
         CurrentFullName = fullName
         CurrentRole = role
+        Dim raw As String = permissionKeys
+        If String.IsNullOrWhiteSpace(raw) Then raw = Permissions.DefaultsForRole(role)
+        _permissions = Permissions.Parse(raw)
     End Sub
 
     Public Sub ClearSession()
@@ -21,7 +26,27 @@ Public Module SessionManager
         CurrentUsername = ""
         CurrentFullName = ""
         CurrentRole = ""
+        _permissions = New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
     End Sub
+
+    ''' <summary>
+    ''' True when the logged-in user may perform the given permission key.
+    ''' Admin always passes; every other account uses its assigned permissions.
+    ''' </summary>
+    Public ReadOnly Property HasPermission(key As String) As Boolean
+        Get
+            If IsAdmin Then Return True
+            If String.IsNullOrEmpty(key) Then Return False
+            Return _permissions.Contains(key)
+        End Get
+    End Property
+
+    Public ReadOnly Property CurrentPermissions As String
+        Get
+            If IsAdmin Then Return Permissions.AllKeys()
+            Return String.Join(",", _permissions)
+        End Get
+    End Property
 
     Public ReadOnly Property IsLoggedIn As Boolean
         Get
@@ -44,6 +69,12 @@ Public Module SessionManager
     Public ReadOnly Property IsStaff As Boolean
         Get
             Return CurrentRole = "Staff"
+        End Get
+    End Property
+
+    Public ReadOnly Property IsEvaluator As Boolean
+        Get
+            Return CurrentRole = "Evaluator"
         End Get
     End Property
 

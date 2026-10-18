@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
     `PasswordHash` VARCHAR(255) NOT NULL,
     `FullName` VARCHAR(100) NOT NULL,
     `Role` VARCHAR(20) NOT NULL,
+    `Permissions` VARCHAR(500) NULL,
     `IsActive` TINYINT(1) NOT NULL DEFAULT 1,
     `DateCreated` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -117,15 +118,16 @@ CREATE TABLE IF NOT EXISTS `Evaluations` (
 -- coach: coach123
 -- staff: staff123
 -- ---------------------------------------------------------------------
-INSERT INTO `Users` (`Username`, `PasswordHash`, `FullName`, `Role`, `IsActive`)
+INSERT INTO `Users` (`Username`, `PasswordHash`, `FullName`, `Role`, `Permissions`, `IsActive`)
 VALUES 
-    ('admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'System Administrator', 'Admin', 1),
-    ('coach', '777a025f5ca4a20f7bafee940f2820e28e1f4bbcbd9dd774bbce883166ef7c55', 'Sample Coach', 'Coach', 1),
-    ('staff', '10176e7b7b24d317acfcf8d2064cfd2f24e154f7b5a96603077d5ef813d6a6b6', 'Sample Registrar', 'Staff', 1)
+    ('admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'System Administrator', 'Admin', 'manage_users,manage_sports,manage_schedules,manage_registration,view_applicants,evaluate,view_reports', 1),
+    ('coach', '777a025f5ca4a20f7bafee940f2820e28e1f4bbcbd9dd774bbce883166ef7c55', 'Sample Coach', 'Coach', 'evaluate,view_applicants,view_reports', 1),
+    ('staff', '10176e7b7b24d317acfcf8d2064cfd2f24e154f7b5a96603077d5ef813d6a6b6', 'Sample Registrar', 'Staff', 'manage_schedules,manage_registration,view_applicants,view_reports', 1)
 ON DUPLICATE KEY UPDATE 
     `PasswordHash` = VALUES(`PasswordHash`),
     `FullName` = VALUES(`FullName`),
     `Role` = VALUES(`Role`),
+    `Permissions` = VALUES(`Permissions`),
     `IsActive` = VALUES(`IsActive`);
 
 -- ---------------------------------------------------------------------
