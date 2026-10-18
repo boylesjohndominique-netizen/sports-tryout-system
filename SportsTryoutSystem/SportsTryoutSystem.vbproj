@@ -10,7 +10,7 @@
     <AssemblyName>SportsTryoutSystem</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <MyType>Empty</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <StartupObject>SportsTryoutSystem.MainModule</StartupObject>
     <OptionStrict>Off</OptionStrict>
     <OptionExplicit>On</OptionExplicit>
@@ -107,21 +107,84 @@
     <Compile Include="Helpers\UIHelper.vb" />
     <Compile Include="Helpers\AppLogic.vb" />
     <Compile Include="Helpers\ComboItems.vb" />
-    <Compile Include="Forms\frmLogin.vb" />
-    <Compile Include="Forms\frmMain.vb" />
-    <Compile Include="Forms\frmDashboard.vb" />
-    <Compile Include="Forms\frmUserManagement.vb" />
-    <Compile Include="Forms\frmSportManagement.vb" />
-    <Compile Include="Forms\frmScheduleManagement.vb" />
-    <Compile Include="Forms\frmStudentRegistration.vb" />
-    <Compile Include="Forms\frmApplicantRecords.vb" />
-    <Compile Include="Forms\frmEvaluationSelection.vb" />
-    <Compile Include="Forms\frmReports.vb" />
-    <Compile Include="Forms\frmChangePassword.vb" />
+    <Compile Include="Helpers\CustomControls.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\frmLogin.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmLogin.Designer.vb">
+      <DependentUpon>frmLogin.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmMain.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmMain.Designer.vb">
+      <DependentUpon>frmMain.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmDashboard.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmDashboard.Designer.vb">
+      <DependentUpon>frmDashboard.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmUserManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmUserManagement.Designer.vb">
+      <DependentUpon>frmUserManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmSportManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmSportManagement.Designer.vb">
+      <DependentUpon>frmSportManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmScheduleManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmScheduleManagement.Designer.vb">
+      <DependentUpon>frmScheduleManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmStudentRegistration.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmStudentRegistration.Designer.vb">
+      <DependentUpon>frmStudentRegistration.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmApplicantRecords.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmApplicantRecords.Designer.vb">
+      <DependentUpon>frmApplicantRecords.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmEvaluationSelection.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmEvaluationSelection.Designer.vb">
+      <DependentUpon>frmEvaluationSelection.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmReports.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmReports.Designer.vb">
+      <DependentUpon>frmReports.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmChangePassword.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmChangePassword.Designer.vb">
+      <DependentUpon>frmChangePassword.vb</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\frmDashboard.resx">
+      <DependentUpon>frmDashboard.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

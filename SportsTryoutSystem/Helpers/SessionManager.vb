@@ -23,6 +23,12 @@ Public Module SessionManager
         CurrentRole = ""
     End Sub
 
+    Public ReadOnly Property IsLoggedIn As Boolean
+        Get
+            Return CurrentUserID > 0
+        End Get
+    End Property
+
     Public ReadOnly Property IsAdmin As Boolean
         Get
             Return CurrentRole = "Admin"
