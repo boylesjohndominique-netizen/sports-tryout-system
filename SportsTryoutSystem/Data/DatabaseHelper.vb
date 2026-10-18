@@ -18,7 +18,7 @@ Public Module DatabaseHelper
                 Return setting.ConnectionString
             End If
             ' Fallback default for local development
-            Return "Server=localhost;Port=3306;Database=sports_tryout_db;Uid=root;Pwd=root;ConnectionTimeout=30;"
+            Return "Server=localhost;Port=3306;Database=sports_tryout_db;Uid=root;Pwd=boyles2005;ConnectionTimeout=30;"
         End Get
     End Property
 
@@ -78,8 +78,10 @@ Public Module DatabaseHelper
         If String.IsNullOrEmpty(sql) Then Return sql
         ' Replace [Column Name] with `Column Name` for MySQL identifier compatibility
         Dim normalized As String = Regex.Replace(sql, "\[([^\]]+)\]", "`$1`")
-        ' Normalize (a || ' ' || b) to CONCAT(a, ' ', b) as fallback
-        normalized = Regex.Replace(normalized, "\(([a-zA-Z0-9_\.]+)\s*\|\|\s*' '\s*\|\|\s*([a-zA-Z0-9_\.]+)\)", "CONCAT($1, ' ', $2)", RegexOptions.IgnoreCase)
+        ' Normalize a || ' ' || b (with or without parentheses) to CONCAT(a, ' ', b)
+        normalized = Regex.Replace(normalized, "(?:\()?([a-zA-Z0-9_\.]+)\s*\|\|\s*' '\s*\|\|\s*([a-zA-Z0-9_\.]+)(?:\))?", "CONCAT($1, ' ', $2)", RegexOptions.IgnoreCase)
+        ' Normalize generic a || b to CONCAT(a, b)
+        normalized = Regex.Replace(normalized, "(?:\()?([a-zA-Z0-9_\.]+)\s*\|\|\s*([a-zA-Z0-9_\.]+)(?:\))?", "CONCAT($1, $2)", RegexOptions.IgnoreCase)
         ' Normalize CAST(... AS TEXT) to CAST(... AS CHAR) for MySQL
         normalized = Regex.Replace(normalized, "\bAS\s+TEXT\b", "AS CHAR", RegexOptions.IgnoreCase)
         Return normalized
@@ -224,6 +226,7 @@ Public Module DatabaseHelper
                  "StudentID INT AUTO_INCREMENT PRIMARY KEY, " &
                  "StudentNumber VARCHAR(50) NOT NULL UNIQUE, " &
                  "FirstName VARCHAR(100) NOT NULL, " &
+                 "MiddleName VARCHAR(100) NULL, " &
                  "LastName VARCHAR(100) NOT NULL, " &
                  "CourseYear VARCHAR(50), " &
                  "Gender VARCHAR(20), " &
@@ -276,6 +279,28 @@ Public Module DatabaseHelper
                 cmd.ExecuteNonQuery()
             End Using
         Next
+
+        ' Run migration for existing databases to add MiddleName if missing
+        Try
+            Using cmdCol As New MySqlCommand("ALTER TABLE Students ADD COLUMN MiddleName VARCHAR(100) NULL AFTER FirstName;", conn)
+                cmdCol.ExecuteNonQuery()
+            End Using
+        Catch
+            ' Ignore if column already exists
+        End Try
+    End Sub
+
+    Public Sub EnsureStudentsMiddleNameColumn()
+        Try
+            Using conn = GetConnection()
+                conn.Open()
+                Using cmdCol As New MySqlCommand("ALTER TABLE Students ADD COLUMN MiddleName VARCHAR(100) NULL AFTER FirstName;", conn.InnerConnection)
+                    cmdCol.ExecuteNonQuery()
+                End Using
+            End Using
+        Catch
+            ' Ignore if column already exists or MySQL connection offline
+        End Try
     End Sub
 
     Private Sub SeedInitialData(conn As MySqlConnection)
