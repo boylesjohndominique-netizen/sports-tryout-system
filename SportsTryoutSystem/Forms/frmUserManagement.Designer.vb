@@ -30,6 +30,8 @@ Partial Class frmUserManagement
         Me.lblPassword = New System.Windows.Forms.Label()
         Me.txtPassword = New System.Windows.Forms.TextBox()
         Me.chkIsActive = New System.Windows.Forms.CheckBox()
+        Me.lblPermissions = New System.Windows.Forms.Label()
+        Me.clbPermissions = New System.Windows.Forms.CheckedListBox()
         Me.btnAdd = New System.Windows.Forms.Button()
         Me.btnUpdate = New System.Windows.Forms.Button()
         Me.btnResetPassword = New System.Windows.Forms.Button()
@@ -54,13 +56,15 @@ Partial Class frmUserManagement
         Me.pnlForm.Controls.Add(Me.lblPassword)
         Me.pnlForm.Controls.Add(Me.txtPassword)
         Me.pnlForm.Controls.Add(Me.chkIsActive)
+        Me.pnlForm.Controls.Add(Me.lblPermissions)
+        Me.pnlForm.Controls.Add(Me.clbPermissions)
         Me.pnlForm.Controls.Add(Me.btnAdd)
         Me.pnlForm.Controls.Add(Me.btnUpdate)
         Me.pnlForm.Controls.Add(Me.btnResetPassword)
         Me.pnlForm.Controls.Add(Me.btnClear)
         Me.pnlForm.Location = New System.Drawing.Point(30, 75)
         Me.pnlForm.Name = "pnlForm"
-        Me.pnlForm.Size = New System.Drawing.Size(950, 125)
+        Me.pnlForm.Size = New System.Drawing.Size(950, 220)
         Me.pnlForm.TabIndex = 1
         '
         'formAccent
@@ -129,7 +133,7 @@ Partial Class frmUserManagement
         Me.cmbRole.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.cmbRole.Font = New System.Drawing.Font("Segoe UI", 9.5!)
         Me.cmbRole.FormattingEnabled = True
-        Me.cmbRole.Items.AddRange(New Object() {"Admin", "Coach", "Staff"})
+        Me.cmbRole.Items.AddRange(New Object() {"Admin", "Coach", "Evaluator", "Staff"})
         Me.cmbRole.Location = New System.Drawing.Point(460, 32)
         Me.cmbRole.Name = "cmbRole"
         Me.cmbRole.Size = New System.Drawing.Size(140, 24)
@@ -170,6 +174,31 @@ Partial Class frmUserManagement
         Me.chkIsActive.Text = "Active"
         Me.chkIsActive.UseVisualStyleBackColor = True
         '
+        'lblPermissions
+        '
+        Me.lblPermissions.AutoSize = True
+        Me.lblPermissions.Font = New System.Drawing.Font("Segoe UI Semibold", 8.0!, System.Drawing.FontStyle.Bold)
+        Me.lblPermissions.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
+        Me.lblPermissions.Location = New System.Drawing.Point(20, 66)
+        Me.lblPermissions.Name = "lblPermissions"
+        Me.lblPermissions.Size = New System.Drawing.Size(80, 13)
+        Me.lblPermissions.TabIndex = 14
+        Me.lblPermissions.Text = "PERMISSIONS"
+        '
+        'clbPermissions
+        '
+        Me.clbPermissions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.clbPermissions.CheckOnClick = True
+        Me.clbPermissions.ColumnWidth = 300
+        Me.clbPermissions.Font = New System.Drawing.Font("Segoe UI", 9.0!)
+        Me.clbPermissions.FormattingEnabled = True
+        Me.clbPermissions.IntegralHeight = False
+        Me.clbPermissions.Location = New System.Drawing.Point(20, 86)
+        Me.clbPermissions.MultiColumn = True
+        Me.clbPermissions.Name = "clbPermissions"
+        Me.clbPermissions.Size = New System.Drawing.Size(930, 62)
+        Me.clbPermissions.TabIndex = 15
+        '
         'btnAdd
         '
         Me.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74)
@@ -178,7 +207,7 @@ Partial Class frmUserManagement
         Me.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnAdd.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnAdd.ForeColor = System.Drawing.Color.White
-        Me.btnAdd.Location = New System.Drawing.Point(20, 76)
+        Me.btnAdd.Location = New System.Drawing.Point(20, 160)
         Me.btnAdd.Name = "btnAdd"
         Me.btnAdd.Size = New System.Drawing.Size(130, 34)
         Me.btnAdd.TabIndex = 10
@@ -193,7 +222,7 @@ Partial Class frmUserManagement
         Me.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnUpdate.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnUpdate.ForeColor = System.Drawing.Color.White
-        Me.btnUpdate.Location = New System.Drawing.Point(158, 76)
+        Me.btnUpdate.Location = New System.Drawing.Point(158, 160)
         Me.btnUpdate.Name = "btnUpdate"
         Me.btnUpdate.Size = New System.Drawing.Size(140, 34)
         Me.btnUpdate.TabIndex = 11
@@ -208,7 +237,7 @@ Partial Class frmUserManagement
         Me.btnResetPassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnResetPassword.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnResetPassword.ForeColor = System.Drawing.Color.FromArgb(14, 38, 72)
-        Me.btnResetPassword.Location = New System.Drawing.Point(306, 76)
+        Me.btnResetPassword.Location = New System.Drawing.Point(306, 160)
         Me.btnResetPassword.Name = "btnResetPassword"
         Me.btnResetPassword.Size = New System.Drawing.Size(170, 34)
         Me.btnResetPassword.TabIndex = 12
@@ -223,7 +252,7 @@ Partial Class frmUserManagement
         Me.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnClear.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.btnClear.Location = New System.Drawing.Point(484, 76)
+        Me.btnClear.Location = New System.Drawing.Point(484, 160)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(120, 34)
         Me.btnClear.TabIndex = 13
@@ -264,14 +293,14 @@ Partial Class frmUserManagement
         Me.dgv.DefaultCellStyle = dataGridViewCellStyle2
         Me.dgv.EnableHeadersVisualStyles = False
         Me.dgv.GridColor = System.Drawing.Color.FromArgb(218, 225, 234)
-        Me.dgv.Location = New System.Drawing.Point(30, 215)
+        Me.dgv.Location = New System.Drawing.Point(30, 305)
         Me.dgv.MultiSelect = False
         Me.dgv.Name = "dgv"
         Me.dgv.ReadOnly = True
         Me.dgv.RowHeadersVisible = False
         Me.dgv.RowTemplate.Height = 32
         Me.dgv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgv.Size = New System.Drawing.Size(950, 360)
+        Me.dgv.Size = New System.Drawing.Size(950, 280)
         Me.dgv.TabIndex = 2
         '
         'frmUserManagement
@@ -303,6 +332,8 @@ Partial Class frmUserManagement
     Friend WithEvents lblPassword As System.Windows.Forms.Label
     Friend WithEvents txtPassword As System.Windows.Forms.TextBox
     Friend WithEvents chkIsActive As System.Windows.Forms.CheckBox
+    Friend WithEvents lblPermissions As System.Windows.Forms.Label
+    Friend WithEvents clbPermissions As System.Windows.Forms.CheckedListBox
     Friend WithEvents btnAdd As System.Windows.Forms.Button
     Friend WithEvents btnUpdate As System.Windows.Forms.Button
     Friend WithEvents btnResetPassword As System.Windows.Forms.Button

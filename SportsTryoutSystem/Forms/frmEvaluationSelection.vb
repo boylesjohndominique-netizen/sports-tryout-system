@@ -244,7 +244,7 @@ Public Class frmEvaluationSelection
     Private Sub LoadSportsFilter()
         cmbFilterSport.Items.Clear()
         Dim sql As String = "SELECT SportID, SportName FROM Sports WHERE IsActive=1 "
-        If SessionManager.IsCoach Then
+        If SessionManager.IsCoach OrElse SessionManager.IsEvaluator Then
             sql &= " AND SportID IN (SELECT SportID FROM SportCoaches WHERE UserID=" & SessionManager.CurrentUserID & ") "
         End If
         sql &= "ORDER BY SportName"

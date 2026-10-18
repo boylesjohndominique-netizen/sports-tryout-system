@@ -4,22 +4,40 @@ Public Class frmUserManagement
 
     Public Sub New()
         InitializeComponent()
+        LoadPermissionCatalog()
         Dim header As Panel = UIHelper.MakePanelHeader("User Account Management", Me.Width)
         Me.Controls.Add(header)
         header.SendToBack()
         AddHandler Me.Shown, AddressOf OnFormShown
     End Sub
 
+    Private Sub LoadPermissionCatalog()
+        clbPermissions.Items.Clear()
+        For Each opt In Permissions.Catalog
+            clbPermissions.Items.Add(opt)
+        Next
+    End Sub
+
     Private Sub OnFormShown(sender As Object, e As EventArgs)
         LoadUsers()
+        Dim existing As DataGridViewRow = GetSelectedRow()
+        If existing Is Nothing Then
+            ApplyPermissions(Permissions.DefaultsForRole(cmbRole.Text))
+        End If
     End Sub
+
+    Private Function GetSelectedRow() As DataGridViewRow
+        If dgv.SelectedRows.Count > 0 Then Return dgv.SelectedRows(0)
+        Return Nothing
+    End Function
 
     Private Sub LoadUsers()
         Try
             dgv.DataSource = DatabaseHelper.GetDataTable(
-                "SELECT UserID, Username, FullName, Role, CASE WHEN IsActive=1 THEN 'Yes' ELSE 'No' END AS Active, DateCreated " &
+                "SELECT UserID, Username, FullName, Role, Permissions, CASE WHEN IsActive=1 THEN 'Yes' ELSE 'No' END AS Active, DateCreated " &
                 "FROM Users ORDER BY FullName")
             If dgv.Columns.Contains("UserID") Then dgv.Columns("UserID").Visible = False
+            If dgv.Columns.Contains("Permissions") Then dgv.Columns("Permissions").Visible = False
         Catch ex As Exception
             UIHelper.ShowError("Error loading users: " & ex.Message)
         End Try
@@ -35,6 +53,12 @@ Public Class frmUserManagement
         chkIsActive.Checked = row.Cells("Active").Value.ToString() = "Yes"
         txtUsername.Enabled = False
         txtPassword.Text = ""
+
+        Dim perms As String = Nothing
+        If row.Cells("Permissions").Value IsNot Nothing AndAlso row.Cells("Permissions").Value IsNot DBNull.Value Then
+            perms = row.Cells("Permissions").Value.ToString()
+        End If
+        ApplyPermissions(If(String.IsNullOrWhiteSpace(perms), Permissions.DefaultsForRole(cmbRole.Text), perms))
     End Sub
 
     Private Sub BtnAdd_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
@@ -52,11 +76,12 @@ Public Class frmUserManagement
             End If
 
             DatabaseHelper.ExecuteNonQuery(
-                "INSERT INTO Users (Username, PasswordHash, FullName, Role, IsActive, DateCreated) VALUES (@u,@p,@f,@r,@a,@d)",
+                "INSERT INTO Users (Username, PasswordHash, FullName, Role, Permissions, IsActive, DateCreated) VALUES (@u,@p,@f,@r,@perm,@a,@d)",
                 New SQLiteParameter("@u", txtUsername.Text.Trim()),
                 New SQLiteParameter("@p", SecurityHelper.HashPassword(txtPassword.Text)),
                 New SQLiteParameter("@f", txtFullName.Text.Trim()),
                 New SQLiteParameter("@r", cmbRole.Text),
+                New SQLiteParameter("@perm", SelectedPermissions()),
                 New SQLiteParameter("@a", If(chkIsActive.Checked, 1, 0)),
                 New SQLiteParameter("@d", Now.ToString("s")))
 
@@ -76,9 +101,10 @@ Public Class frmUserManagement
 
         Try
             DatabaseHelper.ExecuteNonQuery(
-                "UPDATE Users SET FullName=@f, Role=@r, IsActive=@a WHERE UserID=@id",
+                "UPDATE Users SET FullName=@f, Role=@r, Permissions=@perm, IsActive=@a WHERE UserID=@id",
                 New SQLiteParameter("@f", txtFullName.Text.Trim()),
                 New SQLiteParameter("@r", cmbRole.Text),
+                New SQLiteParameter("@perm", SelectedPermissions()),
                 New SQLiteParameter("@a", If(chkIsActive.Checked, 1, 0)),
                 New SQLiteParameter("@id", selectedUserId))
 
@@ -120,6 +146,32 @@ Public Class frmUserManagement
         txtPassword.Text = ""
         chkIsActive.Checked = True
         txtUsername.Enabled = True
+        ApplyPermissions("")
+    End Sub
+
+    Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbRole.SelectedIndexChanged
+        ' When composing a brand-new account, preload the role's default permissions.
+        If selectedUserId = 0 AndAlso cmbRole.SelectedIndex >= 0 Then
+            ApplyPermissions(Permissions.DefaultsForRole(cmbRole.Text))
+        End If
+    End Sub
+
+    ''' <summary>Comma-separated keys for the currently checked permissions.</summary>
+    Private Function SelectedPermissions() As String
+        Dim keys As New List(Of String)
+        For Each item As Object In clbPermissions.CheckedItems
+            Dim opt As Permissions.PermissionItem = TryCast(item, Permissions.PermissionItem)
+            If opt IsNot Nothing Then keys.Add(opt.Key)
+        Next
+        Return String.Join(",", keys)
+    End Function
+
+    Private Sub ApplyPermissions(keys As String)
+        Dim selected As HashSet(Of String) = Permissions.Parse(keys)
+        For i As Integer = 0 To clbPermissions.Items.Count - 1
+            Dim opt As Permissions.PermissionItem = DirectCast(clbPermissions.Items(i), Permissions.PermissionItem)
+            clbPermissions.SetItemChecked(i, selected.Contains(opt.Key))
+        Next
     End Sub
 
 End Class
