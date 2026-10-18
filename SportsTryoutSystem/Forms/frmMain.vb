@@ -3,6 +3,14 @@ Public Class frmMain
     Public LoggedOut As Boolean = False
     Private activeNavButton As Button = Nothing
 
+    Private canManageUsers As Boolean
+    Private canManageSports As Boolean
+    Private canManageSchedules As Boolean
+    Private canManageRegistration As Boolean
+    Private canViewApplicants As Boolean
+    Private canEvaluate As Boolean
+    Private canViewReports As Boolean
+
     Public Sub New()
         InitializeComponent()
         SetupNavRolePermissions()
@@ -15,13 +23,13 @@ Public Class frmMain
         lblRole.Text = " " & If(String.IsNullOrEmpty(SessionManager.CurrentRole), "ADMIN", SessionManager.CurrentRole.ToUpper()) & " "
 
         ' Permission based visibility
-        Dim canManageUsers As Boolean = SessionManager.HasPermission(Permissions.ManageUsers)
-        Dim canManageSports As Boolean = SessionManager.HasPermission(Permissions.ManageSports)
-        Dim canManageSchedules As Boolean = SessionManager.HasPermission(Permissions.ManageSchedules)
-        Dim canManageRegistration As Boolean = SessionManager.HasPermission(Permissions.ManageRegistration)
-        Dim canViewApplicants As Boolean = SessionManager.HasPermission(Permissions.ViewApplicants)
-        Dim canEvaluate As Boolean = SessionManager.HasPermission(Permissions.Evaluate)
-        Dim canViewReports As Boolean = SessionManager.HasPermission(Permissions.ViewReports)
+        canManageUsers = SessionManager.HasPermission(Permissions.ManageUsers)
+        canManageSports = SessionManager.HasPermission(Permissions.ManageSports)
+        canManageSchedules = SessionManager.HasPermission(Permissions.ManageSchedules)
+        canManageRegistration = SessionManager.HasPermission(Permissions.ManageRegistration)
+        canViewApplicants = SessionManager.HasPermission(Permissions.ViewApplicants)
+        canEvaluate = SessionManager.HasPermission(Permissions.Evaluate)
+        canViewReports = SessionManager.HasPermission(Permissions.ViewReports)
 
         lblAdminSection.Visible = canManageUsers OrElse canManageSports
         btnUsers.Visible = canManageUsers
@@ -47,37 +55,49 @@ Public Class frmMain
         btnDashboard.Location = New Point(0, curY)
         curY += 44
 
-        If lblAdminSection.Visible Then
+        If canManageUsers OrElse canManageSports Then
             lblAdminSection.Location = New Point(20, curY + 8)
             curY += 26
-            btnUsers.Location = New Point(0, curY)
-            curY += 44
-            btnCreateAccount.Location = New Point(0, curY)
-            curY += 44
-            btnSports.Location = New Point(0, curY)
-            curY += 44
+            If canManageUsers Then
+                btnUsers.Location = New Point(0, curY)
+                curY += 44
+                btnCreateAccount.Location = New Point(0, curY)
+                curY += 44
+            End If
+            If canManageSports Then
+                btnSports.Location = New Point(0, curY)
+                curY += 44
+            End If
         End If
 
-        If lblOpsSection.Visible Then
+        If canManageSchedules OrElse canManageRegistration Then
             lblOpsSection.Location = New Point(20, curY + 8)
             curY += 26
-            btnSchedules.Location = New Point(0, curY)
-            curY += 44
-            btnRegistration.Location = New Point(0, curY)
-            curY += 44
+            If canManageSchedules Then
+                btnSchedules.Location = New Point(0, curY)
+                curY += 44
+            End If
+            If canManageRegistration Then
+                btnRegistration.Location = New Point(0, curY)
+                curY += 44
+            End If
         End If
 
-        If lblRecordsSection.Visible Then
+        If canViewApplicants OrElse canEvaluate OrElse canViewReports Then
             lblRecordsSection.Location = New Point(20, curY + 8)
             curY += 26
-            btnApplicants.Location = New Point(0, curY)
-            curY += 44
-            If btnEvaluation.Visible Then
+            If canViewApplicants Then
+                btnApplicants.Location = New Point(0, curY)
+                curY += 44
+            End If
+            If canEvaluate Then
                 btnEvaluation.Location = New Point(0, curY)
                 curY += 44
             End If
-            btnReports.Location = New Point(0, curY)
-            curY += 44
+            If canViewReports Then
+                btnReports.Location = New Point(0, curY)
+                curY += 44
+            End If
         End If
 
         lblAccountSection.Location = New Point(20, curY + 8)
