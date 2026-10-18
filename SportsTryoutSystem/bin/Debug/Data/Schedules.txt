@@ -1,2 +1,0 @@
-﻿ScheduleID|SportID|TryoutDate|TryoutTime|Venue|Status|Notes
-1|1|2026-09-15|09:00|Gymnasium|Upcoming|For upcoming college days

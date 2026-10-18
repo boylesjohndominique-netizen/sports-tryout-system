@@ -1,2 +1,0 @@
-﻿StudentID|StudentNumber|FirstName|LastName|CourseYear|Gender|ContactNumber|Email|DateRegistered
-1|2026-TEST-4593|Maria|Santos|BSIT 2B|Female|09987654321|maria@sample.edu|2026-09-05T21:49:33
