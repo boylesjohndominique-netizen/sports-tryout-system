@@ -27,7 +27,7 @@ Public Class frmDashboard
     Private Sub SetupDashboardUI()
         ' Set user greeting
         lblWelcome.Text = "Welcome back, " & If(String.IsNullOrEmpty(SessionManager.CurrentFullName), "Administrator", SessionManager.CurrentFullName)
-        lblDatePill.Text = DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+        lblDatePill.Text = DateTime.Now.ToString("MMMM dd, yyyy")
 
         ' Wire up actions
         AddHandler btnRefresh.Click, AddressOf BtnRefresh_Click
@@ -62,6 +62,12 @@ Public Class frmDashboard
             lblPendingPill.Text = String.Format("● {0} Pending Decisions", pendingCount)
             lblSelectedPill.Text = String.Format("✓ {0} Selected", selectedCount)
 
+            ' Refresh main navigation bar pills
+            Try
+                CType(Me.MdiParent, frmMain)?.RefreshNavMetrics()
+            Catch
+            End Try
+
             ' 2. Load KPI Cards
             LoadKpiCards(totalRegs, upcomingSessions, evaluatedCount, selectedCount, pendingCount, activeSportsCount)
 
@@ -84,32 +90,46 @@ Public Class frmDashboard
     Private Sub LoadKpiCards(total As Integer, upcoming As Integer, evaluated As Integer, selected As Integer, pending As Integer, activeSports As Integer)
         tlpKpi.Controls.Clear()
 
-        Dim evalRate As String = If(total > 0, String.Format("{0}% of total", CInt(Math.Round(evaluated * 100.0 / total))), "0% of total")
-        Dim selectRate As String = If(total > 0, String.Format("{0}% success rate", CInt(Math.Round(selected * 100.0 / total))), "0% rate")
-        Dim pendingRate As String = If(total > 0, String.Format("{0}% awaiting", CInt(Math.Round(pending * 100.0 / total))), "0% awaiting")
-
-        Dim cardsData = New List(Of Tuple(Of String, Integer, Color, String, String)) From {
-            Tuple.Create("Total Applicants", total, UIHelper.ColorPrimaryDark, "[Athletes]", "All registered"),
-            Tuple.Create("Upcoming Tryouts", upcoming, UIHelper.ColorGold, "[Sessions]", "Scheduled sessions"),
-            Tuple.Create("Evaluated", evaluated, UIHelper.ColorPrimary, "[Evaluated]", evalRate),
-            Tuple.Create("Selected Athletes", selected, UIHelper.ColorSuccess, "[Selected]", selectRate),
-            Tuple.Create("Pending Decisions", pending, UIHelper.ColorGoldDark, "[Pending]", pendingRate),
-            Tuple.Create("Active Programs", activeSports, UIHelper.ColorAccent, "[Sports]", "Open tryouts")
+        Dim cardsData = New List(Of Tuple(Of String, Integer, Color)) From {
+            Tuple.Create("Total Applicants", total, UIHelper.ColorPrimaryDark),
+            Tuple.Create("Upcoming Tryouts", upcoming, UIHelper.ColorGold),
+            Tuple.Create("Evaluated", evaluated, UIHelper.ColorPrimary),
+            Tuple.Create("Selected Athletes", selected, UIHelper.ColorSuccess),
+            Tuple.Create("Pending Decisions", pending, UIHelper.ColorGoldDark),
+            Tuple.Create("Active Programs", activeSports, UIHelper.ColorAccent)
         }
 
         For i As Integer = 0 To cardsData.Count - 1
             Dim d = cardsData(i)
-            Dim kpiCard As Panel = CreateKpiTile(d.Item1, d.Item2, d.Item3, d.Item4, d.Item5)
-            tlpKpi.Controls.Add(kpiCard, i, 0)
+            tlpKpi.Controls.Add(CreateKpiTile(d.Item1, d.Item2, d.Item3), i, 0)
         Next
     End Sub
 
-    Private Function CreateKpiTile(title As String, value As Integer, accentColor As Color, iconText As String, subText As String) As Panel
+    Private Function CreateKpiTile(title As String, value As Integer, accentColor As Color) As Panel
         Dim pnl As New DoubleBufferedPanel()
         pnl.Dock = DockStyle.Fill
-        pnl.Margin = New Padding(0, 0, 8, 0)
+        pnl.Margin = New Padding(0, 0, 10, 0)
         pnl.BackColor = Color.White
-        pnl.Padding = New Padding(14, 10, 14, 10)
+        pnl.Padding = New Padding(16, 12, 16, 12)
+
+        ' Value Count (fills the tile)
+        Dim lblVal As New Label()
+        lblVal.Dock = DockStyle.Fill
+        lblVal.Text = value.ToString("N0")
+        lblVal.Font = New Font("Segoe UI Semibold", 26.0!, FontStyle.Bold)
+        lblVal.ForeColor = UIHelper.ColorTextPrimary
+        lblVal.TextAlign = ContentAlignment.MiddleLeft
+        pnl.Controls.Add(lblVal)
+
+        ' Title Label
+        Dim lblTitle As New Label()
+        lblTitle.Dock = DockStyle.Top
+        lblTitle.Height = 22
+        lblTitle.Text = title.ToUpper()
+        lblTitle.Font = New Font("Segoe UI Semibold", 9.0!, FontStyle.Bold)
+        lblTitle.ForeColor = UIHelper.ColorTextSecondary
+        lblTitle.TextAlign = ContentAlignment.TopLeft
+        pnl.Controls.Add(lblTitle)
 
         ' Top Accent Strip
         Dim topStrip As New Panel()
@@ -117,33 +137,6 @@ Public Class frmDashboard
         topStrip.Height = 4
         topStrip.BackColor = accentColor
         pnl.Controls.Add(topStrip)
-
-        ' Title Label
-        Dim lblTitle As New Label()
-        lblTitle.Text = title.ToUpper()
-        lblTitle.Font = New Font("Segoe UI Semibold", 8.5!, FontStyle.Bold)
-        lblTitle.ForeColor = UIHelper.ColorTextSecondary
-        lblTitle.Location = New Point(12, 12)
-        lblTitle.AutoSize = True
-        pnl.Controls.Add(lblTitle)
-
-        ' Value Count
-        Dim lblVal As New Label()
-        lblVal.Text = value.ToString("N0")
-        lblVal.Font = New Font("Segoe UI Semibold", 22.0!, FontStyle.Bold)
-        lblVal.ForeColor = UIHelper.ColorTextPrimary
-        lblVal.Location = New Point(10, 32)
-        lblVal.AutoSize = True
-        pnl.Controls.Add(lblVal)
-
-        ' Subtext / Trend
-        Dim lblSub As New Label()
-        lblSub.Text = subText
-        lblSub.Font = New Font("Segoe UI", 9.0!, FontStyle.Regular)
-        lblSub.ForeColor = UIHelper.ColorTextSecondary
-        lblSub.Location = New Point(12, 74)
-        lblSub.AutoSize = True
-        pnl.Controls.Add(lblSub)
 
         Return pnl
     End Function
@@ -184,10 +177,10 @@ Public Class frmDashboard
         Dim pctNotSelected As Integer = If(total > 0, CInt(Math.Round(notSelected * 100.0 / total)), 0)
         Dim pctPending As Integer = If(total > 0, CInt(Math.Round(pendingCount * 100.0 / total)), 0)
 
-        tlpPipeTiles.Controls.Add(CreatePipeTile("SELECTED", selectedCount, pctSelected, UIHelper.ColorSuccess, "Qualified for team"), 0, 0)
-        tlpPipeTiles.Controls.Add(CreatePipeTile("FURTHER EVAL", further, pctFurther, UIHelper.ColorAccent, "Callbacks / re-tests"), 1, 0)
-        tlpPipeTiles.Controls.Add(CreatePipeTile("NOT SELECTED", notSelected, pctNotSelected, UIHelper.ColorDanger, "Did not qualify"), 2, 0)
-        tlpPipeTiles.Controls.Add(CreatePipeTile("PENDING", pendingCount, pctPending, UIHelper.ColorGold, "Awaiting review"), 3, 0)
+        tlpPipeTiles.Controls.Add(CreatePipeTile("SELECTED", selectedCount, pctSelected, UIHelper.ColorSuccess), 0, 0)
+        tlpPipeTiles.Controls.Add(CreatePipeTile("FURTHER EVAL", further, pctFurther, UIHelper.ColorAccent), 1, 0)
+        tlpPipeTiles.Controls.Add(CreatePipeTile("NOT SELECTED", notSelected, pctNotSelected, UIHelper.ColorDanger), 2, 0)
+        tlpPipeTiles.Controls.Add(CreatePipeTile("PENDING", pendingCount, pctPending, UIHelper.ColorGold), 3, 0)
 
         ' 4. Performance Benchmarks
         pnlBenchmarkFooter.Controls.Clear()
@@ -212,7 +205,7 @@ Public Class frmDashboard
         lblBench.Font = New Font("Segoe UI Semibold", 8.5!, FontStyle.Bold)
         lblBench.ForeColor = UIHelper.ColorTextPrimary
         lblBench.TextAlign = ContentAlignment.MiddleLeft
-        lblBench.Text = String.Format("📊 Avg Score: {0}   |   🏆 Top Score: {1}   |   🎯 Passing Threshold: {2:0.0}   |   Evaluated: {3} of {4}",
+        lblBench.Text = String.Format("Avg {0}   ·   Top {1}   ·   Passing {2:0.0}   ·   Evaluated {3} of {4}",
                                       avgScoreStr, topScoreStr, AppLogic.PassingScore, evalCount, total)
         pnlBenchmarkFooter.Controls.Add(lblBench)
 
@@ -227,12 +220,12 @@ Public Class frmDashboard
     Private Function CreateLegendItem(text As String, col As Color) As Panel
         Dim p As New Panel()
         p.AutoSize = True
-        p.Height = 22
-        p.Margin = New Padding(0, 0, 16, 0)
+        p.Height = 16
+        p.Margin = New Padding(0, 0, 18, 0)
 
         Dim dot As New Panel()
-        dot.Size = New Size(12, 12)
-        dot.Location = New Point(0, 5)
+        dot.Size = New Size(10, 10)
+        dot.Location = New Point(0, 3)
         dot.BackColor = col
         p.Controls.Add(dot)
 
@@ -240,43 +233,38 @@ Public Class frmDashboard
         lbl.Text = text
         lbl.Font = New Font("Segoe UI Semibold", 8.5!, FontStyle.Bold)
         lbl.ForeColor = UIHelper.ColorTextSecondary
-        lbl.Location = New Point(16, 2)
+        lbl.Location = New Point(14, 0)
         lbl.AutoSize = True
         p.Controls.Add(lbl)
 
         Return p
     End Function
 
-    Private Function CreatePipeTile(label As String, count As Integer, pct As Integer, col As Color, hint As String) As Panel
+    Private Function CreatePipeTile(label As String, count As Integer, pct As Integer, col As Color) As Panel
         Dim p As New DoubleBufferedPanel()
         p.Dock = DockStyle.Fill
-        p.Margin = New Padding(0, 4, 8, 4)
+        p.Margin = New Padding(0, 0, 8, 0)
         p.BackColor = Color.FromArgb(248, 250, 252)
-        p.Padding = New Padding(10, 6, 10, 6)
+        p.Padding = New Padding(12, 6, 12, 6)
 
-        Dim lTop As New Label()
-        lTop.Text = label
-        lTop.Font = New Font("Segoe UI Semibold", 8.0!, FontStyle.Bold)
-        lTop.ForeColor = col
-        lTop.Location = New Point(8, 6)
-        lTop.AutoSize = True
-        p.Controls.Add(lTop)
-
+        ' Value (fills the tile)
         Dim lVal As New Label()
-        lVal.Text = String.Format("{0} ({1}%)", count, pct)
-        lVal.Font = New Font("Segoe UI Semibold", 12.0!, FontStyle.Bold)
+        lVal.Dock = DockStyle.Fill
+        lVal.Text = String.Format("{0}  ·  {1}%", count, pct)
+        lVal.Font = New Font("Segoe UI Semibold", 15.0!, FontStyle.Bold)
         lVal.ForeColor = UIHelper.ColorTextPrimary
-        lVal.Location = New Point(7, 24)
-        lVal.AutoSize = True
+        lVal.TextAlign = ContentAlignment.MiddleLeft
         p.Controls.Add(lVal)
 
-        Dim lHint As New Label()
-        lHint.Text = hint
-        lHint.Font = New Font("Segoe UI", 7.5!, FontStyle.Regular)
-        lHint.ForeColor = UIHelper.ColorTextSecondary
-        lHint.Location = New Point(8, 50)
-        lHint.AutoSize = True
-        p.Controls.Add(lHint)
+        ' Label (top)
+        Dim lTop As New Label()
+        lTop.Dock = DockStyle.Top
+        lTop.Height = 16
+        lTop.Text = label
+        lTop.Font = New Font("Segoe UI Semibold", 8.5!, FontStyle.Bold)
+        lTop.ForeColor = col
+        lTop.TextAlign = ContentAlignment.TopLeft
+        p.Controls.Add(lTop)
 
         Return p
     End Function
@@ -410,27 +398,44 @@ Public Class frmDashboard
     End Sub
 
     Private Sub LayoutSportChart(Optional sender As Object = Nothing, Optional e As EventArgs = Nothing)
-        If pnlBarsList Is Nothing OrElse sportBars.Count = 0 Then Return
+        If pnlBarsList Is Nothing Then Return
 
         Dim w As Integer = pnlBarsList.ClientSize.Width
-        Dim nameW As Integer = 150
-        Dim countW As Integer = 105
-        Dim trackW As Integer = Math.Max(40, w - nameW - countW - 18)
-        Dim y As Integer = 4
+        Dim nameW As Integer = Math.Max(120, CInt(w * 0.30))
+        Dim countW As Integer = 110
 
+        ' Keep the column headers aligned with the bar rows
+        If lblHeadSport IsNot Nothing Then lblHeadSport.Width = nameW
+        If lblHeadBar IsNot Nothing Then lblHeadBar.Location = New Point(nameW, 3)
+
+        If sportBars.Count = 0 Then Return
+
+        Dim h As Integer = pnlBarsList.ClientSize.Height
+        Dim trackW As Integer = Math.Max(40, w - nameW - countW - 12)
+
+        Dim n As Integer = sportBars.Count
+        Dim rowH As Integer = 40
+        If n > 0 Then
+            rowH = CInt(h / n)
+            If rowH < 28 Then rowH = 28
+            If rowH > 64 Then rowH = 64
+        End If
+        Dim barH As Integer = Math.Min(22, Math.Max(12, rowH - 24))
+
+        Dim y As Integer = 0
         For Each row As SportBarRow In sportBars
-            row.Container.SetBounds(0, y, w, 34)
-            row.LblName.SetBounds(0, 4, nameW, 26)
-            row.PnlTrack.SetBounds(nameW, 9, trackW, 16)
+            row.Container.SetBounds(0, y, w, rowH)
+            row.LblName.SetBounds(0, 0, nameW, rowH)
+            row.PnlTrack.SetBounds(nameW, (rowH - barH) \ 2, trackW, barH)
 
             Dim fillW As Integer = 0
             If row.Count > 0 AndAlso maxSportCount > 0 Then
                 fillW = Math.Max(8, CInt(Math.Round(trackW * (row.Count / CDbl(maxSportCount)))))
             End If
-            row.PnlFill.SetBounds(0, 0, fillW, 16)
-            row.LblCount.SetBounds(nameW + trackW + 8, 4, countW, 26)
+            row.PnlFill.SetBounds(0, 0, fillW, barH)
+            row.LblCount.SetBounds(nameW + trackW + 8, 0, countW, rowH)
 
-            y += 38
+            y += rowH
         Next
     End Sub
 
@@ -559,7 +564,7 @@ Public Class frmDashboard
     End Sub
 
     Private Sub BtnApplicants_Click(sender As Object, e As EventArgs)
-        NavigateTo(GetType(frmApplicantRecords))
+        NavigateTo(GetType(frmStudentRegistration))
     End Sub
 
     Private Sub NavigateTo(formType As Type)
