@@ -42,8 +42,8 @@ Public Class frmLogin
     End Sub
 
     ''' <summary>
-    ''' Explicitly positions the left and right panels with 0% overlap,
-    ''' guaranteeing the login card is always centered in the right panel.
+    ''' Splits the window into the left showcase and right login area, then
+    ''' sizes and centers the card so it fills the available space.
     ''' </summary>
     Private Sub LayoutPanels()
         Dim totalW As Integer = Me.ClientSize.Width
@@ -51,27 +51,98 @@ Public Class frmLogin
 
         If totalW <= 0 OrElse totalH <= 0 Then Return
 
-        ' Left panel takes 52% of screen width, right takes remainder
         Dim leftW As Integer = CInt(totalW * 0.52)
         Dim rightW As Integer = totalW - leftW
 
         pnlLeft.SetBounds(0, 0, leftW, totalH)
         pnlRight.SetBounds(leftW, 0, rightW, totalH)
 
-        ' Position window controls in the top-right of the right panel
-        pnlWindowControls.Location = New Point(rightW - pnlWindowControls.Width - 10, 10)
+        pnlWindowControls.Location = New Point(rightW - pnlWindowControls.Width - 12, 12)
 
-        ' Center login card inside the right panel
-        Dim cardX As Integer = (rightW - pnlCard.Width) \ 2
-        Dim cardY As Integer = (totalH - pnlCard.Height) \ 2
+        ' Grow the card with the window, clamped to comfortable limits
+        Dim cardW As Integer = Math.Min(620, Math.Max(440, rightW - 160))
+        Dim cardH As Integer = Math.Min(680, Math.Max(500, totalH - 160))
+        If cardW > rightW - 60 Then cardW = rightW - 60
+        If cardH > totalH - 60 Then cardH = totalH - 60
+
+        pnlCard.Size = New Size(cardW, cardH)
+        LayoutCard()
+
+        Dim cardX As Integer = (rightW - cardW) \ 2
+        Dim cardY As Integer = (totalH - cardH) \ 2
         If cardX < 15 Then cardX = 15
         If cardY < 20 Then cardY = 20
 
         pnlCard.Location = New Point(cardX, cardY)
     End Sub
 
+    ''' <summary>
+    ''' Reflows the controls inside the card so they stay centered and evenly
+    ''' spaced at any card size.
+    ''' </summary>
+    Private Sub LayoutCard()
+        Dim w As Integer = pnlCard.ClientSize.Width
+        Dim h As Integer = pnlCard.ClientSize.Height
+        If w <= 0 OrElse h <= 0 Then Return
+
+        Dim pad As Integer = CInt(w * 0.11)
+        If pad < 44 Then pad = 44
+        Dim contentW As Integer = w - pad * 2
+        If contentW < 220 Then
+            pad = 24
+            contentW = w - pad * 2
+        End If
+
+        Dim titleH As Integer = 46
+        Dim subH As Integer = 24
+        Dim divH As Integer = 3
+        Dim lblH As Integer = 16
+        Dim boxH As Integer = 56
+        Dim chkH As Integer = 22
+        Dim btnH As Integer = 56
+        Dim statusH As Integer = 34
+
+        Dim blockH As Integer = titleH + 6 + subH + 16 + divH + 26 + lblH + 8 + boxH + 20 + lblH + 8 + boxH + 16 + chkH + 20 + btnH + 10 + statusH
+
+        Dim y As Integer = (h - blockH) \ 2
+        If y < 30 Then y = 30
+
+        lblTitle.SetBounds(0, y, w, titleH)
+        y += titleH + 6
+
+        lblSubtitle.SetBounds(0, y, w, subH)
+        y += subH + 16
+
+        pnlDiv.SetBounds((w - 64) \ 2, y, 64, divH)
+        y += divH + 26
+
+        lblUserTitle.Location = New Point(pad, y)
+        y += lblH + 8
+
+        pnlUserWrap.SetBounds(pad, y, contentW, boxH)
+        lblUserIco.SetBounds(0, 0, 46, boxH - 2)
+        txtUsername.SetBounds(48, (boxH - txtUsername.PreferredHeight) \ 2, contentW - 60, txtUsername.PreferredHeight)
+        y += boxH + 20
+
+        lblPassTitle.Location = New Point(pad, y)
+        y += lblH + 8
+
+        pnlPassWrap.SetBounds(pad, y, contentW, boxH)
+        lblPassIco.SetBounds(0, 0, 46, boxH - 2)
+        txtPassword.SetBounds(48, (boxH - txtPassword.PreferredHeight) \ 2, contentW - 60, txtPassword.PreferredHeight)
+        y += boxH + 16
+
+        chkShowPassword.SetBounds(pad + 2, y, contentW - 4, chkH)
+        y += chkH + 20
+
+        btnLogin.SetBounds(pad, y, contentW, btnH)
+        y += btnH + 10
+
+        lblStatus.SetBounds(pad, y, contentW, statusH)
+    End Sub
+
     ' ═══════════════════════════════════════════════════════════════
-    '  LEFT SHOWCASE PAINTING — High-Resolution, Zero-Flicker, Scaled
+    '  LEFT SHOWCASE PAINTING — Decluttered, Centered, Responsive
     ' ═══════════════════════════════════════════════════════════════
     Private Sub PaintLeftPanel(sender As Object, e As PaintEventArgs)
         Dim pnl As Panel = DirectCast(sender, Panel)
@@ -79,7 +150,7 @@ Public Class frmLogin
         g.SmoothingMode = SmoothingMode.AntiAlias
         g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
 
-        ' ── 1. Gradient Background ──
+        ' ── Gradient background ──
         Using bgBrush As New LinearGradientBrush(
             New Point(0, 0), New Point(pnl.Width, pnl.Height),
             Color.FromArgb(10, 26, 50),
@@ -87,7 +158,7 @@ Public Class frmLogin
             g.FillRectangle(bgBrush, pnl.ClientRectangle)
         End Using
 
-        ' ── 2. Top Gold Accent Bar ──
+        ' ── Top gold accent bar ──
         Using goldBrush As New LinearGradientBrush(
             New Rectangle(0, 0, pnl.Width, 4),
             UIHelper.ColorGold,
@@ -96,154 +167,89 @@ Public Class frmLogin
             g.FillRectangle(goldBrush, 0, 0, pnl.Width, 4)
         End Using
 
-        ' ── 3. Geometric Background Accents ──
-        Using pGold As New Pen(Color.FromArgb(14, 234, 179, 8), 1.5!)
-            g.DrawEllipse(pGold, pnl.Width - 160, 40, 240, 240)
+        ' ── Subtle geometric accents ──
+        Using pGold As New Pen(Color.FromArgb(16, 234, 179, 8), 1.5!)
+            g.DrawEllipse(pGold, pnl.Width - 150, 30, 240, 240)
         End Using
         Using pWhite As New Pen(Color.FromArgb(10, 255, 255, 255), 1.5!)
-            g.DrawEllipse(pWhite, -60, pnl.Height - 260, 280, 280)
+            g.DrawEllipse(pWhite, -70, pnl.Height - 240, 260, 260)
         End Using
 
-        ' ── 4. Dynamic Vertical Spacing ──
-        Dim cardW As Integer = Math.Min(560, pnl.Width - 80)
-        If cardW < 300 Then cardW = Math.Max(260, pnl.Width - 40)
-        Dim startX As Integer = Math.Max(35, (pnl.Width - cardW) \ 2)
+        ' ── Layout metrics ──
+        Dim pad As Integer = Math.Max(48, CInt(pnl.Width * 0.1))
+        Dim contentW As Integer = pnl.Width - pad * 2
+        Dim titleH As Integer = 62
+        Dim subH As Integer = 30
+        Dim lineH As Integer = 4
+        Dim tagH As Integer = 26
+        Dim rowH As Integer = 58
+        Dim rowGap As Integer = 14
 
-        Dim totalBlockHeight As Integer = 500
-        Dim curY As Integer = Math.Max(25, (pnl.Height - totalBlockHeight - 35) \ 2)
-
-        ' Top Badge Pill
-        Dim badgeText As String = "⚽  OFFICIAL TRYOUT PLATFORM"
-        Using fntBadge As New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
-            Dim szBadge = g.MeasureString(badgeText, fntBadge)
-            Dim badgeRect As New Rectangle(startX, curY, CInt(szBadge.Width) + 20, 28)
-            Using bBrush As New SolidBrush(Color.FromArgb(28, 234, 179, 8))
-                g.FillRectangle(bBrush, badgeRect)
-            End Using
-            Using bPen As New Pen(UIHelper.ColorGold, 1.2!)
-                g.DrawRectangle(bPen, badgeRect)
-            End Using
-            Using textBrush As New SolidBrush(UIHelper.ColorGoldLight)
-                g.DrawString(badgeText, fntBadge, textBrush, startX + 10, curY + 5)
-            End Using
-        End Using
-
-        curY += 40
+        Dim blockH As Integer = titleH + 4 + subH + 18 + lineH + 22 + tagH + 34 + 3 * rowH + 2 * rowGap
+        Dim y As Integer = Math.Max(60, (pnl.Height - blockH) \ 2)
 
         ' Title
-        Using fntTitle As New Font("Segoe UI", 33.0!, FontStyle.Bold)
-            Using brushTitle As New SolidBrush(Color.White)
-                g.DrawString("Sports Tryout", fntTitle, brushTitle, startX, curY)
-            End Using
+        Using fntTitle As New Font("Segoe UI", 34.0!, FontStyle.Bold)
+            g.DrawString("Sports Tryout", fntTitle, Brushes.White, pad, y)
         End Using
-
-        curY += 50
+        y += titleH + 4
 
         ' Subtitle
         Using fntSub As New Font("Segoe UI Semibold", 12.5!, FontStyle.Bold)
-            Using brushGold As New SolidBrush(UIHelper.ColorGold)
-                g.DrawString("MANAGEMENT & EVALUATION SYSTEM", fntSub, brushGold, startX, curY)
+            Using b As New SolidBrush(UIHelper.ColorGold)
+                g.DrawString("MANAGEMENT & EVALUATION SYSTEM", fntSub, b, pad, y)
             End Using
         End Using
-
-        curY += 26
+        y += subH + 18
 
         ' Gold accent line
-        Using pLine As New Pen(UIHelper.ColorGold, 3.5!)
-            g.DrawLine(pLine, startX, curY, startX + 110, curY)
+        Using pLine As New Pen(UIHelper.ColorGold, 4.0!)
+            g.DrawLine(pLine, pad, y, pad + 96, y)
         End Using
+        y += lineH + 22
 
-        curY += 16
-
-        ' Description
-        Using fntDesc As New Font("Segoe UI", 10.5!, FontStyle.Regular)
-            Using brushDesc As New SolidBrush(Color.FromArgb(200, 220, 245))
-                Dim desc As String = "Digital evaluation portal for coaches and scouting staff to record" & vbCrLf &
-                                     "rubric scores, monitor leaderboards, and draft athlete rosters."
-                g.DrawString(desc, fntDesc, brushDesc, startX, curY)
+        ' One-line tagline
+        Using fntTag As New Font("Segoe UI", 12.0!)
+            Using b As New SolidBrush(Color.FromArgb(205, 222, 245))
+                g.DrawString("Score objectively. Rank instantly. Select confidently.", fntTag, b, pad, y)
             End Using
         End Using
+        y += tagH + 34
 
-        curY += 50
+        ' Feature highlights (compact)
+        DrawFeatureRow(g, pad, y, contentW, rowH, "🏅", "Objective Skill Rubrics")
+        y += rowH + rowGap
 
-        ' Feature Cards
-        Dim cardH As Integer = 64
-        DrawFeatureCard(g, startX, curY, cardW, cardH, "🏅", "Objective Skill Rubrics", "Standardized physical, tactical, and game IQ criteria.")
-        curY += 76
+        DrawFeatureRow(g, pad, y, contentW, rowH, "📊", "Real-Time Rankings & Analytics")
+        y += rowH + rowGap
 
-        DrawFeatureCard(g, startX, curY, cardW, cardH, "📊", "Real-Time Ranking & Analytics", "Instant calculation of coach scores, ranks, and percentiles.")
-        curY += 76
-
-        DrawFeatureCard(g, startX, curY, cardW, cardH, "📋", "Instant Roster Selection", "Filter qualified applicants and generate draft reports.")
-        curY += 82
-
-        ' Athletic Stats Strip (only if screen height allows)
-        If curY + 30 < pnl.Height - 35 Then
-            Using fntTag As New Font("Segoe UI Semibold", 9.0!, FontStyle.Bold)
-                Dim tags As String() = {"⚡ Fast Scoring", "🔒 Secure Database", "🎯 Objective Criteria"}
-                Dim tagX As Integer = startX
-                For i As Integer = 0 To tags.Length - 1
-                    Dim tagText As String = tags(i)
-                    Dim sz = g.MeasureString(tagText, fntTag)
-                    Dim tRect As New Rectangle(tagX, curY, CInt(sz.Width) + 16, 26)
-                    Using tbBrush As New SolidBrush(Color.FromArgb(24, 255, 255, 255))
-                        g.FillRectangle(tbBrush, tRect)
-                    End Using
-                    Using tbPen As New Pen(Color.FromArgb(60, 255, 255, 255), 1.0!)
-                        g.DrawRectangle(tbPen, tRect)
-                    End Using
-                    Using tBrush As New SolidBrush(Color.FromArgb(215, 230, 250))
-                        g.DrawString(tagText, fntTag, tBrush, tagX + 8, curY + 4)
-                    End Using
-                    tagX += CInt(sz.Width) + 22
-                Next
-            End Using
-        End If
-
-        ' Bottom Status Line
-        Using fntVer As New Font("Segoe UI", 8.5!, FontStyle.Regular)
-            Using brushVer As New SolidBrush(Color.FromArgb(130, 160, 200))
-                g.DrawString("● System Online  •  Version 2.0  •  Enterprise Ready", fntVer, brushVer, startX, pnl.Height - 28)
-            End Using
-        End Using
+        DrawFeatureRow(g, pad, y, contentW, rowH, "📋", "Instant Roster Selection")
     End Sub
 
-    Private Sub DrawFeatureCard(g As Graphics, x As Integer, y As Integer, w As Integer, h As Integer, icon As String, title As String, desc As String)
+    Private Sub DrawFeatureRow(g As Graphics, x As Integer, y As Integer, w As Integer, h As Integer, icon As String, title As String)
         Dim rect As New Rectangle(x, y, w, h)
 
-        ' Card background
-        Using bBrush As New SolidBrush(Color.FromArgb(24, 255, 255, 255))
+        Using bBrush As New SolidBrush(Color.FromArgb(22, 255, 255, 255))
             g.FillRectangle(bBrush, rect)
         End Using
 
-        ' Left gold border accent
         Using pGold As New Pen(UIHelper.ColorGold, 3.5!)
             g.DrawLine(pGold, x, y, x, y + h)
         End Using
 
-        ' Border
-        Using pBorder As New Pen(Color.FromArgb(45, 255, 255, 255), 1.0!)
+        Using pBorder As New Pen(Color.FromArgb(40, 255, 255, 255), 1.0!)
             g.DrawRectangle(pBorder, rect)
         End Using
 
-        ' Icon
-        Using fntIcon As New Font("Segoe UI", 18.0!, FontStyle.Regular)
-            Using brushIcon As New SolidBrush(Color.White)
-                g.DrawString(icon, fntIcon, brushIcon, x + 12, y + 12)
+        Using fntIcon As New Font("Segoe UI", 15.0!)
+            Using b As New SolidBrush(UIHelper.ColorGoldLight)
+                g.DrawString(icon, fntIcon, b, x + 16, y + (h - 28) \ 2)
             End Using
         End Using
 
-        ' Title
-        Using fntTitle As New Font("Segoe UI Semibold", 11.0!, FontStyle.Bold)
-            Using brushTitle As New SolidBrush(Color.White)
-                g.DrawString(title, fntTitle, brushTitle, x + 52, y + 10)
-            End Using
-        End Using
-
-        ' Description
-        Using fntDesc As New Font("Segoe UI", 9.0!, FontStyle.Regular)
-            Using brushDesc As New SolidBrush(Color.FromArgb(190, 215, 240))
-                g.DrawString(desc, fntDesc, brushDesc, x + 52, y + 34)
+        Using fntTitle As New Font("Segoe UI Semibold", 11.5!, FontStyle.Bold)
+            Using b As New SolidBrush(Color.White)
+                g.DrawString(title, fntTitle, b, x + 58, y + (h - 24) \ 2)
             End Using
         End Using
     End Sub
@@ -284,12 +290,28 @@ Public Class frmLogin
                 Return
             End If
 
+            Dim picBase64 As String = ""
+            If dt.Columns.Contains("ProfilePicture") AndAlso dt.Rows(0)("ProfilePicture") IsNot DBNull.Value Then
+                picBase64 = dt.Rows(0)("ProfilePicture").ToString()
+            End If
+            Dim emailVal As String = ""
+            If dt.Columns.Contains("Email") AndAlso dt.Rows(0)("Email") IsNot DBNull.Value Then
+                emailVal = dt.Rows(0)("Email").ToString()
+            End If
+            Dim contactVal As String = ""
+            If dt.Columns.Contains("ContactNumber") AndAlso dt.Rows(0)("ContactNumber") IsNot DBNull.Value Then
+                contactVal = dt.Rows(0)("ContactNumber").ToString()
+            End If
+
             SessionManager.SetSession(
                 CInt(dt.Rows(0)("UserID")),
                 dt.Rows(0)("Username").ToString(),
                 dt.Rows(0)("FullName").ToString(),
                 dt.Rows(0)("Role").ToString(),
-                GetPermissionsValue(dt.Rows(0)))
+                GetPermissionsValue(dt.Rows(0)),
+                picBase64,
+                emailVal,
+                contactVal)
 
             Me.DialogResult = DialogResult.OK
             Me.Close()

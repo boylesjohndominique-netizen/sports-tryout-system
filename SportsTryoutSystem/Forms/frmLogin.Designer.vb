@@ -24,7 +24,6 @@ Partial Class frmLogin
         Me.btnClose = New System.Windows.Forms.Button()
         Me.pnlCard = New System.Windows.Forms.Panel()
         Me.cardTopStripe = New System.Windows.Forms.Panel()
-        Me.lblBadge = New System.Windows.Forms.Label()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.lblSubtitle = New System.Windows.Forms.Label()
         Me.pnlDiv = New System.Windows.Forms.Panel()
@@ -52,7 +51,7 @@ Partial Class frmLogin
         Me.pnlLeft.Dock = System.Windows.Forms.DockStyle.Left
         Me.pnlLeft.Location = New System.Drawing.Point(0, 0)
         Me.pnlLeft.Name = "pnlLeft"
-        Me.pnlLeft.Size = New System.Drawing.Size(480, 700)
+        Me.pnlLeft.Size = New System.Drawing.Size(560, 700)
         Me.pnlLeft.TabIndex = 0
         '
         'pnlRight
@@ -61,9 +60,9 @@ Partial Class frmLogin
         Me.pnlRight.Controls.Add(Me.pnlWindowControls)
         Me.pnlRight.Controls.Add(Me.pnlCard)
         Me.pnlRight.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.pnlRight.Location = New System.Drawing.Point(480, 0)
+        Me.pnlRight.Location = New System.Drawing.Point(560, 0)
         Me.pnlRight.Name = "pnlRight"
-        Me.pnlRight.Size = New System.Drawing.Size(620, 700)
+        Me.pnlRight.Size = New System.Drawing.Size(540, 700)
         Me.pnlRight.TabIndex = 1
         '
         'pnlWindowControls
@@ -72,7 +71,7 @@ Partial Class frmLogin
         Me.pnlWindowControls.BackColor = System.Drawing.Color.Transparent
         Me.pnlWindowControls.Controls.Add(Me.btnMinimize)
         Me.pnlWindowControls.Controls.Add(Me.btnClose)
-        Me.pnlWindowControls.Location = New System.Drawing.Point(520, 4)
+        Me.pnlWindowControls.Location = New System.Drawing.Point(432, 10)
         Me.pnlWindowControls.Name = "pnlWindowControls"
         Me.pnlWindowControls.Size = New System.Drawing.Size(96, 38)
         Me.pnlWindowControls.TabIndex = 0
@@ -109,11 +108,9 @@ Partial Class frmLogin
         '
         'pnlCard
         '
-        Me.pnlCard.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.pnlCard.BackColor = System.Drawing.Color.White
         Me.pnlCard.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlCard.Controls.Add(Me.cardTopStripe)
-        Me.pnlCard.Controls.Add(Me.lblBadge)
         Me.pnlCard.Controls.Add(Me.lblTitle)
         Me.pnlCard.Controls.Add(Me.lblSubtitle)
         Me.pnlCard.Controls.Add(Me.pnlDiv)
@@ -124,9 +121,9 @@ Partial Class frmLogin
         Me.pnlCard.Controls.Add(Me.chkShowPassword)
         Me.pnlCard.Controls.Add(Me.btnLogin)
         Me.pnlCard.Controls.Add(Me.lblStatus)
-        Me.pnlCard.Location = New System.Drawing.Point(70, 100)
+        Me.pnlCard.Location = New System.Drawing.Point(60, 80)
         Me.pnlCard.Name = "pnlCard"
-        Me.pnlCard.Size = New System.Drawing.Size(480, 480)
+        Me.pnlCard.Size = New System.Drawing.Size(540, 620)
         Me.pnlCard.TabIndex = 1
         '
         'cardTopStripe
@@ -135,58 +132,48 @@ Partial Class frmLogin
         Me.cardTopStripe.Dock = System.Windows.Forms.DockStyle.Top
         Me.cardTopStripe.Location = New System.Drawing.Point(0, 0)
         Me.cardTopStripe.Name = "cardTopStripe"
-        Me.cardTopStripe.Size = New System.Drawing.Size(478, 4)
+        Me.cardTopStripe.Size = New System.Drawing.Size(538, 4)
         Me.cardTopStripe.TabIndex = 0
-        '
-        'lblBadge
-        '
-        Me.lblBadge.Font = New System.Drawing.Font("Segoe UI", 30.0!)
-        Me.lblBadge.Location = New System.Drawing.Point(0, 18)
-        Me.lblBadge.Name = "lblBadge"
-        Me.lblBadge.Size = New System.Drawing.Size(480, 46)
-        Me.lblBadge.TabIndex = 1
-        Me.lblBadge.Text = "🏆"
-        Me.lblBadge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'lblTitle
         '
-        Me.lblTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 22.0!, System.Drawing.FontStyle.Bold)
+        Me.lblTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 26.0!, System.Drawing.FontStyle.Bold)
         Me.lblTitle.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        Me.lblTitle.Location = New System.Drawing.Point(0, 68)
+        Me.lblTitle.Location = New System.Drawing.Point(0, 90)
         Me.lblTitle.Name = "lblTitle"
-        Me.lblTitle.Size = New System.Drawing.Size(480, 36)
-        Me.lblTitle.TabIndex = 2
+        Me.lblTitle.Size = New System.Drawing.Size(540, 46)
+        Me.lblTitle.TabIndex = 1
         Me.lblTitle.Text = "Welcome Back"
         Me.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'lblSubtitle
         '
-        Me.lblSubtitle.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.lblSubtitle.Font = New System.Drawing.Font("Segoe UI", 10.5!)
         Me.lblSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblSubtitle.Location = New System.Drawing.Point(0, 108)
+        Me.lblSubtitle.Location = New System.Drawing.Point(0, 142)
         Me.lblSubtitle.Name = "lblSubtitle"
-        Me.lblSubtitle.Size = New System.Drawing.Size(480, 24)
-        Me.lblSubtitle.TabIndex = 3
-        Me.lblSubtitle.Text = "Sign in to access your tryout portal"
+        Me.lblSubtitle.Size = New System.Drawing.Size(540, 24)
+        Me.lblSubtitle.TabIndex = 2
+        Me.lblSubtitle.Text = "Sign in to your account"
         Me.lblSubtitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'pnlDiv
         '
         Me.pnlDiv.BackColor = System.Drawing.Color.FromArgb(234, 179, 8)
-        Me.pnlDiv.Location = New System.Drawing.Point(210, 138)
+        Me.pnlDiv.Location = New System.Drawing.Point(238, 182)
         Me.pnlDiv.Name = "pnlDiv"
-        Me.pnlDiv.Size = New System.Drawing.Size(60, 3)
-        Me.pnlDiv.TabIndex = 4
+        Me.pnlDiv.Size = New System.Drawing.Size(64, 3)
+        Me.pnlDiv.TabIndex = 3
         '
         'lblUserTitle
         '
         Me.lblUserTitle.AutoSize = True
         Me.lblUserTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
         Me.lblUserTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblUserTitle.Location = New System.Drawing.Point(45, 156)
+        Me.lblUserTitle.Location = New System.Drawing.Point(60, 214)
         Me.lblUserTitle.Name = "lblUserTitle"
-        Me.lblUserTitle.Size = New System.Drawing.Size(73, 15)
-        Me.lblUserTitle.TabIndex = 5
+        Me.lblUserTitle.Size = New System.Drawing.Size(66, 15)
+        Me.lblUserTitle.TabIndex = 4
         Me.lblUserTitle.Text = "USERNAME"
         '
         'pnlUserWrap
@@ -195,17 +182,17 @@ Partial Class frmLogin
         Me.pnlUserWrap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlUserWrap.Controls.Add(Me.lblUserIco)
         Me.pnlUserWrap.Controls.Add(Me.txtUsername)
-        Me.pnlUserWrap.Location = New System.Drawing.Point(45, 176)
+        Me.pnlUserWrap.Location = New System.Drawing.Point(60, 236)
         Me.pnlUserWrap.Name = "pnlUserWrap"
-        Me.pnlUserWrap.Size = New System.Drawing.Size(390, 48)
-        Me.pnlUserWrap.TabIndex = 6
+        Me.pnlUserWrap.Size = New System.Drawing.Size(420, 56)
+        Me.pnlUserWrap.TabIndex = 5
         '
         'lblUserIco
         '
-        Me.lblUserIco.Font = New System.Drawing.Font("Segoe UI", 13.5!)
-        Me.lblUserIco.Location = New System.Drawing.Point(4, 2)
+        Me.lblUserIco.Font = New System.Drawing.Font("Segoe UI", 14.0!)
+        Me.lblUserIco.Location = New System.Drawing.Point(0, 0)
         Me.lblUserIco.Name = "lblUserIco"
-        Me.lblUserIco.Size = New System.Drawing.Size(34, 42)
+        Me.lblUserIco.Size = New System.Drawing.Size(46, 56)
         Me.lblUserIco.TabIndex = 0
         Me.lblUserIco.Text = "👤"
         Me.lblUserIco.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -214,11 +201,11 @@ Partial Class frmLogin
         '
         Me.txtUsername.BackColor = System.Drawing.Color.FromArgb(248, 250, 252)
         Me.txtUsername.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.txtUsername.Font = New System.Drawing.Font("Segoe UI", 11.5!)
+        Me.txtUsername.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtUsername.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.txtUsername.Location = New System.Drawing.Point(42, 13)
+        Me.txtUsername.Location = New System.Drawing.Point(48, 17)
         Me.txtUsername.Name = "txtUsername"
-        Me.txtUsername.Size = New System.Drawing.Size(334, 21)
+        Me.txtUsername.Size = New System.Drawing.Size(360, 22)
         Me.txtUsername.TabIndex = 1
         '
         'lblPassTitle
@@ -226,10 +213,10 @@ Partial Class frmLogin
         Me.lblPassTitle.AutoSize = True
         Me.lblPassTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
         Me.lblPassTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblPassTitle.Location = New System.Drawing.Point(45, 234)
+        Me.lblPassTitle.Location = New System.Drawing.Point(60, 312)
         Me.lblPassTitle.Name = "lblPassTitle"
-        Me.lblPassTitle.Size = New System.Drawing.Size(73, 15)
-        Me.lblPassTitle.TabIndex = 7
+        Me.lblPassTitle.Size = New System.Drawing.Size(68, 15)
+        Me.lblPassTitle.TabIndex = 6
         Me.lblPassTitle.Text = "PASSWORD"
         '
         'pnlPassWrap
@@ -238,17 +225,17 @@ Partial Class frmLogin
         Me.pnlPassWrap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pnlPassWrap.Controls.Add(Me.lblPassIco)
         Me.pnlPassWrap.Controls.Add(Me.txtPassword)
-        Me.pnlPassWrap.Location = New System.Drawing.Point(45, 254)
+        Me.pnlPassWrap.Location = New System.Drawing.Point(60, 334)
         Me.pnlPassWrap.Name = "pnlPassWrap"
-        Me.pnlPassWrap.Size = New System.Drawing.Size(390, 48)
-        Me.pnlPassWrap.TabIndex = 8
+        Me.pnlPassWrap.Size = New System.Drawing.Size(420, 56)
+        Me.pnlPassWrap.TabIndex = 7
         '
         'lblPassIco
         '
-        Me.lblPassIco.Font = New System.Drawing.Font("Segoe UI", 13.5!)
-        Me.lblPassIco.Location = New System.Drawing.Point(4, 2)
+        Me.lblPassIco.Font = New System.Drawing.Font("Segoe UI", 14.0!)
+        Me.lblPassIco.Location = New System.Drawing.Point(0, 0)
         Me.lblPassIco.Name = "lblPassIco"
-        Me.lblPassIco.Size = New System.Drawing.Size(34, 42)
+        Me.lblPassIco.Size = New System.Drawing.Size(46, 56)
         Me.lblPassIco.TabIndex = 0
         Me.lblPassIco.Text = "🔒"
         Me.lblPassIco.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -257,12 +244,12 @@ Partial Class frmLogin
         '
         Me.txtPassword.BackColor = System.Drawing.Color.FromArgb(248, 250, 252)
         Me.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.txtPassword.Font = New System.Drawing.Font("Segoe UI", 11.5!)
+        Me.txtPassword.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtPassword.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.txtPassword.Location = New System.Drawing.Point(42, 13)
+        Me.txtPassword.Location = New System.Drawing.Point(48, 17)
         Me.txtPassword.Name = "txtPassword"
         Me.txtPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
-        Me.txtPassword.Size = New System.Drawing.Size(334, 21)
+        Me.txtPassword.Size = New System.Drawing.Size(360, 22)
         Me.txtPassword.TabIndex = 1
         '
         'chkShowPassword
@@ -270,10 +257,10 @@ Partial Class frmLogin
         Me.chkShowPassword.Cursor = System.Windows.Forms.Cursors.Hand
         Me.chkShowPassword.Font = New System.Drawing.Font("Segoe UI", 9.5!)
         Me.chkShowPassword.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.chkShowPassword.Location = New System.Drawing.Point(47, 310)
+        Me.chkShowPassword.Location = New System.Drawing.Point(62, 406)
         Me.chkShowPassword.Name = "chkShowPassword"
-        Me.chkShowPassword.Size = New System.Drawing.Size(386, 24)
-        Me.chkShowPassword.TabIndex = 9
+        Me.chkShowPassword.Size = New System.Drawing.Size(416, 22)
+        Me.chkShowPassword.TabIndex = 8
         Me.chkShowPassword.Text = "Show password"
         Me.chkShowPassword.UseVisualStyleBackColor = True
         '
@@ -282,24 +269,25 @@ Partial Class frmLogin
         Me.btnLogin.BackColor = System.Drawing.Color.FromArgb(22, 55, 100)
         Me.btnLogin.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnLogin.FlatAppearance.BorderSize = 0
+        Me.btnLogin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(37, 80, 140)
         Me.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnLogin.Font = New System.Drawing.Font("Segoe UI Semibold", 11.5!, System.Drawing.FontStyle.Bold)
+        Me.btnLogin.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
         Me.btnLogin.ForeColor = System.Drawing.Color.White
-        Me.btnLogin.Location = New System.Drawing.Point(45, 344)
+        Me.btnLogin.Location = New System.Drawing.Point(60, 448)
         Me.btnLogin.Name = "btnLogin"
-        Me.btnLogin.Size = New System.Drawing.Size(390, 50)
-        Me.btnLogin.TabIndex = 10
-        Me.btnLogin.Text = "SIGN IN  ➔"
+        Me.btnLogin.Size = New System.Drawing.Size(420, 56)
+        Me.btnLogin.TabIndex = 9
+        Me.btnLogin.Text = "SIGN IN"
         Me.btnLogin.UseVisualStyleBackColor = False
         '
         'lblStatus
         '
         Me.lblStatus.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.lblStatus.ForeColor = System.Drawing.Color.FromArgb(220, 38, 38)
-        Me.lblStatus.Location = New System.Drawing.Point(45, 402)
+        Me.lblStatus.Location = New System.Drawing.Point(60, 514)
         Me.lblStatus.Name = "lblStatus"
-        Me.lblStatus.Size = New System.Drawing.Size(390, 36)
-        Me.lblStatus.TabIndex = 11
+        Me.lblStatus.Size = New System.Drawing.Size(420, 34)
+        Me.lblStatus.TabIndex = 10
         Me.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'frmLogin
@@ -337,7 +325,6 @@ Partial Class frmLogin
     Friend WithEvents btnClose As System.Windows.Forms.Button
     Friend WithEvents pnlCard As System.Windows.Forms.Panel
     Friend WithEvents cardTopStripe As System.Windows.Forms.Panel
-    Friend WithEvents lblBadge As System.Windows.Forms.Label
     Friend WithEvents lblTitle As System.Windows.Forms.Label
     Friend WithEvents lblSubtitle As System.Windows.Forms.Label
     Friend WithEvents pnlDiv As System.Windows.Forms.Panel

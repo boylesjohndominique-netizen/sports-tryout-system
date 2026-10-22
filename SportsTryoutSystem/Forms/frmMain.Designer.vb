@@ -20,16 +20,25 @@ Partial Class frmMain
         Me.pnlTop = New System.Windows.Forms.Panel()
         Me.topStripe = New System.Windows.Forms.Panel()
         Me.lblBrand = New System.Windows.Forms.Label()
-        Me.lblUser = New System.Windows.Forms.Label()
-        Me.lblRole = New System.Windows.Forms.Label()
-        Me.btnLogoutTop = New System.Windows.Forms.Button()
+        Me.pnlPills = New System.Windows.Forms.FlowLayoutPanel()
+        Me.lblDatePill = New System.Windows.Forms.Label()
+        Me.lblPendingPill = New System.Windows.Forms.Label()
+        Me.lblSelectedPill = New System.Windows.Forms.Label()
+        Me.pnlProfileBtn = New System.Windows.Forms.Panel()
+        Me.pbProfileAvatar = New System.Windows.Forms.PictureBox()
+        Me.lblProfileUser = New System.Windows.Forms.Label()
+        Me.lblProfileRole = New System.Windows.Forms.Label()
+        Me.lblProfileArrow = New System.Windows.Forms.Label()
+        Me.pnlSidebar = New System.Windows.Forms.Panel()
+        Me.pnlSideBottom = New System.Windows.Forms.Panel()
+        Me.pnlSideBottomSep = New System.Windows.Forms.Panel()
+        Me.btnLogout = New System.Windows.Forms.Button()
         Me.pnlNav = New System.Windows.Forms.Panel()
         Me.pnlSideHeader = New System.Windows.Forms.Panel()
         Me.lblMenu = New System.Windows.Forms.Label()
         Me.btnDashboard = New System.Windows.Forms.Button()
         Me.lblAdminSection = New System.Windows.Forms.Label()
         Me.btnUsers = New System.Windows.Forms.Button()
-        Me.btnCreateAccount = New System.Windows.Forms.Button()
         Me.btnSports = New System.Windows.Forms.Button()
         Me.lblOpsSection = New System.Windows.Forms.Label()
         Me.btnSchedules = New System.Windows.Forms.Button()
@@ -38,10 +47,13 @@ Partial Class frmMain
         Me.btnApplicants = New System.Windows.Forms.Button()
         Me.btnEvaluation = New System.Windows.Forms.Button()
         Me.btnReports = New System.Windows.Forms.Button()
-        Me.lblAccountSection = New System.Windows.Forms.Label()
-        Me.btnChangePassword = New System.Windows.Forms.Button()
 
         Me.pnlTop.SuspendLayout()
+        Me.pnlPills.SuspendLayout()
+        Me.pnlProfileBtn.SuspendLayout()
+        CType(Me.pbProfileAvatar, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.pnlSidebar.SuspendLayout()
+        Me.pnlSideBottom.SuspendLayout()
         Me.pnlNav.SuspendLayout()
         Me.pnlSideHeader.SuspendLayout()
         Me.SuspendLayout()
@@ -49,9 +61,8 @@ Partial Class frmMain
         'pnlTop
         '
         Me.pnlTop.BackColor = System.Drawing.Color.FromArgb(12, 32, 62)
-        Me.pnlTop.Controls.Add(Me.btnLogoutTop)
-        Me.pnlTop.Controls.Add(Me.lblRole)
-        Me.pnlTop.Controls.Add(Me.lblUser)
+        Me.pnlTop.Controls.Add(Me.pnlProfileBtn)
+        Me.pnlTop.Controls.Add(Me.pnlPills)
         Me.pnlTop.Controls.Add(Me.lblBrand)
         Me.pnlTop.Controls.Add(Me.topStripe)
         Me.pnlTop.Dock = System.Windows.Forms.DockStyle.Top
@@ -80,72 +91,194 @@ Partial Class frmMain
         Me.lblBrand.TabIndex = 1
         Me.lblBrand.Text = "⚽  Sports Tryout Management System"
         '
-        'lblUser
+        'pnlProfileBtn
         '
-        Me.lblUser.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblUser.AutoSize = True
-        Me.lblUser.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblUser.ForeColor = System.Drawing.Color.White
-        Me.lblUser.Location = New System.Drawing.Point(950, 21)
-        Me.lblUser.Name = "lblUser"
-        Me.lblUser.Size = New System.Drawing.Size(91, 17)
-        Me.lblUser.TabIndex = 2
-        Me.lblUser.Text = "Administrator"
+        Me.pnlProfileBtn.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlProfileBtn.BackColor = System.Drawing.Color.FromArgb(16, 42, 76)
+        Me.pnlProfileBtn.Controls.Add(Me.lblProfileArrow)
+        Me.pnlProfileBtn.Controls.Add(Me.lblProfileRole)
+        Me.pnlProfileBtn.Controls.Add(Me.lblProfileUser)
+        Me.pnlProfileBtn.Controls.Add(Me.pbProfileAvatar)
+        Me.pnlProfileBtn.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.pnlProfileBtn.Location = New System.Drawing.Point(1040, 10)
+        Me.pnlProfileBtn.Name = "pnlProfileBtn"
+        Me.pnlProfileBtn.Size = New System.Drawing.Size(225, 38)
+        Me.pnlProfileBtn.TabIndex = 2
         '
-        'lblRole
+        'pbProfileAvatar
         '
-        Me.lblRole.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblRole.AutoSize = True
-        Me.lblRole.BackColor = System.Drawing.Color.FromArgb(212, 160, 23)
-        Me.lblRole.Font = New System.Drawing.Font("Segoe UI Semibold", 7.5!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblRole.ForeColor = System.Drawing.Color.FromArgb(12, 32, 62)
-        Me.lblRole.Location = New System.Drawing.Point(1055, 23)
-        Me.lblRole.Name = "lblRole"
-        Me.lblRole.Padding = New System.Windows.Forms.Padding(4, 2, 4, 2)
-        Me.lblRole.Size = New System.Drawing.Size(51, 16)
-        Me.lblRole.TabIndex = 3
-        Me.lblRole.Text = " ADMIN "
+        Me.pbProfileAvatar.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.pbProfileAvatar.Location = New System.Drawing.Point(6, 5)
+        Me.pbProfileAvatar.Name = "pbProfileAvatar"
+        Me.pbProfileAvatar.Size = New System.Drawing.Size(28, 28)
+        Me.pbProfileAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
+        Me.pbProfileAvatar.TabIndex = 0
+        Me.pbProfileAvatar.TabStop = False
         '
-        'btnLogoutTop
+        'lblProfileUser
         '
-        Me.btnLogoutTop.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnLogoutTop.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
-        Me.btnLogoutTop.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnLogoutTop.FlatAppearance.BorderSize = 0
-        Me.btnLogoutTop.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnLogoutTop.Font = New System.Drawing.Font("Segoe UI Semibold", 8.5!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnLogoutTop.ForeColor = System.Drawing.Color.White
-        Me.btnLogoutTop.Location = New System.Drawing.Point(1170, 14)
-        Me.btnLogoutTop.Name = "btnLogoutTop"
-        Me.btnLogoutTop.Size = New System.Drawing.Size(95, 32)
-        Me.btnLogoutTop.TabIndex = 4
-        Me.btnLogoutTop.Text = "Sign Out"
-        Me.btnLogoutTop.UseVisualStyleBackColor = False
+        Me.lblProfileUser.AutoSize = True
+        Me.lblProfileUser.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblProfileUser.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.lblProfileUser.ForeColor = System.Drawing.Color.White
+        Me.lblProfileUser.Location = New System.Drawing.Point(38, 11)
+        Me.lblProfileUser.Name = "lblProfileUser"
+        Me.lblProfileUser.Size = New System.Drawing.Size(81, 15)
+        Me.lblProfileUser.TabIndex = 1
+        Me.lblProfileUser.Text = "Administrator"
+        '
+        'lblProfileRole
+        '
+        Me.lblProfileRole.AutoSize = True
+        Me.lblProfileRole.BackColor = System.Drawing.Color.FromArgb(212, 160, 23)
+        Me.lblProfileRole.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblProfileRole.Font = New System.Drawing.Font("Segoe UI Semibold", 7.0!, System.Drawing.FontStyle.Bold)
+        Me.lblProfileRole.ForeColor = System.Drawing.Color.FromArgb(12, 32, 62)
+        Me.lblProfileRole.Location = New System.Drawing.Point(125, 13)
+        Me.lblProfileRole.Name = "lblProfileRole"
+        Me.lblProfileRole.Padding = New System.Windows.Forms.Padding(4, 1, 4, 1)
+        Me.lblProfileRole.Size = New System.Drawing.Size(46, 14)
+        Me.lblProfileRole.TabIndex = 2
+        Me.lblProfileRole.Text = " ADMIN "
+        '
+        'lblProfileArrow
+        '
+        Me.lblProfileArrow.AutoSize = True
+        Me.lblProfileArrow.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblProfileArrow.Font = New System.Drawing.Font("Segoe UI", 8.5!)
+        Me.lblProfileArrow.ForeColor = System.Drawing.Color.FromArgb(212, 160, 23)
+        Me.lblProfileArrow.Location = New System.Drawing.Point(178, 11)
+        Me.lblProfileArrow.Name = "lblProfileArrow"
+        Me.lblProfileArrow.Size = New System.Drawing.Size(18, 15)
+        Me.lblProfileArrow.TabIndex = 3
+        Me.lblProfileArrow.Text = "⚙"
+        '
+        'pnlPills
+        '
+        Me.pnlPills.AutoSize = True
+        Me.pnlPills.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.pnlPills.BackColor = System.Drawing.Color.Transparent
+        Me.pnlPills.Controls.Add(Me.lblDatePill)
+        Me.pnlPills.Controls.Add(Me.lblPendingPill)
+        Me.pnlPills.Controls.Add(Me.lblSelectedPill)
+        Me.pnlPills.Location = New System.Drawing.Point(325, 15)
+        Me.pnlPills.Margin = New System.Windows.Forms.Padding(0)
+        Me.pnlPills.Name = "pnlPills"
+        Me.pnlPills.Padding = New System.Windows.Forms.Padding(0)
+        Me.pnlPills.Size = New System.Drawing.Size(420, 27)
+        Me.pnlPills.TabIndex = 4
+        Me.pnlPills.WrapContents = False
+        '
+        'lblDatePill
+        '
+        Me.lblDatePill.AutoSize = True
+        Me.lblDatePill.BackColor = System.Drawing.Color.FromArgb(CType(CType(35, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.lblDatePill.Font = New System.Drawing.Font("Segoe UI Semibold", 8.5!, System.Drawing.FontStyle.Bold)
+        Me.lblDatePill.ForeColor = System.Drawing.Color.FromArgb(CType(CType(253, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(71, Byte), Integer))
+        Me.lblDatePill.Location = New System.Drawing.Point(0, 0)
+        Me.lblDatePill.Margin = New System.Windows.Forms.Padding(0, 0, 8, 0)
+        Me.lblDatePill.Name = "lblDatePill"
+        Me.lblDatePill.Padding = New System.Windows.Forms.Padding(9, 3, 9, 3)
+        Me.lblDatePill.Size = New System.Drawing.Size(107, 21)
+        Me.lblDatePill.TabIndex = 0
+        Me.lblDatePill.Text = "October 22, 2026"
+        '
+        'lblPendingPill
+        '
+        Me.lblPendingPill.AutoSize = True
+        Me.lblPendingPill.BackColor = System.Drawing.Color.FromArgb(CType(CType(40, Byte), Integer), CType(CType(234, Byte), Integer), CType(CType(179, Byte), Integer), CType(CType(8, Byte), Integer))
+        Me.lblPendingPill.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblPendingPill.Font = New System.Drawing.Font("Segoe UI Semibold", 8.5!, System.Drawing.FontStyle.Bold)
+        Me.lblPendingPill.ForeColor = System.Drawing.Color.FromArgb(CType(CType(254, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.lblPendingPill.Location = New System.Drawing.Point(115, 0)
+        Me.lblPendingPill.Margin = New System.Windows.Forms.Padding(0, 0, 8, 0)
+        Me.lblPendingPill.Name = "lblPendingPill"
+        Me.lblPendingPill.Padding = New System.Windows.Forms.Padding(9, 3, 9, 3)
+        Me.lblPendingPill.Size = New System.Drawing.Size(142, 21)
+        Me.lblPendingPill.TabIndex = 1
+        Me.lblPendingPill.Text = "● 0 Pending Decisions"
+        '
+        'lblSelectedPill
+        '
+        Me.lblSelectedPill.AutoSize = True
+        Me.lblSelectedPill.BackColor = System.Drawing.Color.FromArgb(CType(CType(40, Byte), Integer), CType(CType(34, Byte), Integer), CType(CType(197, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.lblSelectedPill.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.lblSelectedPill.Font = New System.Drawing.Font("Segoe UI Semibold", 8.5!, System.Drawing.FontStyle.Bold)
+        Me.lblSelectedPill.ForeColor = System.Drawing.Color.FromArgb(CType(CType(187, Byte), Integer), CType(CType(247, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.lblSelectedPill.Location = New System.Drawing.Point(265, 0)
+        Me.lblSelectedPill.Margin = New System.Windows.Forms.Padding(0)
+        Me.lblSelectedPill.Padding = New System.Windows.Forms.Padding(9, 3, 9, 3)
+        Me.lblSelectedPill.Size = New System.Drawing.Size(95, 21)
+        Me.lblSelectedPill.TabIndex = 2
+        Me.lblSelectedPill.Text = "✓ 0 Selected"
+        '
+        'pnlSidebar
+        '
+        Me.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(12, 32, 62)
+        Me.pnlSidebar.Controls.Add(Me.pnlNav)
+        Me.pnlSidebar.Controls.Add(Me.pnlSideBottom)
+        Me.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left
+        Me.pnlSidebar.Location = New System.Drawing.Point(0, 58)
+        Me.pnlSidebar.Name = "pnlSidebar"
+        Me.pnlSidebar.Size = New System.Drawing.Size(240, 653)
+        Me.pnlSidebar.TabIndex = 1
+        '
+        'pnlSideBottom
+        '
+        Me.pnlSideBottom.BackColor = System.Drawing.Color.FromArgb(10, 26, 50)
+        Me.pnlSideBottom.Controls.Add(Me.btnLogout)
+        Me.pnlSideBottom.Controls.Add(Me.pnlSideBottomSep)
+        Me.pnlSideBottom.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.pnlSideBottom.Location = New System.Drawing.Point(0, 593)
+        Me.pnlSideBottom.Name = "pnlSideBottom"
+        Me.pnlSideBottom.Size = New System.Drawing.Size(240, 60)
+        Me.pnlSideBottom.TabIndex = 1
+        '
+        'pnlSideBottomSep
+        '
+        Me.pnlSideBottomSep.BackColor = System.Drawing.Color.FromArgb(25, 55, 95)
+        Me.pnlSideBottomSep.Dock = System.Windows.Forms.DockStyle.Top
+        Me.pnlSideBottomSep.Location = New System.Drawing.Point(0, 0)
+        Me.pnlSideBottomSep.Name = "pnlSideBottomSep"
+        Me.pnlSideBottomSep.Size = New System.Drawing.Size(240, 1)
+        Me.pnlSideBottomSep.TabIndex = 0
+        '
+        'btnLogout
+        '
+        Me.btnLogout.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnLogout.BackColor = System.Drawing.Color.FromArgb(220, 38, 38)
+        Me.btnLogout.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.btnLogout.FlatAppearance.BorderSize = 0
+        Me.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnLogout.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnLogout.ForeColor = System.Drawing.Color.White
+        Me.btnLogout.Location = New System.Drawing.Point(14, 11)
+        Me.btnLogout.Name = "btnLogout"
+        Me.btnLogout.Size = New System.Drawing.Size(212, 38)
+        Me.btnLogout.TabIndex = 1
+        Me.btnLogout.Text = "🚪  Sign Out"
+        Me.btnLogout.UseVisualStyleBackColor = False
         '
         'pnlNav
         '
         Me.pnlNav.AutoScroll = True
         Me.pnlNav.BackColor = System.Drawing.Color.FromArgb(12, 32, 62)
-        Me.pnlNav.Controls.Add(Me.btnChangePassword)
-        Me.pnlNav.Controls.Add(Me.lblAccountSection)
         Me.pnlNav.Controls.Add(Me.btnReports)
         Me.pnlNav.Controls.Add(Me.btnEvaluation)
-        Me.pnlNav.Controls.Add(Me.btnApplicants)
         Me.pnlNav.Controls.Add(Me.lblRecordsSection)
         Me.pnlNav.Controls.Add(Me.btnRegistration)
         Me.pnlNav.Controls.Add(Me.btnSchedules)
         Me.pnlNav.Controls.Add(Me.lblOpsSection)
         Me.pnlNav.Controls.Add(Me.btnSports)
-        Me.pnlNav.Controls.Add(Me.btnCreateAccount)
         Me.pnlNav.Controls.Add(Me.btnUsers)
         Me.pnlNav.Controls.Add(Me.lblAdminSection)
         Me.pnlNav.Controls.Add(Me.btnDashboard)
         Me.pnlNav.Controls.Add(Me.pnlSideHeader)
-        Me.pnlNav.Dock = System.Windows.Forms.DockStyle.Left
-        Me.pnlNav.Location = New System.Drawing.Point(0, 58)
+        Me.pnlNav.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pnlNav.Location = New System.Drawing.Point(0, 0)
         Me.pnlNav.Name = "pnlNav"
-        Me.pnlNav.Size = New System.Drawing.Size(240, 653)
-        Me.pnlNav.TabIndex = 1
+        Me.pnlNav.Size = New System.Drawing.Size(240, 593)
+        Me.pnlNav.TabIndex = 0
         '
         'pnlSideHeader
         '
@@ -212,23 +345,6 @@ Partial Class frmMain
         Me.btnUsers.Text = "👥  User Accounts"
         Me.btnUsers.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.btnUsers.UseVisualStyleBackColor = False
-        '
-        'btnCreateAccount
-        '
-        Me.btnCreateAccount.BackColor = System.Drawing.Color.FromArgb(12, 32, 62)
-        Me.btnCreateAccount.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnCreateAccount.FlatAppearance.BorderSize = 0
-        Me.btnCreateAccount.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnCreateAccount.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnCreateAccount.ForeColor = System.Drawing.Color.FromArgb(190, 210, 235)
-        Me.btnCreateAccount.Location = New System.Drawing.Point(0, 169)
-        Me.btnCreateAccount.Name = "btnCreateAccount"
-        Me.btnCreateAccount.Padding = New System.Windows.Forms.Padding(18, 0, 0, 0)
-        Me.btnCreateAccount.Size = New System.Drawing.Size(240, 42)
-        Me.btnCreateAccount.TabIndex = 4
-        Me.btnCreateAccount.Text = "➕  Create Account"
-        Me.btnCreateAccount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.btnCreateAccount.UseVisualStyleBackColor = False
         '
         'btnSports
         '
@@ -354,49 +470,29 @@ Partial Class frmMain
         Me.btnReports.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.btnReports.UseVisualStyleBackColor = False
         '
-        'lblAccountSection
-        '
-        Me.lblAccountSection.AutoSize = True
-        Me.lblAccountSection.Font = New System.Drawing.Font("Segoe UI Semibold", 7.5!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblAccountSection.ForeColor = System.Drawing.Color.FromArgb(100, 140, 180)
-        Me.lblAccountSection.Location = New System.Drawing.Point(20, 493)
-        Me.lblAccountSection.Name = "lblAccountSection"
-        Me.lblAccountSection.Size = New System.Drawing.Size(56, 12)
-        Me.lblAccountSection.TabIndex = 12
-        Me.lblAccountSection.Text = "ACCOUNT"
-        '
-        'btnChangePassword
-        '
-        Me.btnChangePassword.BackColor = System.Drawing.Color.FromArgb(12, 32, 62)
-        Me.btnChangePassword.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.btnChangePassword.FlatAppearance.BorderSize = 0
-        Me.btnChangePassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnChangePassword.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnChangePassword.ForeColor = System.Drawing.Color.FromArgb(190, 210, 235)
-        Me.btnChangePassword.Location = New System.Drawing.Point(0, 511)
-        Me.btnChangePassword.Name = "btnChangePassword"
-        Me.btnChangePassword.Padding = New System.Windows.Forms.Padding(18, 0, 0, 0)
-        Me.btnChangePassword.Size = New System.Drawing.Size(240, 42)
-        Me.btnChangePassword.TabIndex = 13
-        Me.btnChangePassword.Text = "🔒  Change Password"
-        Me.btnChangePassword.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.btnChangePassword.UseVisualStyleBackColor = False
-        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(245, 247, 250)
         Me.ClientSize = New System.Drawing.Size(1284, 711)
-        Me.Controls.Add(Me.pnlNav)
+        Me.Controls.Add(Me.pnlSidebar)
         Me.Controls.Add(Me.pnlTop)
         Me.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.IsMdiContainer = True
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Sports Tryout Management System"
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.pnlTop.ResumeLayout(False)
         Me.pnlTop.PerformLayout()
+        Me.pnlPills.ResumeLayout(False)
+        Me.pnlPills.PerformLayout()
+        Me.pnlProfileBtn.ResumeLayout(False)
+        Me.pnlProfileBtn.PerformLayout()
+        CType(Me.pbProfileAvatar, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.pnlSidebar.ResumeLayout(False)
+        Me.pnlSideBottom.ResumeLayout(False)
         Me.pnlNav.ResumeLayout(False)
         Me.pnlNav.PerformLayout()
         Me.pnlSideHeader.ResumeLayout(False)
@@ -408,16 +504,25 @@ Partial Class frmMain
     Friend WithEvents pnlTop As System.Windows.Forms.Panel
     Friend WithEvents topStripe As System.Windows.Forms.Panel
     Friend WithEvents lblBrand As System.Windows.Forms.Label
-    Friend WithEvents lblUser As System.Windows.Forms.Label
-    Friend WithEvents lblRole As System.Windows.Forms.Label
-    Friend WithEvents btnLogoutTop As System.Windows.Forms.Button
+    Friend WithEvents pnlPills As System.Windows.Forms.FlowLayoutPanel
+    Friend WithEvents lblDatePill As System.Windows.Forms.Label
+    Friend WithEvents lblPendingPill As System.Windows.Forms.Label
+    Friend WithEvents lblSelectedPill As System.Windows.Forms.Label
+    Friend WithEvents pnlProfileBtn As System.Windows.Forms.Panel
+    Friend WithEvents pbProfileAvatar As System.Windows.Forms.PictureBox
+    Friend WithEvents lblProfileUser As System.Windows.Forms.Label
+    Friend WithEvents lblProfileRole As System.Windows.Forms.Label
+    Friend WithEvents lblProfileArrow As System.Windows.Forms.Label
+    Friend WithEvents pnlSidebar As System.Windows.Forms.Panel
+    Friend WithEvents pnlSideBottom As System.Windows.Forms.Panel
+    Friend WithEvents pnlSideBottomSep As System.Windows.Forms.Panel
+    Friend WithEvents btnLogout As System.Windows.Forms.Button
     Friend WithEvents pnlNav As System.Windows.Forms.Panel
     Friend WithEvents pnlSideHeader As System.Windows.Forms.Panel
     Friend WithEvents lblMenu As System.Windows.Forms.Label
     Friend WithEvents btnDashboard As System.Windows.Forms.Button
     Friend WithEvents lblAdminSection As System.Windows.Forms.Label
     Friend WithEvents btnUsers As System.Windows.Forms.Button
-    Friend WithEvents btnCreateAccount As System.Windows.Forms.Button
     Friend WithEvents btnSports As System.Windows.Forms.Button
     Friend WithEvents lblOpsSection As System.Windows.Forms.Label
     Friend WithEvents btnSchedules As System.Windows.Forms.Button
@@ -426,8 +531,5 @@ Partial Class frmMain
     Friend WithEvents btnApplicants As System.Windows.Forms.Button
     Friend WithEvents btnEvaluation As System.Windows.Forms.Button
     Friend WithEvents btnReports As System.Windows.Forms.Button
-    Friend WithEvents lblAccountSection As System.Windows.Forms.Label
-    Friend WithEvents btnChangePassword As System.Windows.Forms.Button
-
 
 End Class
