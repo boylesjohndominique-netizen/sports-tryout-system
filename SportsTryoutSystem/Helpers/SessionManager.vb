@@ -8,14 +8,20 @@ Public Module SessionManager
     Public Property CurrentUsername As String = ""
     Public Property CurrentFullName As String = ""
     Public Property CurrentRole As String = ""
+    Public Property CurrentEmail As String = ""
+    Public Property CurrentContactNumber As String = ""
+    Public Property CurrentProfilePictureBase64 As String = ""
 
     Private _permissions As HashSet(Of String) = New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
 
-    Public Sub SetSession(userId As Integer, username As String, fullName As String, role As String, Optional permissionKeys As String = Nothing)
+    Public Sub SetSession(userId As Integer, username As String, fullName As String, role As String, Optional permissionKeys As String = Nothing, Optional profilePicBase64 As String = Nothing, Optional email As String = Nothing, Optional contactNumber As String = Nothing)
         CurrentUserID = userId
         CurrentUsername = username
         CurrentFullName = fullName
         CurrentRole = role
+        CurrentProfilePictureBase64 = If(profilePicBase64, "")
+        CurrentEmail = If(email, "")
+        CurrentContactNumber = If(contactNumber, "")
         Dim raw As String = permissionKeys
         If String.IsNullOrWhiteSpace(raw) Then raw = Permissions.DefaultsForRole(role)
         _permissions = Permissions.Parse(raw)
@@ -26,6 +32,9 @@ Public Module SessionManager
         CurrentUsername = ""
         CurrentFullName = ""
         CurrentRole = ""
+        CurrentEmail = ""
+        CurrentContactNumber = ""
+        CurrentProfilePictureBase64 = ""
         _permissions = New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
     End Sub
 
@@ -40,6 +49,12 @@ Public Module SessionManager
             Return _permissions.Contains(key)
         End Get
     End Property
+
+    Public Sub UpdatePermissions(rawKeys As String)
+        Dim raw As String = rawKeys
+        If String.IsNullOrWhiteSpace(raw) Then raw = Permissions.DefaultsForRole(CurrentRole)
+        _permissions = Permissions.Parse(raw)
+    End Sub
 
     Public ReadOnly Property CurrentPermissions As String
         Get

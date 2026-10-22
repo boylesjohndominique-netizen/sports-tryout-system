@@ -206,6 +206,9 @@ Public Module DatabaseHelper
                  "PasswordHash VARCHAR(255) NOT NULL, " &
                  "FullName VARCHAR(100) NOT NULL, " &
                  "Role VARCHAR(20) NOT NULL, " &
+                 "Email VARCHAR(100) NULL, " &
+                 "ContactNumber VARCHAR(50) NULL, " &
+                 "ProfilePicture LONGTEXT NULL, " &
                  "Permissions VARCHAR(500) NULL, " &
                  "IsActive TINYINT(1) NOT NULL DEFAULT 1, " &
                  "DateCreated DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB;")
@@ -297,6 +300,28 @@ Public Module DatabaseHelper
             End Using
         Catch
             ' Ignore if column already exists
+        End Try
+
+        ' Run migration for ProfilePicture, Email, and ContactNumber if missing
+        Try
+            Using cmdCol As New MySqlCommand("ALTER TABLE Users ADD COLUMN ProfilePicture LONGTEXT NULL;", conn)
+                cmdCol.ExecuteNonQuery()
+            End Using
+        Catch
+        End Try
+
+        Try
+            Using cmdCol As New MySqlCommand("ALTER TABLE Users ADD COLUMN Email VARCHAR(100) NULL;", conn)
+                cmdCol.ExecuteNonQuery()
+            End Using
+        Catch
+        End Try
+
+        Try
+            Using cmdCol As New MySqlCommand("ALTER TABLE Users ADD COLUMN ContactNumber VARCHAR(50) NULL;", conn)
+                cmdCol.ExecuteNonQuery()
+            End Using
+        Catch
         End Try
     End Sub
 

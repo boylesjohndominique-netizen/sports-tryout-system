@@ -177,6 +177,7 @@ Public Module UIHelper
         lbl.Font = FontHeader
         lbl.ForeColor = ColorPrimary
         lbl.AutoSize = True
+        lbl.UseMnemonic = False
         lbl.Location = New Point(24, 16)
 
         ' Bottom border
@@ -205,6 +206,112 @@ Public Module UIHelper
 
     Public Function Confirm(message As String, Optional title As String = "Please Confirm") As Boolean
         Return MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes
+    End Function
+
+    ' ═══════════════════════════════════════════════════════════════
+    '  IMAGE & AVATAR HELPERS
+    ' ═══════════════════════════════════════════════════════════════
+
+    Public Function ImageToBase64(img As Image) As String
+        If img Is Nothing Then Return ""
+        Try
+            Using ms As New System.IO.MemoryStream()
+                Using bmp As New Bitmap(img)
+                    bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png)
+                End Using
+                Return Convert.ToBase64String(ms.ToArray())
+            End Using
+        Catch
+            Return ""
+        End Try
+    End Function
+
+    Public Function Base64ToImage(base64 As String) As Image
+        If String.IsNullOrWhiteSpace(base64) Then Return Nothing
+        Try
+            Dim bytes As Byte() = Convert.FromBase64String(base64.Trim())
+            Using ms As New System.IO.MemoryStream(bytes)
+                Return New Bitmap(Image.FromStream(ms))
+            End Using
+        Catch
+            Return Nothing
+        End Try
+    End Function
+
+    Public Function MakeCircularImage(img As Image, diameter As Integer) As Image
+        If diameter <= 0 Then diameter = 32
+        Dim result As New Bitmap(diameter, diameter)
+        Using g As Graphics = Graphics.FromImage(result)
+            g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+            g.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
+            g.PixelOffsetMode = Drawing2D.PixelOffsetMode.HighQuality
+
+            Using path As New Drawing2D.GraphicsPath()
+                path.AddEllipse(0, 0, diameter, diameter)
+                g.SetClip(path)
+
+                If img IsNot Nothing Then
+                    Dim scale As Single = Math.Max(CSng(diameter) / img.Width, CSng(diameter) / img.Height)
+                    Dim w As Single = img.Width * scale
+                    Dim h As Single = img.Height * scale
+                    Dim x As Single = (diameter - w) / 2.0F
+                    Dim y As Single = (diameter - h) / 2.0F
+                    g.DrawImage(img, x, y, w, h)
+                Else
+                    Using b As New SolidBrush(ColorPrimaryDark)
+                        g.FillRectangle(b, 0, 0, diameter, diameter)
+                    End Using
+                End If
+            End Using
+
+            ' Subtle gold border
+            Using pen As New Pen(Color.FromArgb(180, ColorGold), 1.5F)
+                g.DrawEllipse(pen, 1, 1, diameter - 2, diameter - 2)
+            End Using
+        End Using
+        Return result
+    End Function
+
+    Public Function CreateDefaultAvatar(name As String, diameter As Integer) As Image
+        If diameter <= 0 Then diameter = 32
+        Dim result As New Bitmap(diameter, diameter)
+        Dim initials As String = "U"
+        If Not String.IsNullOrWhiteSpace(name) Then
+            Dim parts = name.Trim().Split(New Char() {" "c}, StringSplitOptions.RemoveEmptyEntries)
+            If parts.Length = 1 Then
+                initials = parts(0).Substring(0, Math.Min(2, parts(0).Length)).ToUpper()
+            ElseIf parts.Length >= 2 Then
+                initials = (parts(0).Substring(0, 1) & parts(parts.Length - 1).Substring(0, 1)).ToUpper()
+            End If
+        End If
+
+        Using g As Graphics = Graphics.FromImage(result)
+            g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+            g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
+
+            ' Rich navy circle
+            Using b As New SolidBrush(Color.FromArgb(18, 44, 78))
+                g.FillEllipse(b, 0, 0, diameter, diameter)
+            End Using
+
+            ' Gold ring border
+            Using pen As New Pen(ColorGold, 1.5F)
+                g.DrawEllipse(pen, 1, 1, diameter - 2, diameter - 2)
+            End Using
+
+            ' Initials text
+            Dim fontSize As Single = Math.Max(7.0F, diameter * 0.36F)
+            Using f As New Font("Segoe UI Semibold", fontSize, FontStyle.Bold)
+                Using bText As New SolidBrush(ColorGoldLight)
+                    Using sf As New StringFormat()
+                        sf.Alignment = StringAlignment.Center
+                        sf.LineAlignment = StringAlignment.Center
+                        g.DrawString(initials, f, bText, New RectangleF(0, 0, diameter, diameter), sf)
+                    End Using
+                End Using
+            End Using
+        End Using
+        Return result
     End Function
 
 End Module
