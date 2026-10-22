@@ -37,3 +37,6 @@ C:\Users\boyle\AppData\Local\Temp\opencode\stout\SportsTryoutSystem.exe.config
 C:\Users\boyle\AppData\Local\Temp\opencode\stout\SportsTryoutSystem.exe
 C:\Users\boyle\AppData\Local\Temp\opencode\stout\SportsTryoutSystem.pdb
 C:\Users\boyle\Documents\SportsTryoutSystem\SportsTryoutSystem\obj\Debug\SportsTryoutSystem.frmUserManagement.resources
+C:\Users\boyle\AppData\Local\Temp\opencode\stsbuild\SportsTryoutSystem.exe.config
+C:\Users\boyle\AppData\Local\Temp\opencode\stsbuild\SportsTryoutSystem.exe
+C:\Users\boyle\AppData\Local\Temp\opencode\stsbuild\SportsTryoutSystem.pdb
