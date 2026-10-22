@@ -197,6 +197,12 @@
     <Compile Include="Forms\frmSportDialog.Designer.vb">
       <DependentUpon>frmSportDialog.vb</DependentUpon>
     </Compile>
+    <Compile Include="Forms\frmScheduleDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmScheduleDialog.Designer.vb">
+      <DependentUpon>frmScheduleDialog.vb</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
