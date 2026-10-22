@@ -43,9 +43,9 @@ Public Class frmEvaluationSelection
 
         Me.SuspendLayout()
 
-        Dim topY As Integer = 72
-        Dim marginX As Integer = 24
-        Dim bottomMargin As Integer = 18
+        Dim topY As Integer = 66
+        Dim marginX As Integer = 20
+        Dim bottomMargin As Integer = 14
         Dim totalW As Integer = Me.ClientSize.Width - (marginX * 2)
 
         ' 1. Top Filter & KPI Bar
@@ -53,18 +53,20 @@ Public Class frmEvaluationSelection
         pnlFilter.Size = New Size(totalW, 64)
         filterAccent.Width = totalW
 
-        lblSport.Location = New Point(20, 24)
-        cmbFilterSport.Location = New Point(125, 20)
-        cmbFilterSport.Size = New Size(260, 26)
+        lblSport.Location = New Point(20, 20)
+        cmbFilterSport.Location = New Point(lblSport.Right + 12, 16)
+        cmbFilterSport.Size = New Size(260, 30)
 
-        lblStats.Location = New Point(405, 18)
-        lblStats.Size = New Size(Math.Max(200, totalW - 425), 28)
+        Dim statsLeft As Integer = cmbFilterSport.Right + 20
+        Dim statsW As Integer = Math.Max(200, totalW - statsLeft - 20)
+        lblStats.Location = New Point(statsLeft, 14)
+        lblStats.Size = New Size(statsW, 36)
 
         ' 2. Main Tab Control
-        Dim tabY As Integer = topY + pnlFilter.Height + 12
+        Dim tabY As Integer = topY + pnlFilter.Height + 10
         Dim tabH As Integer = Me.ClientSize.Height - tabY - bottomMargin
         tabMain.Location = New Point(marginX, tabY)
-        tabMain.Size = New Size(totalW, Math.Max(300, tabH))
+        tabMain.Size = New Size(totalW, Math.Max(350, tabH))
 
         ' 3. Layout Tabs
         LayoutTabEval()
@@ -80,134 +82,185 @@ Public Class frmEvaluationSelection
 
         pnlContainer.SuspendLayout()
 
-        Dim gapX As Integer = 18
-        ' Left Roster Card: ~42% of width, bounded between 380 and 560
-        Dim leftW As Integer = CInt(Math.Max(380, Math.Min(560, (containerW - gapX) * 0.42)))
+        Dim gapX As Integer = 16
+        ' Left Roster Card: ~38% of width, bounded between 380 and 600
+        Dim leftW As Integer = CInt(Math.Max(380, Math.Min(600, (containerW - gapX) * 0.38)))
         Dim rightW As Integer = containerW - leftW - gapX
 
         ' Roster Card (Left)
-        pnlRosterCard.Location = New Point(10, 10)
-        pnlRosterCard.Size = New Size(leftW, containerH - 20)
+        pnlRosterCard.Location = New Point(8, 8)
+        pnlRosterCard.Size = New Size(leftW, containerH - 16)
         rosterAccent.Width = leftW
 
-        lblGridTitle.Location = New Point(16, 14)
+        lblGridTitle.Location = New Point(18, 14)
         lblRosterCount.Location = New Point(lblGridTitle.Right + 10, 16)
 
-        Dim searchW As Integer = Math.Min(200, Math.Max(120, leftW - lblGridTitle.Right - 120))
-        txtSearchApplicant.Location = New Point(leftW - searchW - 16, 14)
-        txtSearchApplicant.Size = New Size(searchW, 24)
+        lblSearch.Location = New Point(18, 50)
+        Dim searchLeft As Integer = lblSearch.Right + 8
+        Dim searchW As Integer = Math.Max(100, leftW - searchLeft - 18)
+        txtSearchApplicant.Location = New Point(searchLeft, 46)
+        txtSearchApplicant.Size = New Size(searchW, 28)
 
-        dgvApplicants.Location = New Point(16, 48)
-        dgvApplicants.Size = New Size(leftW - 32, Math.Max(100, pnlRosterCard.Height - 64))
+        dgvApplicants.Location = New Point(18, 84)
+        dgvApplicants.Size = New Size(leftW - 36, Math.Max(120, pnlRosterCard.Height - 98))
 
         ' Evaluation Detail Card (Right)
-        pnlCard.Location = New Point(10 + leftW + gapX, 10)
-        pnlCard.Size = New Size(rightW, containerH - 20)
+        pnlCard.Location = New Point(8 + leftW + gapX, 8)
+        pnlCard.Size = New Size(rightW, containerH - 16)
         cardAccent.Width = rightW
 
-        LayoutEvaluationCard(rightW)
+        LayoutEvaluationCard(rightW, pnlCard.ClientSize.Height)
 
         pnlContainer.ResumeLayout(True)
     End Sub
 
-    Private Sub LayoutEvaluationCard(cardW As Integer)
+    Private Sub LayoutEvaluationCard(cardW As Integer, cardH As Integer)
         pnlCard.SuspendLayout()
 
         cardAccent.Width = cardW
 
-        lblApplicantHeader.Location = New Point(20, 14)
-        lblApplicantHeader.Size = New Size(cardW - 40, 26)
+        Dim marginX As Integer = 20
+        Dim usableW As Integer = cardW - (marginX * 2)
 
-        lblApplicantSub.Location = New Point(22, 40)
-        lblApplicantSub.Size = New Size(cardW - 44, 18)
+        Dim isTall As Boolean = cardH >= 600
 
-        div1.Location = New Point(20, 62)
-        div1.Size = New Size(cardW - 40, 1)
+        ' Top Applicant Headers (Row 1: Title/Selected Athlete, Row 2: Subtitle instructions)
+        Dim topHeaderY As Integer = If(isTall, 14, 10)
+        lblApplicantHeader.Location = New Point(marginX, topHeaderY)
+        lblApplicantHeader.Size = New Size(usableW, 24)
+        lblApplicantHeader.TextAlign = ContentAlignment.MiddleLeft
 
-        lblCriteriaHeader.Location = New Point(20, 70)
+        Dim topSubY As Integer = topHeaderY + 26
+        lblApplicantSub.Location = New Point(marginX, topSubY)
+        lblApplicantSub.Size = New Size(usableW, 18)
+        lblApplicantSub.TextAlign = ContentAlignment.MiddleLeft
+
+        Dim div1Y As Integer = topSubY + 22
+        div1.Location = New Point(marginX, div1Y)
+        div1.Size = New Size(usableW, 1)
+        div1.Visible = True
+
+        Dim critY As Integer = div1Y + If(isTall, 8, 6)
+        lblCriteriaHeader.Location = New Point(marginX, critY)
+        lblCriteriaHeader.Size = New Size(usableW, 18)
 
         ' 2-column scoring grid
-        Dim colGap As Integer = 24
-        Dim colW As Integer = CInt((cardW - 40 - colGap) / 2)
-        Dim col1X As Integer = 20
-        Dim col2X As Integer = 20 + colW + colGap
+        Dim colGap As Integer = 20
+        Dim colW As Integer = CInt((usableW - colGap) / 2)
+        Dim col1X As Integer = marginX
+        Dim col2X As Integer = marginX + colW + colGap
 
-        Dim numW As Integer = 90
-        Dim lblW As Integer = Math.Max(120, colW - numW - 12)
+        Dim numW As Integer = 95
+        Dim numH As Integer = If(isTall, 30, 26)
+        Dim lblW As Integer = colW - numW - 8
+
+        ' Row spacing adapted to available height
+        Dim rowGap As Integer = If(isTall, 36, 31)
+        Dim row1Y As Integer = critY + lblCriteriaHeader.Height + If(isTall, 8, 5)
 
         ' Row 1: Skill & Teamwork
-        lblSkill.Location = New Point(col1X, 98)
+        Dim r1Y As Integer = row1Y
+        lblSkill.Location = New Point(col1X, r1Y + 2)
         lblSkill.Size = New Size(lblW, 22)
-        numSkill.Location = New Point(col1X + lblW + 10, 96)
-        numSkill.Size = New Size(numW, 26)
+        numSkill.Location = New Point(col1X + colW - numW, r1Y)
+        numSkill.Size = New Size(numW, numH)
 
-        lblTeamwork.Location = New Point(col2X, 98)
+        lblTeamwork.Location = New Point(col2X, r1Y + 2)
         lblTeamwork.Size = New Size(lblW, 22)
-        numTeamwork.Location = New Point(col2X + lblW + 10, 96)
-        numTeamwork.Size = New Size(numW, 26)
+        numTeamwork.Location = New Point(col2X + colW - numW, r1Y)
+        numTeamwork.Size = New Size(numW, numH)
 
         ' Row 2: Speed & Discipline
-        lblSpeed.Location = New Point(col1X, 134)
+        Dim r2Y As Integer = r1Y + rowGap
+        lblSpeed.Location = New Point(col1X, r2Y + 2)
         lblSpeed.Size = New Size(lblW, 22)
-        numSpeed.Location = New Point(col1X + lblW + 10, 132)
-        numSpeed.Size = New Size(numW, 26)
+        numSpeed.Location = New Point(col1X + colW - numW, r2Y)
+        numSpeed.Size = New Size(numW, numH)
 
-        lblDiscipline.Location = New Point(col2X, 134)
+        lblDiscipline.Location = New Point(col2X, r2Y + 2)
         lblDiscipline.Size = New Size(lblW, 22)
-        numDiscipline.Location = New Point(col2X + lblW + 10, 132)
-        numDiscipline.Size = New Size(numW, 26)
+        numDiscipline.Location = New Point(col2X + colW - numW, r2Y)
+        numDiscipline.Size = New Size(numW, numH)
 
         ' Row 3: Agility & Overall
-        lblAgility.Location = New Point(col1X, 170)
+        Dim r3Y As Integer = r2Y + rowGap
+        lblAgility.Location = New Point(col1X, r3Y + 2)
         lblAgility.Size = New Size(lblW, 22)
-        numAgility.Location = New Point(col1X + lblW + 10, 168)
-        numAgility.Size = New Size(numW, 26)
+        numAgility.Location = New Point(col1X + colW - numW, r3Y)
+        numAgility.Size = New Size(numW, numH)
 
-        lblOverall.Location = New Point(col2X, 170)
+        lblOverall.Location = New Point(col2X, r3Y + 2)
         lblOverall.Size = New Size(lblW, 22)
-        numOverall.Location = New Point(col2X + lblW + 10, 168)
-        numOverall.Size = New Size(numW, 26)
+        numOverall.Location = New Point(col2X + colW - numW, r3Y)
+        numOverall.Size = New Size(numW, numH)
 
         ' Row 4: Endurance & Scale Hint
-        lblEndurance.Location = New Point(col1X, 206)
+        Dim r4Y As Integer = r3Y + rowGap
+        lblEndurance.Location = New Point(col1X, r4Y + 2)
         lblEndurance.Size = New Size(lblW, 22)
-        numEndurance.Location = New Point(col1X + lblW + 10, 204)
-        numEndurance.Size = New Size(numW, 26)
+        numEndurance.Location = New Point(col1X + colW - numW, r4Y)
+        numEndurance.Size = New Size(numW, numH)
 
-        lblScaleHint.Location = New Point(col2X, 206)
+        lblScaleHint.Location = New Point(col2X, r4Y + 3)
         lblScaleHint.Size = New Size(colW, 22)
 
         ' Computed Score Banner
-        pnlScoreBanner.Location = New Point(20, 242)
-        pnlScoreBanner.Size = New Size(cardW - 40, 56)
-        lblFinalTitle.Location = New Point(16, 10)
-        lblPassingStandard.Location = New Point(16, 30)
-        lblFinalScoreValue.Location = New Point(pnlScoreBanner.Width - 140, 8)
-        lblFinalScoreValue.Size = New Size(124, 38)
+        Dim bannerY As Integer = r4Y + numH + If(isTall, 14, 10)
+        Dim bannerH As Integer = If(isTall, 70, 66)
+        pnlScoreBanner.Location = New Point(marginX, bannerY)
+        pnlScoreBanner.Size = New Size(usableW, bannerH)
 
-        div2.Location = New Point(20, 310)
-        div2.Size = New Size(cardW - 40, 1)
+        Dim titleY As Integer = If(isTall, 10, 8)
+        lblFinalTitle.Location = New Point(18, titleY)
+        lblPassingStandard.Location = New Point(18, titleY + 26)
+        lblPassingStandard.Size = New Size(320, 20)
+        lblFinalScoreValue.Location = New Point(usableW - 170, If(isTall, 8, 6))
+        lblFinalScoreValue.Size = New Size(150, If(isTall, 50, 46))
 
-        ' Selection Decision
-        lblDecisionTitle.Location = New Point(20, 320)
-        Dim decW As Integer = Math.Min(340, cardW - 40)
-        cmbDecision.Location = New Point(20, 342)
-        cmbDecision.Size = New Size(decW, 26)
+        ' Hide div2 since Score Banner already has a styled container
+        div2.Visible = False
+        div2.Size = Size.Empty
 
-        ' Remarks
-        lblRemarks.Location = New Point(20, 380)
-        txtRemarks.Location = New Point(20, 402)
-        txtRemarks.Size = New Size(cardW - 40, 72)
+        ' Selection Decision Row (Horizontal aligned)
+        Dim decY As Integer = bannerY + bannerH + If(isTall, 12, 10)
+        lblDecisionTitle.Location = New Point(marginX, decY + 4)
+        lblDecisionTitle.Text = "DECISION: *"
 
-        ' Action Buttons
-        Dim btnSaveW As Integer = Math.Min(280, CInt((cardW - 40 - 14) * 0.65))
-        Dim btnClearW As Integer = Math.Min(150, (cardW - 40 - 14) - btnSaveW)
+        Dim decComboLeft As Integer = lblDecisionTitle.Right + 12
+        Dim decComboW As Integer = Math.Min(220, Math.Max(180, CInt(usableW * 0.32)))
+        cmbDecision.Location = New Point(decComboLeft, decY)
+        cmbDecision.Size = New Size(decComboW, 28)
 
-        btnSave.Location = New Point(20, 486)
-        btnSave.Size = New Size(btnSaveW, 42)
+        Dim hintX As Integer = decComboLeft + decComboW + 14
+        Dim hintW As Integer = Math.Max(120, usableW - (hintX - marginX))
+        lblDecisionHint.Location = New Point(hintX, decY + 2)
+        lblDecisionHint.Size = New Size(hintW, 36)
 
-        btnClear.Location = New Point(20 + btnSaveW + 14, 486)
-        btnClear.Size = New Size(btnClearW, 42)
+        ' Remarks Header & TextBox
+        Dim remTitleY As Integer = decY + 40
+        lblRemarks.Location = New Point(marginX, remTitleY)
+
+        Dim remBoxY As Integer = remTitleY + 22
+
+        ' Action Buttons (Pinned to bottom of card)
+        Dim btnH As Integer = 42
+        Dim btnY As Integer = cardH - btnH - 12
+
+        ' Remarks TextBox dynamically takes ALL remaining vertical space!
+        Dim remarksH As Integer = Math.Max(48, btnY - 10 - remBoxY)
+        txtRemarks.Location = New Point(marginX, remBoxY)
+        txtRemarks.Size = New Size(usableW, remarksH)
+
+        ' Action Buttons span full usable width
+        Dim btnGap As Integer = 16
+        Dim btnSaveW As Integer = CInt((usableW - btnGap) * 0.65)
+        Dim btnClearW As Integer = usableW - btnGap - btnSaveW
+
+        btnSave.Location = New Point(marginX, btnY)
+        btnSave.Size = New Size(btnSaveW, btnH)
+
+        btnClear.Location = New Point(marginX + btnSaveW + btnGap, btnY)
+        btnClear.Size = New Size(btnClearW, btnH)
 
         pnlCard.ResumeLayout(True)
     End Sub
@@ -219,20 +272,35 @@ Public Class frmEvaluationSelection
 
         pnlRankings.SuspendLayout()
 
-        pnlRankCard.Location = New Point(10, 10)
-        pnlRankCard.Size = New Size(rankW - 20, rankH - 20)
+        pnlRankCard.Location = New Point(8, 8)
+        pnlRankCard.Size = New Size(rankW - 16, rankH - 16)
         rankAccent.Width = pnlRankCard.Width
 
+        Dim cardW As Integer = pnlRankCard.Width
+        Dim cardH As Integer = pnlRankCard.Height
+
+        Dim exportW As Integer = 180
+        Dim exportH As Integer = 40
+        btnExportRankings.Size = New Size(exportW, exportH)
+        btnExportRankings.Location = New Point(cardW - exportW - 20, 14)
+
         lblBoardTitle.Location = New Point(20, 16)
-        chkQualifiedOnly.Location = New Point(lblBoardTitle.Right + 24, 18)
 
-        btnExportRankings.Location = New Point(pnlRankCard.Width - 186, 12)
-        btnExportRankings.Size = New Size(166, 36)
-
-        lblRankSummary.Location = New Point(20, 48)
-
-        dgvRankings.Location = New Point(20, 74)
-        dgvRankings.Size = New Size(pnlRankCard.Width - 40, Math.Max(100, pnlRankCard.Height - 92))
+        ' Responsive header layout for Tab 2
+        If cardW >= 1060 Then
+            ' Wide layout: Title, Checkbox, Export all on Row 1
+            chkQualifiedOnly.Location = New Point(lblBoardTitle.Right + 24, 22)
+            lblRankSummary.Location = New Point(20, 54)
+            dgvRankings.Location = New Point(20, 84)
+            dgvRankings.Size = New Size(cardW - 40, Math.Max(120, cardH - 98))
+        Else
+            ' Narrower layout: Row 1 = Title & Export, Row 2 = Checkbox & Summary
+            chkQualifiedOnly.Location = New Point(20, 50)
+            Dim sumLeft As Integer = chkQualifiedOnly.Right + 20
+            lblRankSummary.Location = New Point(sumLeft, 52)
+            dgvRankings.Location = New Point(20, 84)
+            dgvRankings.Size = New Size(cardW - 40, Math.Max(120, cardH - 98))
+        End If
 
         pnlRankings.ResumeLayout(True)
     End Sub
@@ -354,15 +422,23 @@ Public Class frmEvaluationSelection
         dgvApplicants.DataSource = display
         If dgvApplicants.Columns.Contains("RegistrationID") Then dgvApplicants.Columns("RegistrationID").Visible = False
 
-        If dgvApplicants.Columns.Contains("Student ID") Then dgvApplicants.Columns("Student ID").FillWeight = 22
-        If dgvApplicants.Columns.Contains("Full Name") Then dgvApplicants.Columns("Full Name").FillWeight = 38
+        If dgvApplicants.Columns.Contains("Student ID") Then
+            dgvApplicants.Columns("Student ID").FillWeight = 22
+            dgvApplicants.Columns("Student ID").MinimumWidth = 90
+        End If
+        If dgvApplicants.Columns.Contains("Full Name") Then
+            dgvApplicants.Columns("Full Name").FillWeight = 38
+            dgvApplicants.Columns("Full Name").MinimumWidth = 120
+        End If
         If dgvApplicants.Columns.Contains("Final Score") Then
             dgvApplicants.Columns("Final Score").FillWeight = 18
+            dgvApplicants.Columns("Final Score").MinimumWidth = 75
             dgvApplicants.Columns("Final Score").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
             dgvApplicants.Columns("Final Score").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
         If dgvApplicants.Columns.Contains("Selection Status") Then
             dgvApplicants.Columns("Selection Status").FillWeight = 22
+            dgvApplicants.Columns("Selection Status").MinimumWidth = 95
             dgvApplicants.Columns("Selection Status").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
             dgvApplicants.Columns("Selection Status").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
@@ -500,7 +576,7 @@ Public Class frmEvaluationSelection
                 If Double.TryParse(e.Value.ToString(), sc) Then
                     If sc >= AppLogic.PassingScore Then
                         e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74)
-                        e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+                        e.CellStyle.Font = New Font("Segoe UI Semibold", 10.5!, FontStyle.Bold)
                     Else
                         e.CellStyle.ForeColor = Color.FromArgb(217, 119, 6)
                     End If
@@ -510,7 +586,7 @@ Public Class frmEvaluationSelection
                 Select Case st
                     Case "Selected"
                         e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74)
-                        e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+                        e.CellStyle.Font = New Font("Segoe UI Semibold", 10.5!, FontStyle.Bold)
                     Case "Not Selected"
                         e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38)
                     Case "For Further Evaluation"
@@ -536,7 +612,7 @@ Public Class frmEvaluationSelection
                 If Double.TryParse(e.Value.ToString(), sc) Then
                     If sc >= AppLogic.PassingScore Then
                         e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74)
-                        e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+                        e.CellStyle.Font = New Font("Segoe UI Semibold", 10.5!, FontStyle.Bold)
                     Else
                         e.CellStyle.ForeColor = Color.FromArgb(217, 119, 6)
                     End If
@@ -544,7 +620,7 @@ Public Class frmEvaluationSelection
             ElseIf colName = "Qualifies (>=75)" Then
                 If e.Value.ToString() = "Yes" Then
                     e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74)
-                    e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+                    e.CellStyle.Font = New Font("Segoe UI Semibold", 10.5!, FontStyle.Bold)
                 Else
                     e.CellStyle.ForeColor = Color.FromArgb(148, 163, 184)
                 End If
@@ -552,7 +628,7 @@ Public Class frmEvaluationSelection
                 Select Case e.Value.ToString()
                     Case "Selected"
                         e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74)
-                        e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+                        e.CellStyle.Font = New Font("Segoe UI Semibold", 10.5!, FontStyle.Bold)
                     Case "Not Selected"
                         e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38)
                     Case "For Further Evaluation"
@@ -636,6 +712,11 @@ Public Class frmEvaluationSelection
             UpdateSummaryStats(currSportId)
             LoadApplicants()
             LoadRankings()
+
+            Try
+                CType(Me.MdiParent, frmMain)?.RefreshNavMetrics()
+            Catch
+            End Try
         Catch ex As Exception
             UIHelper.ShowError("Failed to save evaluation & selection: " & ex.Message)
         End Try
@@ -740,29 +821,81 @@ Public Class frmEvaluationSelection
         If dgvRankings.Columns.Contains("RegistrationID") Then dgvRankings.Columns("RegistrationID").Visible = False
 
         If dgvRankings.Columns.Contains("Rank") Then
-            dgvRankings.Columns("Rank").FillWeight = 6
+            dgvRankings.Columns("Rank").FillWeight = 5
+            dgvRankings.Columns("Rank").MinimumWidth = 50
             dgvRankings.Columns("Rank").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Rank").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
-        If dgvRankings.Columns.Contains("Student ID") Then dgvRankings.Columns("Student ID").FillWeight = 11
-        If dgvRankings.Columns.Contains("Name") Then dgvRankings.Columns("Name").FillWeight = 16
-        If dgvRankings.Columns.Contains("Skill") Then dgvRankings.Columns("Skill").FillWeight = 7
-        If dgvRankings.Columns.Contains("Speed") Then dgvRankings.Columns("Speed").FillWeight = 7
-        If dgvRankings.Columns.Contains("Agility") Then dgvRankings.Columns("Agility").FillWeight = 7
-        If dgvRankings.Columns.Contains("Endurance") Then dgvRankings.Columns("Endurance").FillWeight = 7
-        If dgvRankings.Columns.Contains("Teamwork") Then dgvRankings.Columns("Teamwork").FillWeight = 7
-        If dgvRankings.Columns.Contains("Discipline") Then dgvRankings.Columns("Discipline").FillWeight = 7
-        If dgvRankings.Columns.Contains("Overall") Then dgvRankings.Columns("Overall").FillWeight = 7
+        If dgvRankings.Columns.Contains("Student ID") Then
+            dgvRankings.Columns("Student ID").FillWeight = 10
+            dgvRankings.Columns("Student ID").MinimumWidth = 85
+            dgvRankings.Columns("Student ID").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Student ID").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Name") Then
+            dgvRankings.Columns("Name").FillWeight = 16
+            dgvRankings.Columns("Name").MinimumWidth = 130
+        End If
+        If dgvRankings.Columns.Contains("Skill") Then
+            dgvRankings.Columns("Skill").FillWeight = 6
+            dgvRankings.Columns("Skill").MinimumWidth = 60
+            dgvRankings.Columns("Skill").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Skill").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Speed") Then
+            dgvRankings.Columns("Speed").FillWeight = 6
+            dgvRankings.Columns("Speed").MinimumWidth = 60
+            dgvRankings.Columns("Speed").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Speed").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Agility") Then
+            dgvRankings.Columns("Agility").FillWeight = 6
+            dgvRankings.Columns("Agility").MinimumWidth = 60
+            dgvRankings.Columns("Agility").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Agility").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Endurance") Then
+            dgvRankings.Columns("Endurance").FillWeight = 8
+            dgvRankings.Columns("Endurance").MinimumWidth = 85
+            dgvRankings.Columns("Endurance").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Endurance").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Teamwork") Then
+            dgvRankings.Columns("Teamwork").FillWeight = 8
+            dgvRankings.Columns("Teamwork").MinimumWidth = 85
+            dgvRankings.Columns("Teamwork").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Teamwork").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Discipline") Then
+            dgvRankings.Columns("Discipline").FillWeight = 9
+            dgvRankings.Columns("Discipline").MinimumWidth = 90
+            dgvRankings.Columns("Discipline").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Discipline").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+        If dgvRankings.Columns.Contains("Overall") Then
+            dgvRankings.Columns("Overall").FillWeight = 7
+            dgvRankings.Columns("Overall").MinimumWidth = 70
+            dgvRankings.Columns("Overall").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Overall").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
         If dgvRankings.Columns.Contains("Final Score") Then
-            dgvRankings.Columns("Final Score").FillWeight = 9
+            dgvRankings.Columns("Final Score").FillWeight = 8
+            dgvRankings.Columns("Final Score").MinimumWidth = 85
             dgvRankings.Columns("Final Score").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Final Score").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
         If dgvRankings.Columns.Contains("Qualifies (>=75)") Then
-            dgvRankings.Columns("Qualifies (>=75)").FillWeight = 10
+            dgvRankings.Columns("Qualifies (>=75)").HeaderText = "Qualifies"
+            dgvRankings.Columns("Qualifies (>=75)").FillWeight = 8
+            dgvRankings.Columns("Qualifies (>=75)").MinimumWidth = 75
             dgvRankings.Columns("Qualifies (>=75)").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Qualifies (>=75)").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
         If dgvRankings.Columns.Contains("Selection Status") Then
-            dgvRankings.Columns("Selection Status").FillWeight = 12
+            dgvRankings.Columns("Selection Status").FillWeight = 11
+            dgvRankings.Columns("Selection Status").MinimumWidth = 100
             dgvRankings.Columns("Selection Status").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            dgvRankings.Columns("Selection Status").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
 
         lblRankSummary.Text = String.Format("Total Ranked: {0} athlete(s)   |   Meeting Qualifying Standard (≥ {1:0}): {2}",

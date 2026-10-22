@@ -36,6 +36,7 @@ Partial Class frmEvaluationSelection
         Me.rosterAccent = New System.Windows.Forms.Panel()
         Me.lblGridTitle = New System.Windows.Forms.Label()
         Me.lblRosterCount = New System.Windows.Forms.Label()
+        Me.lblSearch = New System.Windows.Forms.Label()
         Me.txtSearchApplicant = New System.Windows.Forms.TextBox()
         Me.dgvApplicants = New System.Windows.Forms.DataGridView()
 
@@ -69,6 +70,7 @@ Partial Class frmEvaluationSelection
         Me.div2 = New System.Windows.Forms.Panel()
         Me.lblDecisionTitle = New System.Windows.Forms.Label()
         Me.cmbDecision = New System.Windows.Forms.ComboBox()
+        Me.lblDecisionHint = New System.Windows.Forms.Label()
         Me.lblRemarks = New System.Windows.Forms.Label()
         Me.txtRemarks = New System.Windows.Forms.TextBox()
         Me.btnSave = New System.Windows.Forms.Button()
@@ -112,9 +114,9 @@ Partial Class frmEvaluationSelection
         Me.pnlFilter.Controls.Add(Me.lblSport)
         Me.pnlFilter.Controls.Add(Me.cmbFilterSport)
         Me.pnlFilter.Controls.Add(Me.lblStats)
-        Me.pnlFilter.Location = New System.Drawing.Point(24, 72)
+        Me.pnlFilter.Location = New System.Drawing.Point(20, 68)
         Me.pnlFilter.Name = "pnlFilter"
-        Me.pnlFilter.Size = New System.Drawing.Size(1150, 64)
+        Me.pnlFilter.Size = New System.Drawing.Size(1160, 68)
         Me.pnlFilter.TabIndex = 0
         '
         'filterAccent
@@ -123,61 +125,65 @@ Partial Class frmEvaluationSelection
         Me.filterAccent.Dock = System.Windows.Forms.DockStyle.Top
         Me.filterAccent.Location = New System.Drawing.Point(0, 0)
         Me.filterAccent.Name = "filterAccent"
-        Me.filterAccent.Size = New System.Drawing.Size(1150, 4)
+        Me.filterAccent.Size = New System.Drawing.Size(1160, 4)
         Me.filterAccent.TabIndex = 0
         '
         'lblSport
         '
         Me.lblSport.AutoSize = True
-        Me.lblSport.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
-        Me.lblSport.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
-        Me.lblSport.Location = New System.Drawing.Point(20, 24)
+        Me.lblSport.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.lblSport.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
+        Me.lblSport.Location = New System.Drawing.Point(20, 22)
         Me.lblSport.Name = "lblSport"
-        Me.lblSport.Size = New System.Drawing.Size(95, 15)
+        Me.lblSport.Size = New System.Drawing.Size(107, 19)
         Me.lblSport.TabIndex = 1
-        Me.lblSport.Text = "🏅 SELECT SPORT:"
+        Me.lblSport.Text = "SELECT SPORT:"
+        Me.lblSport.UseMnemonic = False
         '
         'cmbFilterSport
         '
         Me.cmbFilterSport.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbFilterSport.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.cmbFilterSport.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.cmbFilterSport.Font = New System.Drawing.Font("Segoe UI", 11.0!)
         Me.cmbFilterSport.FormattingEnabled = True
-        Me.cmbFilterSport.Location = New System.Drawing.Point(125, 20)
+        Me.cmbFilterSport.Location = New System.Drawing.Point(145, 18)
         Me.cmbFilterSport.Name = "cmbFilterSport"
-        Me.cmbFilterSport.Size = New System.Drawing.Size(260, 25)
+        Me.cmbFilterSport.Size = New System.Drawing.Size(260, 28)
         Me.cmbFilterSport.TabIndex = 2
         '
         'lblStats
         '
-        Me.lblStats.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblStats.BackColor = System.Drawing.Color.FromArgb(241, 245, 249)
+        Me.lblStats.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         Me.lblStats.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        Me.lblStats.Location = New System.Drawing.Point(405, 18)
+        Me.lblStats.Location = New System.Drawing.Point(425, 14)
         Me.lblStats.Name = "lblStats"
-        Me.lblStats.Size = New System.Drawing.Size(720, 28)
+        Me.lblStats.Padding = New System.Windows.Forms.Padding(12, 0, 12, 0)
+        Me.lblStats.Size = New System.Drawing.Size(715, 38)
         Me.lblStats.TabIndex = 3
-        Me.lblStats.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.lblStats.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.lblStats.UseMnemonic = False
         '
         'tabMain
         '
         Me.tabMain.Controls.Add(Me.tabEval)
         Me.tabMain.Controls.Add(Me.tabRankings)
-        Me.tabMain.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.tabMain.Location = New System.Drawing.Point(24, 146)
+        Me.tabMain.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
+        Me.tabMain.Location = New System.Drawing.Point(20, 148)
         Me.tabMain.Name = "tabMain"
-        Me.tabMain.Padding = New System.Drawing.Point(18, 10)
+        Me.tabMain.Padding = New System.Drawing.Point(24, 10)
         Me.tabMain.SelectedIndex = 0
-        Me.tabMain.Size = New System.Drawing.Size(1150, 560)
+        Me.tabMain.Size = New System.Drawing.Size(1160, 560)
         Me.tabMain.TabIndex = 1
         '
         'tabEval
         '
         Me.tabEval.BackColor = System.Drawing.Color.FromArgb(245, 247, 250)
         Me.tabEval.Controls.Add(Me.pnlContainer)
-        Me.tabEval.Location = New System.Drawing.Point(4, 40)
+        Me.tabEval.Location = New System.Drawing.Point(4, 43)
         Me.tabEval.Name = "tabEval"
         Me.tabEval.Padding = New System.Windows.Forms.Padding(6)
-        Me.tabEval.Size = New System.Drawing.Size(1142, 516)
+        Me.tabEval.Size = New System.Drawing.Size(1152, 513)
         Me.tabEval.TabIndex = 0
         Me.tabEval.Text = "  1. Athlete Evaluation & Selection  "
         '
@@ -188,20 +194,21 @@ Partial Class frmEvaluationSelection
         Me.pnlContainer.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlContainer.Location = New System.Drawing.Point(6, 6)
         Me.pnlContainer.Name = "pnlContainer"
-        Me.pnlContainer.Size = New System.Drawing.Size(1130, 504)
+        Me.pnlContainer.Size = New System.Drawing.Size(1140, 501)
         Me.pnlContainer.TabIndex = 0
         '
-        'pnlRosterCard (Left: Athlete Roster Card)
+        'pnlRosterCard
         '
         Me.pnlRosterCard.BackColor = System.Drawing.Color.White
         Me.pnlRosterCard.Controls.Add(Me.rosterAccent)
         Me.pnlRosterCard.Controls.Add(Me.lblGridTitle)
         Me.pnlRosterCard.Controls.Add(Me.lblRosterCount)
+        Me.pnlRosterCard.Controls.Add(Me.lblSearch)
         Me.pnlRosterCard.Controls.Add(Me.txtSearchApplicant)
         Me.pnlRosterCard.Controls.Add(Me.dgvApplicants)
         Me.pnlRosterCard.Location = New System.Drawing.Point(10, 10)
         Me.pnlRosterCard.Name = "pnlRosterCard"
-        Me.pnlRosterCard.Size = New System.Drawing.Size(480, 484)
+        Me.pnlRosterCard.Size = New System.Drawing.Size(460, 480)
         Me.pnlRosterCard.TabIndex = 0
         '
         'rosterAccent
@@ -210,41 +217,56 @@ Partial Class frmEvaluationSelection
         Me.rosterAccent.Dock = System.Windows.Forms.DockStyle.Top
         Me.rosterAccent.Location = New System.Drawing.Point(0, 0)
         Me.rosterAccent.Name = "rosterAccent"
-        Me.rosterAccent.Size = New System.Drawing.Size(480, 4)
+        Me.rosterAccent.Size = New System.Drawing.Size(460, 4)
         Me.rosterAccent.TabIndex = 0
         '
         'lblGridTitle
         '
         Me.lblGridTitle.AutoSize = True
-        Me.lblGridTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 11.5!, System.Drawing.FontStyle.Bold)
+        Me.lblGridTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 13.0!, System.Drawing.FontStyle.Bold)
         Me.lblGridTitle.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        Me.lblGridTitle.Location = New System.Drawing.Point(16, 14)
+        Me.lblGridTitle.Location = New System.Drawing.Point(18, 14)
         Me.lblGridTitle.Name = "lblGridTitle"
-        Me.lblGridTitle.Size = New System.Drawing.Size(170, 21)
+        Me.lblGridTitle.Size = New System.Drawing.Size(167, 25)
         Me.lblGridTitle.TabIndex = 1
-        Me.lblGridTitle.Text = "📋 Registered Athletes"
+        Me.lblGridTitle.Text = "Registered Athletes"
+        Me.lblGridTitle.UseMnemonic = False
         '
         'lblRosterCount
         '
         Me.lblRosterCount.AutoSize = True
         Me.lblRosterCount.BackColor = System.Drawing.Color.FromArgb(241, 245, 249)
-        Me.lblRosterCount.Font = New System.Drawing.Font("Segoe UI Semibold", 8.5!, System.Drawing.FontStyle.Bold)
+        Me.lblRosterCount.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
         Me.lblRosterCount.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
-        Me.lblRosterCount.Location = New System.Drawing.Point(195, 18)
+        Me.lblRosterCount.Location = New System.Drawing.Point(198, 16)
         Me.lblRosterCount.Name = "lblRosterCount"
-        Me.lblRosterCount.Size = New System.Drawing.Size(60, 15)
+        Me.lblRosterCount.Padding = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me.lblRosterCount.Size = New System.Drawing.Size(79, 23)
         Me.lblRosterCount.TabIndex = 2
         Me.lblRosterCount.Text = "0 Athletes"
+        Me.lblRosterCount.UseMnemonic = False
+        '
+        'lblSearch
+        '
+        Me.lblSearch.AutoSize = True
+        Me.lblSearch.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.lblSearch.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
+        Me.lblSearch.Location = New System.Drawing.Point(18, 52)
+        Me.lblSearch.Name = "lblSearch"
+        Me.lblSearch.Size = New System.Drawing.Size(54, 19)
+        Me.lblSearch.TabIndex = 3
+        Me.lblSearch.Text = "Search:"
+        Me.lblSearch.UseMnemonic = False
         '
         'txtSearchApplicant
         '
         Me.txtSearchApplicant.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtSearchApplicant.Font = New System.Drawing.Font("Segoe UI", 9.5!)
-        Me.txtSearchApplicant.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
-        Me.txtSearchApplicant.Location = New System.Drawing.Point(280, 14)
+        Me.txtSearchApplicant.Font = New System.Drawing.Font("Segoe UI", 10.5!)
+        Me.txtSearchApplicant.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
+        Me.txtSearchApplicant.Location = New System.Drawing.Point(78, 48)
         Me.txtSearchApplicant.Name = "txtSearchApplicant"
-        Me.txtSearchApplicant.Size = New System.Drawing.Size(184, 24)
-        Me.txtSearchApplicant.TabIndex = 3
+        Me.txtSearchApplicant.Size = New System.Drawing.Size(364, 26)
+        Me.txtSearchApplicant.TabIndex = 4
         '
         'dgvApplicants
         '
@@ -258,38 +280,38 @@ Partial Class frmEvaluationSelection
         Me.dgvApplicants.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        dataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        dataGridViewCellStyle1.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(253, 224, 71)
-        dataGridViewCellStyle1.Padding = New System.Windows.Forms.Padding(8, 0, 0, 0)
+        dataGridViewCellStyle1.Padding = New System.Windows.Forms.Padding(8, 0, 8, 0)
         dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(22, 55, 100)
         dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvApplicants.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1
-        Me.dgvApplicants.ColumnHeadersHeight = 38
+        Me.dgvApplicants.ColumnHeadersHeight = 42
         dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         dataGridViewCellStyle2.BackColor = System.Drawing.Color.White
-        dataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 9.5!)
+        dataGridViewCellStyle2.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        dataGridViewCellStyle2.Padding = New System.Windows.Forms.Padding(6, 0, 0, 0)
+        dataGridViewCellStyle2.Padding = New System.Windows.Forms.Padding(8, 0, 8, 0)
         dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254)
         dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
         dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.dgvApplicants.DefaultCellStyle = dataGridViewCellStyle2
         Me.dgvApplicants.EnableHeadersVisualStyles = False
         Me.dgvApplicants.GridColor = System.Drawing.Color.FromArgb(226, 232, 240)
-        Me.dgvApplicants.Location = New System.Drawing.Point(16, 48)
+        Me.dgvApplicants.Location = New System.Drawing.Point(18, 86)
         Me.dgvApplicants.MultiSelect = False
         Me.dgvApplicants.Name = "dgvApplicants"
         Me.dgvApplicants.ReadOnly = True
         Me.dgvApplicants.RowHeadersVisible = False
-        Me.dgvApplicants.RowTemplate.Height = 36
+        Me.dgvApplicants.RowTemplate.Height = 40
         Me.dgvApplicants.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvApplicants.Size = New System.Drawing.Size(448, 420)
-        Me.dgvApplicants.TabIndex = 4
+        Me.dgvApplicants.Size = New System.Drawing.Size(424, 380)
+        Me.dgvApplicants.TabIndex = 5
         '
-        'pnlCard (Right: Scoring & Decision Card)
+        'pnlCard
         '
-        Me.pnlCard.AutoScroll = True
+        Me.pnlCard.AutoScroll = False
         Me.pnlCard.BackColor = System.Drawing.Color.White
         Me.pnlCard.Controls.Add(Me.cardAccent)
         Me.pnlCard.Controls.Add(Me.lblApplicantHeader)
@@ -315,13 +337,14 @@ Partial Class frmEvaluationSelection
         Me.pnlCard.Controls.Add(Me.div2)
         Me.pnlCard.Controls.Add(Me.lblDecisionTitle)
         Me.pnlCard.Controls.Add(Me.cmbDecision)
+        Me.pnlCard.Controls.Add(Me.lblDecisionHint)
         Me.pnlCard.Controls.Add(Me.lblRemarks)
         Me.pnlCard.Controls.Add(Me.txtRemarks)
         Me.pnlCard.Controls.Add(Me.btnSave)
         Me.pnlCard.Controls.Add(Me.btnClear)
-        Me.pnlCard.Location = New System.Drawing.Point(510, 10)
+        Me.pnlCard.Location = New System.Drawing.Point(485, 10)
         Me.pnlCard.Name = "pnlCard"
-        Me.pnlCard.Size = New System.Drawing.Size(610, 484)
+        Me.pnlCard.Size = New System.Drawing.Size(645, 480)
         Me.pnlCard.TabIndex = 1
         '
         'cardAccent
@@ -330,197 +353,208 @@ Partial Class frmEvaluationSelection
         Me.cardAccent.Dock = System.Windows.Forms.DockStyle.Top
         Me.cardAccent.Location = New System.Drawing.Point(0, 0)
         Me.cardAccent.Name = "cardAccent"
-        Me.cardAccent.Size = New System.Drawing.Size(610, 4)
+        Me.cardAccent.Size = New System.Drawing.Size(645, 4)
         Me.cardAccent.TabIndex = 0
         '
         'lblApplicantHeader
         '
-        Me.lblApplicantHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.lblApplicantHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 13.5!, System.Drawing.FontStyle.Bold)
         Me.lblApplicantHeader.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        Me.lblApplicantHeader.Location = New System.Drawing.Point(20, 14)
+        Me.lblApplicantHeader.Location = New System.Drawing.Point(24, 14)
         Me.lblApplicantHeader.Name = "lblApplicantHeader"
-        Me.lblApplicantHeader.Size = New System.Drawing.Size(570, 26)
+        Me.lblApplicantHeader.Size = New System.Drawing.Size(595, 28)
         Me.lblApplicantHeader.TabIndex = 1
         Me.lblApplicantHeader.Text = "Select an athlete on the left to evaluate or record decision."
+        Me.lblApplicantHeader.UseMnemonic = False
         '
         'lblApplicantSub
         '
-        Me.lblApplicantSub.Font = New System.Drawing.Font("Segoe UI", 8.5!)
+        Me.lblApplicantSub.Font = New System.Drawing.Font("Segoe UI", 9.5!)
         Me.lblApplicantSub.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblApplicantSub.Location = New System.Drawing.Point(22, 40)
+        Me.lblApplicantSub.Location = New System.Drawing.Point(26, 42)
         Me.lblApplicantSub.Name = "lblApplicantSub"
-        Me.lblApplicantSub.Size = New System.Drawing.Size(566, 18)
+        Me.lblApplicantSub.Size = New System.Drawing.Size(593, 20)
         Me.lblApplicantSub.TabIndex = 2
-        Me.lblApplicantSub.Text = "Score tryout drills on a scale of 0 to 100. System automatically computes weighted composite."
+        Me.lblApplicantSub.Text = "Score tryout drills from 0 to 100. System automatically computes weighted score."
+        Me.lblApplicantSub.UseMnemonic = False
         '
         'div1
         '
         Me.div1.BackColor = System.Drawing.Color.FromArgb(226, 232, 240)
-        Me.div1.Location = New System.Drawing.Point(20, 62)
+        Me.div1.Location = New System.Drawing.Point(24, 68)
         Me.div1.Name = "div1"
-        Me.div1.Size = New System.Drawing.Size(570, 1)
+        Me.div1.Size = New System.Drawing.Size(595, 1)
         Me.div1.TabIndex = 3
         '
         'lblCriteriaHeader
         '
         Me.lblCriteriaHeader.AutoSize = True
-        Me.lblCriteriaHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblCriteriaHeader.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         Me.lblCriteriaHeader.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
-        Me.lblCriteriaHeader.Location = New System.Drawing.Point(20, 70)
+        Me.lblCriteriaHeader.Location = New System.Drawing.Point(24, 78)
         Me.lblCriteriaHeader.Name = "lblCriteriaHeader"
-        Me.lblCriteriaHeader.Size = New System.Drawing.Size(262, 17)
+        Me.lblCriteriaHeader.Size = New System.Drawing.Size(288, 19)
         Me.lblCriteriaHeader.TabIndex = 4
         Me.lblCriteriaHeader.Text = "TRYOUT PERFORMANCE METRICS (0 - 100)"
+        Me.lblCriteriaHeader.UseMnemonic = False
         '
         'lblSkill
         '
-        Me.lblSkill.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblSkill.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblSkill.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblSkill.Location = New System.Drawing.Point(20, 98)
+        Me.lblSkill.Location = New System.Drawing.Point(24, 109)
         Me.lblSkill.Name = "lblSkill"
-        Me.lblSkill.Size = New System.Drawing.Size(160, 22)
+        Me.lblSkill.Size = New System.Drawing.Size(170, 24)
         Me.lblSkill.TabIndex = 5
-        Me.lblSkill.Text = "🎯 Skill & Technique"
+        Me.lblSkill.Text = "Skill & Technique"
+        Me.lblSkill.UseMnemonic = False
         '
         'numSkill
         '
         Me.numSkill.DecimalPlaces = 1
-        Me.numSkill.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numSkill.Location = New System.Drawing.Point(190, 96)
+        Me.numSkill.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numSkill.Location = New System.Drawing.Point(200, 106)
         Me.numSkill.Name = "numSkill"
-        Me.numSkill.Size = New System.Drawing.Size(90, 26)
+        Me.numSkill.Size = New System.Drawing.Size(110, 29)
         Me.numSkill.TabIndex = 6
         Me.numSkill.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblTeamwork
         '
-        Me.lblTeamwork.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblTeamwork.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblTeamwork.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblTeamwork.Location = New System.Drawing.Point(310, 98)
+        Me.lblTeamwork.Location = New System.Drawing.Point(330, 109)
         Me.lblTeamwork.Name = "lblTeamwork"
-        Me.lblTeamwork.Size = New System.Drawing.Size(160, 22)
+        Me.lblTeamwork.Size = New System.Drawing.Size(170, 24)
         Me.lblTeamwork.TabIndex = 7
-        Me.lblTeamwork.Text = "🤝 Teamwork & Comms"
+        Me.lblTeamwork.Text = "Teamwork & Comms"
+        Me.lblTeamwork.UseMnemonic = False
         '
         'numTeamwork
         '
         Me.numTeamwork.DecimalPlaces = 1
-        Me.numTeamwork.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numTeamwork.Location = New System.Drawing.Point(480, 96)
+        Me.numTeamwork.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numTeamwork.Location = New System.Drawing.Point(509, 106)
         Me.numTeamwork.Name = "numTeamwork"
-        Me.numTeamwork.Size = New System.Drawing.Size(90, 26)
+        Me.numTeamwork.Size = New System.Drawing.Size(110, 29)
         Me.numTeamwork.TabIndex = 8
         Me.numTeamwork.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblSpeed
         '
-        Me.lblSpeed.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblSpeed.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblSpeed.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblSpeed.Location = New System.Drawing.Point(20, 134)
+        Me.lblSpeed.Location = New System.Drawing.Point(24, 147)
         Me.lblSpeed.Name = "lblSpeed"
-        Me.lblSpeed.Size = New System.Drawing.Size(160, 22)
+        Me.lblSpeed.Size = New System.Drawing.Size(170, 24)
         Me.lblSpeed.TabIndex = 9
-        Me.lblSpeed.Text = "⚡ Speed & Acceleration"
+        Me.lblSpeed.Text = "Speed & Acceleration"
+        Me.lblSpeed.UseMnemonic = False
         '
         'numSpeed
         '
         Me.numSpeed.DecimalPlaces = 1
-        Me.numSpeed.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numSpeed.Location = New System.Drawing.Point(190, 132)
+        Me.numSpeed.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numSpeed.Location = New System.Drawing.Point(200, 144)
         Me.numSpeed.Name = "numSpeed"
-        Me.numSpeed.Size = New System.Drawing.Size(90, 26)
+        Me.numSpeed.Size = New System.Drawing.Size(110, 29)
         Me.numSpeed.TabIndex = 10
         Me.numSpeed.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblDiscipline
         '
-        Me.lblDiscipline.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblDiscipline.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblDiscipline.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblDiscipline.Location = New System.Drawing.Point(310, 134)
+        Me.lblDiscipline.Location = New System.Drawing.Point(330, 147)
         Me.lblDiscipline.Name = "lblDiscipline"
-        Me.lblDiscipline.Size = New System.Drawing.Size(160, 22)
+        Me.lblDiscipline.Size = New System.Drawing.Size(170, 24)
         Me.lblDiscipline.TabIndex = 11
-        Me.lblDiscipline.Text = "🛡️ Discipline & Attitude"
+        Me.lblDiscipline.Text = "Discipline & Attitude"
+        Me.lblDiscipline.UseMnemonic = False
         '
         'numDiscipline
         '
         Me.numDiscipline.DecimalPlaces = 1
-        Me.numDiscipline.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numDiscipline.Location = New System.Drawing.Point(480, 132)
+        Me.numDiscipline.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numDiscipline.Location = New System.Drawing.Point(509, 144)
         Me.numDiscipline.Name = "numDiscipline"
-        Me.numDiscipline.Size = New System.Drawing.Size(90, 26)
+        Me.numDiscipline.Size = New System.Drawing.Size(110, 29)
         Me.numDiscipline.TabIndex = 12
         Me.numDiscipline.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblAgility
         '
-        Me.lblAgility.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblAgility.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblAgility.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblAgility.Location = New System.Drawing.Point(20, 170)
+        Me.lblAgility.Location = New System.Drawing.Point(24, 185)
         Me.lblAgility.Name = "lblAgility"
-        Me.lblAgility.Size = New System.Drawing.Size(160, 22)
+        Me.lblAgility.Size = New System.Drawing.Size(170, 24)
         Me.lblAgility.TabIndex = 13
-        Me.lblAgility.Text = "🌪️ Agility & Footwork"
+        Me.lblAgility.Text = "Agility & Footwork"
+        Me.lblAgility.UseMnemonic = False
         '
         'numAgility
         '
         Me.numAgility.DecimalPlaces = 1
-        Me.numAgility.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numAgility.Location = New System.Drawing.Point(190, 168)
+        Me.numAgility.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numAgility.Location = New System.Drawing.Point(200, 182)
         Me.numAgility.Name = "numAgility"
-        Me.numAgility.Size = New System.Drawing.Size(90, 26)
+        Me.numAgility.Size = New System.Drawing.Size(110, 29)
         Me.numAgility.TabIndex = 14
         Me.numAgility.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblOverall
         '
-        Me.lblOverall.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblOverall.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblOverall.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblOverall.Location = New System.Drawing.Point(310, 170)
+        Me.lblOverall.Location = New System.Drawing.Point(330, 185)
         Me.lblOverall.Name = "lblOverall"
-        Me.lblOverall.Size = New System.Drawing.Size(160, 22)
+        Me.lblOverall.Size = New System.Drawing.Size(170, 24)
         Me.lblOverall.TabIndex = 15
-        Me.lblOverall.Text = "⭐ Overall Performance"
+        Me.lblOverall.Text = "Overall Performance"
+        Me.lblOverall.UseMnemonic = False
         '
         'numOverall
         '
         Me.numOverall.DecimalPlaces = 1
-        Me.numOverall.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numOverall.Location = New System.Drawing.Point(480, 168)
+        Me.numOverall.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numOverall.Location = New System.Drawing.Point(509, 182)
         Me.numOverall.Name = "numOverall"
-        Me.numOverall.Size = New System.Drawing.Size(90, 26)
+        Me.numOverall.Size = New System.Drawing.Size(110, 29)
         Me.numOverall.TabIndex = 16
         Me.numOverall.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblEndurance
         '
-        Me.lblEndurance.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblEndurance.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblEndurance.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.lblEndurance.Location = New System.Drawing.Point(20, 206)
+        Me.lblEndurance.Location = New System.Drawing.Point(24, 223)
         Me.lblEndurance.Name = "lblEndurance"
-        Me.lblEndurance.Size = New System.Drawing.Size(160, 22)
+        Me.lblEndurance.Size = New System.Drawing.Size(170, 24)
         Me.lblEndurance.TabIndex = 17
-        Me.lblEndurance.Text = "🏃 Endurance & Stamina"
+        Me.lblEndurance.Text = "Endurance & Stamina"
+        Me.lblEndurance.UseMnemonic = False
         '
         'numEndurance
         '
         Me.numEndurance.DecimalPlaces = 1
-        Me.numEndurance.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.numEndurance.Location = New System.Drawing.Point(190, 204)
+        Me.numEndurance.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.numEndurance.Location = New System.Drawing.Point(200, 220)
         Me.numEndurance.Name = "numEndurance"
-        Me.numEndurance.Size = New System.Drawing.Size(90, 26)
+        Me.numEndurance.Size = New System.Drawing.Size(110, 29)
         Me.numEndurance.TabIndex = 18
         Me.numEndurance.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
         '
         'lblScaleHint
         '
-        Me.lblScaleHint.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Italic)
-        Me.lblScaleHint.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184)
-        Me.lblScaleHint.Location = New System.Drawing.Point(310, 206)
+        Me.lblScaleHint.Font = New System.Drawing.Font("Segoe UI", 9.5!, System.Drawing.FontStyle.Italic)
+        Me.lblScaleHint.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
+        Me.lblScaleHint.Location = New System.Drawing.Point(330, 224)
         Me.lblScaleHint.Name = "lblScaleHint"
-        Me.lblScaleHint.Size = New System.Drawing.Size(260, 22)
+        Me.lblScaleHint.Size = New System.Drawing.Size(289, 24)
         Me.lblScaleHint.TabIndex = 19
-        Me.lblScaleHint.Text = "Scale: 0.0 (Lowest) - 100.0 (Mastery)"
+        Me.lblScaleHint.Text = "Scale: 0.0 (Lowest) to 100.0 (Mastery)"
+        Me.lblScaleHint.UseMnemonic = False
         '
         'pnlScoreBanner
         '
@@ -529,40 +563,42 @@ Partial Class frmEvaluationSelection
         Me.pnlScoreBanner.Controls.Add(Me.lblFinalTitle)
         Me.pnlScoreBanner.Controls.Add(Me.lblPassingStandard)
         Me.pnlScoreBanner.Controls.Add(Me.lblFinalScoreValue)
-        Me.pnlScoreBanner.Location = New System.Drawing.Point(20, 242)
+        Me.pnlScoreBanner.Location = New System.Drawing.Point(24, 260)
         Me.pnlScoreBanner.Name = "pnlScoreBanner"
-        Me.pnlScoreBanner.Size = New System.Drawing.Size(570, 56)
+        Me.pnlScoreBanner.Size = New System.Drawing.Size(595, 62)
         Me.pnlScoreBanner.TabIndex = 20
         '
         'lblFinalTitle
         '
         Me.lblFinalTitle.AutoSize = True
-        Me.lblFinalTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.lblFinalTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.lblFinalTitle.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        Me.lblFinalTitle.Location = New System.Drawing.Point(16, 10)
+        Me.lblFinalTitle.Location = New System.Drawing.Point(18, 11)
         Me.lblFinalTitle.Name = "lblFinalTitle"
-        Me.lblFinalTitle.Size = New System.Drawing.Size(167, 17)
+        Me.lblFinalTitle.Size = New System.Drawing.Size(199, 20)
         Me.lblFinalTitle.TabIndex = 0
         Me.lblFinalTitle.Text = "COMPUTED TRYOUT SCORE"
+        Me.lblFinalTitle.UseMnemonic = False
         '
         'lblPassingStandard
         '
         Me.lblPassingStandard.AutoSize = True
-        Me.lblPassingStandard.Font = New System.Drawing.Font("Segoe UI", 8.5!)
+        Me.lblPassingStandard.Font = New System.Drawing.Font("Segoe UI", 9.5!)
         Me.lblPassingStandard.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblPassingStandard.Location = New System.Drawing.Point(16, 30)
+        Me.lblPassingStandard.Location = New System.Drawing.Point(18, 35)
         Me.lblPassingStandard.Name = "lblPassingStandard"
-        Me.lblPassingStandard.Size = New System.Drawing.Size(188, 15)
+        Me.lblPassingStandard.Size = New System.Drawing.Size(225, 17)
         Me.lblPassingStandard.TabIndex = 1
         Me.lblPassingStandard.Text = "Standard: ≥ 75.00 to Qualify Roster"
+        Me.lblPassingStandard.UseMnemonic = False
         '
         'lblFinalScoreValue
         '
-        Me.lblFinalScoreValue.Font = New System.Drawing.Font("Segoe UI", 20.0!, System.Drawing.FontStyle.Bold)
+        Me.lblFinalScoreValue.Font = New System.Drawing.Font("Segoe UI", 26.0!, System.Drawing.FontStyle.Bold)
         Me.lblFinalScoreValue.ForeColor = System.Drawing.Color.FromArgb(22, 163, 74)
-        Me.lblFinalScoreValue.Location = New System.Drawing.Point(420, 8)
+        Me.lblFinalScoreValue.Location = New System.Drawing.Point(425, 8)
         Me.lblFinalScoreValue.Name = "lblFinalScoreValue"
-        Me.lblFinalScoreValue.Size = New System.Drawing.Size(130, 38)
+        Me.lblFinalScoreValue.Size = New System.Drawing.Size(155, 46)
         Me.lblFinalScoreValue.TabIndex = 2
         Me.lblFinalScoreValue.Text = "0.00"
         Me.lblFinalScoreValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -570,55 +606,69 @@ Partial Class frmEvaluationSelection
         'div2
         '
         Me.div2.BackColor = System.Drawing.Color.FromArgb(226, 232, 240)
-        Me.div2.Location = New System.Drawing.Point(20, 310)
+        Me.div2.Location = New System.Drawing.Point(0, 0)
         Me.div2.Name = "div2"
-        Me.div2.Size = New System.Drawing.Size(570, 1)
+        Me.div2.Size = New System.Drawing.Size(0, 0)
         Me.div2.TabIndex = 21
+        Me.div2.Visible = False
         '
         'lblDecisionTitle
         '
         Me.lblDecisionTitle.AutoSize = True
-        Me.lblDecisionTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.lblDecisionTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         Me.lblDecisionTitle.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
-        Me.lblDecisionTitle.Location = New System.Drawing.Point(20, 320)
+        Me.lblDecisionTitle.Location = New System.Drawing.Point(24, 342)
         Me.lblDecisionTitle.Name = "lblDecisionTitle"
-        Me.lblDecisionTitle.Size = New System.Drawing.Size(164, 15)
+        Me.lblDecisionTitle.Size = New System.Drawing.Size(198, 19)
         Me.lblDecisionTitle.TabIndex = 22
         Me.lblDecisionTitle.Text = "FINAL SELECTION DECISION *"
+        Me.lblDecisionTitle.UseMnemonic = False
         '
         'cmbDecision
         '
         Me.cmbDecision.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbDecision.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.cmbDecision.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.cmbDecision.Font = New System.Drawing.Font("Segoe UI", 11.0!)
         Me.cmbDecision.FormattingEnabled = True
         Me.cmbDecision.Items.AddRange(New Object() {"Pending", "Selected", "Not Selected", "For Further Evaluation"})
-        Me.cmbDecision.Location = New System.Drawing.Point(20, 342)
+        Me.cmbDecision.Location = New System.Drawing.Point(24, 366)
         Me.cmbDecision.Name = "cmbDecision"
-        Me.cmbDecision.Size = New System.Drawing.Size(320, 25)
+        Me.cmbDecision.Size = New System.Drawing.Size(270, 28)
         Me.cmbDecision.TabIndex = 23
+        '
+        'lblDecisionHint
+        '
+        Me.lblDecisionHint.Font = New System.Drawing.Font("Segoe UI", 9.5!)
+        Me.lblDecisionHint.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
+        Me.lblDecisionHint.Location = New System.Drawing.Point(310, 364)
+        Me.lblDecisionHint.Name = "lblDecisionHint"
+        Me.lblDecisionHint.Size = New System.Drawing.Size(309, 32)
+        Me.lblDecisionHint.TabIndex = 24
+        Me.lblDecisionHint.Text = "Assign official roster status: Selected, Not Selected, or For Further Evaluation."
+        Me.lblDecisionHint.UseMnemonic = False
         '
         'lblRemarks
         '
         Me.lblRemarks.AutoSize = True
-        Me.lblRemarks.Font = New System.Drawing.Font("Segoe UI Semibold", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.lblRemarks.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         Me.lblRemarks.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
-        Me.lblRemarks.Location = New System.Drawing.Point(20, 380)
+        Me.lblRemarks.Location = New System.Drawing.Point(24, 404)
         Me.lblRemarks.Name = "lblRemarks"
-        Me.lblRemarks.Size = New System.Drawing.Size(193, 15)
-        Me.lblRemarks.TabIndex = 24
+        Me.lblRemarks.Size = New System.Drawing.Size(222, 19)
+        Me.lblRemarks.TabIndex = 25
         Me.lblRemarks.Text = "ASSESSMENT NOTES & REMARKS"
+        Me.lblRemarks.UseMnemonic = False
         '
         'txtRemarks
         '
         Me.txtRemarks.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtRemarks.Font = New System.Drawing.Font("Segoe UI", 9.5!)
-        Me.txtRemarks.Location = New System.Drawing.Point(20, 402)
+        Me.txtRemarks.Font = New System.Drawing.Font("Segoe UI", 11.0!)
+        Me.txtRemarks.Location = New System.Drawing.Point(24, 428)
         Me.txtRemarks.Multiline = True
         Me.txtRemarks.Name = "txtRemarks"
         Me.txtRemarks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtRemarks.Size = New System.Drawing.Size(570, 72)
-        Me.txtRemarks.TabIndex = 25
+        Me.txtRemarks.Size = New System.Drawing.Size(595, 40)
+        Me.txtRemarks.TabIndex = 26
         '
         'btnSave
         '
@@ -626,13 +676,14 @@ Partial Class frmEvaluationSelection
         Me.btnSave.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnSave.FlatAppearance.BorderSize = 0
         Me.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnSave.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnSave.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.btnSave.ForeColor = System.Drawing.Color.White
-        Me.btnSave.Location = New System.Drawing.Point(20, 486)
+        Me.btnSave.Location = New System.Drawing.Point(24, 474)
         Me.btnSave.Name = "btnSave"
-        Me.btnSave.Size = New System.Drawing.Size(280, 42)
-        Me.btnSave.TabIndex = 26
-        Me.btnSave.Text = "💾  Save Evaluation & Decision"
+        Me.btnSave.Size = New System.Drawing.Size(370, 44)
+        Me.btnSave.TabIndex = 27
+        Me.btnSave.Text = "Save Evaluation & Decision"
+        Me.btnSave.UseMnemonic = False
         Me.btnSave.UseVisualStyleBackColor = False
         '
         'btnClear
@@ -641,23 +692,24 @@ Partial Class frmEvaluationSelection
         Me.btnClear.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnClear.FlatAppearance.BorderSize = 0
         Me.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnClear.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        Me.btnClear.Font = New System.Drawing.Font("Segoe UI Semibold", 11.0!, System.Drawing.FontStyle.Bold)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        Me.btnClear.Location = New System.Drawing.Point(314, 486)
+        Me.btnClear.Location = New System.Drawing.Point(408, 474)
         Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(140, 42)
-        Me.btnClear.TabIndex = 27
-        Me.btnClear.Text = "↺  Reset Fields"
+        Me.btnClear.Size = New System.Drawing.Size(211, 44)
+        Me.btnClear.TabIndex = 28
+        Me.btnClear.Text = "Reset Fields"
+        Me.btnClear.UseMnemonic = False
         Me.btnClear.UseVisualStyleBackColor = False
         '
         'tabRankings
         '
         Me.tabRankings.BackColor = System.Drawing.Color.FromArgb(245, 247, 250)
         Me.tabRankings.Controls.Add(Me.pnlRankings)
-        Me.tabRankings.Location = New System.Drawing.Point(4, 40)
+        Me.tabRankings.Location = New System.Drawing.Point(4, 43)
         Me.tabRankings.Name = "tabRankings"
         Me.tabRankings.Padding = New System.Windows.Forms.Padding(6)
-        Me.tabRankings.Size = New System.Drawing.Size(1142, 516)
+        Me.tabRankings.Size = New System.Drawing.Size(1152, 513)
         Me.tabRankings.TabIndex = 1
         Me.tabRankings.Text = "  2. Screening & Rankings Board  "
         '
@@ -667,7 +719,7 @@ Partial Class frmEvaluationSelection
         Me.pnlRankings.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlRankings.Location = New System.Drawing.Point(6, 6)
         Me.pnlRankings.Name = "pnlRankings"
-        Me.pnlRankings.Size = New System.Drawing.Size(1130, 504)
+        Me.pnlRankings.Size = New System.Drawing.Size(1140, 501)
         Me.pnlRankings.TabIndex = 0
         '
         'pnlRankCard
@@ -681,7 +733,7 @@ Partial Class frmEvaluationSelection
         Me.pnlRankCard.Controls.Add(Me.dgvRankings)
         Me.pnlRankCard.Location = New System.Drawing.Point(10, 10)
         Me.pnlRankCard.Name = "pnlRankCard"
-        Me.pnlRankCard.Size = New System.Drawing.Size(1110, 484)
+        Me.pnlRankCard.Size = New System.Drawing.Size(1120, 480)
         Me.pnlRankCard.TabIndex = 0
         '
         'rankAccent
@@ -690,31 +742,33 @@ Partial Class frmEvaluationSelection
         Me.rankAccent.Dock = System.Windows.Forms.DockStyle.Top
         Me.rankAccent.Location = New System.Drawing.Point(0, 0)
         Me.rankAccent.Name = "rankAccent"
-        Me.rankAccent.Size = New System.Drawing.Size(1110, 4)
+        Me.rankAccent.Size = New System.Drawing.Size(1120, 4)
         Me.rankAccent.TabIndex = 0
         '
         'lblBoardTitle
         '
         Me.lblBoardTitle.AutoSize = True
-        Me.lblBoardTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.lblBoardTitle.Font = New System.Drawing.Font("Segoe UI Semibold", 13.5!, System.Drawing.FontStyle.Bold)
         Me.lblBoardTitle.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
         Me.lblBoardTitle.Location = New System.Drawing.Point(20, 16)
         Me.lblBoardTitle.Name = "lblBoardTitle"
-        Me.lblBoardTitle.Size = New System.Drawing.Size(325, 21)
+        Me.lblBoardTitle.Size = New System.Drawing.Size(378, 25)
         Me.lblBoardTitle.TabIndex = 1
-        Me.lblBoardTitle.Text = "🏆 Athlete Screening & Ranking Leaderboard"
+        Me.lblBoardTitle.Text = "Athlete Screening & Ranking Leaderboard"
+        Me.lblBoardTitle.UseMnemonic = False
         '
         'chkQualifiedOnly
         '
         Me.chkQualifiedOnly.AutoSize = True
         Me.chkQualifiedOnly.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.chkQualifiedOnly.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.chkQualifiedOnly.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         Me.chkQualifiedOnly.ForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
-        Me.chkQualifiedOnly.Location = New System.Drawing.Point(365, 18)
+        Me.chkQualifiedOnly.Location = New System.Drawing.Point(420, 18)
         Me.chkQualifiedOnly.Name = "chkQualifiedOnly"
-        Me.chkQualifiedOnly.Size = New System.Drawing.Size(305, 21)
+        Me.chkQualifiedOnly.Size = New System.Drawing.Size(342, 23)
         Me.chkQualifiedOnly.TabIndex = 2
         Me.chkQualifiedOnly.Text = "Show only qualified athletes (Final Score ≥ 75)"
+        Me.chkQualifiedOnly.UseMnemonic = False
         Me.chkQualifiedOnly.UseVisualStyleBackColor = True
         '
         'btnExportRankings
@@ -723,24 +777,26 @@ Partial Class frmEvaluationSelection
         Me.btnExportRankings.Cursor = System.Windows.Forms.Cursors.Hand
         Me.btnExportRankings.FlatAppearance.BorderSize = 0
         Me.btnExportRankings.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnExportRankings.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
+        Me.btnExportRankings.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
         Me.btnExportRankings.ForeColor = System.Drawing.Color.White
         Me.btnExportRankings.Location = New System.Drawing.Point(920, 12)
         Me.btnExportRankings.Name = "btnExportRankings"
-        Me.btnExportRankings.Size = New System.Drawing.Size(170, 36)
+        Me.btnExportRankings.Size = New System.Drawing.Size(180, 40)
         Me.btnExportRankings.TabIndex = 3
-        Me.btnExportRankings.Text = "📥  Export to CSV"
+        Me.btnExportRankings.Text = "Export to CSV"
+        Me.btnExportRankings.UseMnemonic = False
         Me.btnExportRankings.UseVisualStyleBackColor = False
         '
         'lblRankSummary
         '
         Me.lblRankSummary.AutoSize = True
-        Me.lblRankSummary.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
-        Me.lblRankSummary.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139)
-        Me.lblRankSummary.Location = New System.Drawing.Point(22, 48)
+        Me.lblRankSummary.Font = New System.Drawing.Font("Segoe UI Semibold", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.lblRankSummary.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
+        Me.lblRankSummary.Location = New System.Drawing.Point(20, 56)
         Me.lblRankSummary.Name = "lblRankSummary"
-        Me.lblRankSummary.Size = New System.Drawing.Size(0, 17)
+        Me.lblRankSummary.Size = New System.Drawing.Size(0, 19)
         Me.lblRankSummary.TabIndex = 4
+        Me.lblRankSummary.UseMnemonic = False
         '
         'dgvRankings
         '
@@ -756,31 +812,31 @@ Partial Class frmEvaluationSelection
         dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(22, 55, 100)
         dataGridViewCellStyle3.Font = New System.Drawing.Font("Segoe UI Semibold", 9.5!, System.Drawing.FontStyle.Bold)
         dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(253, 224, 71)
-        dataGridViewCellStyle3.Padding = New System.Windows.Forms.Padding(8, 0, 0, 0)
+        dataGridViewCellStyle3.Padding = New System.Windows.Forms.Padding(4, 0, 4, 0)
         dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(22, 55, 100)
         dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvRankings.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3
-        Me.dgvRankings.ColumnHeadersHeight = 38
+        Me.dgvRankings.ColumnHeadersHeight = 42
         dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         dataGridViewCellStyle4.BackColor = System.Drawing.Color.White
-        dataGridViewCellStyle4.Font = New System.Drawing.Font("Segoe UI", 9.5!)
+        dataGridViewCellStyle4.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59)
-        dataGridViewCellStyle4.Padding = New System.Windows.Forms.Padding(6, 0, 0, 0)
+        dataGridViewCellStyle4.Padding = New System.Windows.Forms.Padding(8, 0, 8, 0)
         dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254)
         dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(22, 55, 100)
         dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.dgvRankings.DefaultCellStyle = dataGridViewCellStyle4
         Me.dgvRankings.EnableHeadersVisualStyles = False
         Me.dgvRankings.GridColor = System.Drawing.Color.FromArgb(226, 232, 240)
-        Me.dgvRankings.Location = New System.Drawing.Point(20, 76)
+        Me.dgvRankings.Location = New System.Drawing.Point(20, 88)
         Me.dgvRankings.MultiSelect = False
         Me.dgvRankings.Name = "dgvRankings"
         Me.dgvRankings.ReadOnly = True
         Me.dgvRankings.RowHeadersVisible = False
-        Me.dgvRankings.RowTemplate.Height = 36
+        Me.dgvRankings.RowTemplate.Height = 40
         Me.dgvRankings.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvRankings.Size = New System.Drawing.Size(1070, 390)
+        Me.dgvRankings.Size = New System.Drawing.Size(1080, 380)
         Me.dgvRankings.TabIndex = 5
         '
         'frmEvaluationSelection
@@ -836,6 +892,7 @@ Partial Class frmEvaluationSelection
     Friend WithEvents rosterAccent As System.Windows.Forms.Panel
     Friend WithEvents lblGridTitle As System.Windows.Forms.Label
     Friend WithEvents lblRosterCount As System.Windows.Forms.Label
+    Friend WithEvents lblSearch As System.Windows.Forms.Label
     Friend WithEvents txtSearchApplicant As System.Windows.Forms.TextBox
     Friend WithEvents dgvApplicants As System.Windows.Forms.DataGridView
 
@@ -869,6 +926,7 @@ Partial Class frmEvaluationSelection
     Friend WithEvents div2 As System.Windows.Forms.Panel
     Friend WithEvents lblDecisionTitle As System.Windows.Forms.Label
     Friend WithEvents cmbDecision As System.Windows.Forms.ComboBox
+    Friend WithEvents lblDecisionHint As System.Windows.Forms.Label
     Friend WithEvents lblRemarks As System.Windows.Forms.Label
     Friend WithEvents txtRemarks As System.Windows.Forms.TextBox
     Friend WithEvents btnSave As System.Windows.Forms.Button
