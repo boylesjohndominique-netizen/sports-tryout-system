@@ -1,415 +1,485 @@
 Imports System.Data
 Imports System.Drawing
 
+''' <summary>
+''' Student-Athlete Registration & Records Management Form.
+''' Displays the full-page table of registered student applicants across all sports disciplines.
+''' Features a "+ Register Student" pop-up dialog, inline "Edit" pop-up, and safe "Delete" with confirmation.
+''' </summary>
 Public Class frmStudentRegistration
-
-    Private headerPanel As Panel
 
     Public Sub New()
         InitializeComponent()
         Me.DoubleBuffered = True
-
-        headerPanel = UIHelper.MakePanelHeader("Student-Athlete Registration", Me.Width)
-        Me.Controls.Add(headerPanel)
-        headerPanel.SendToBack()
-
-        AddHandler Me.Resize, AddressOf OnFormResized
-        AddHandler Me.Shown, AddressOf OnFormShown
-        AddHandler dgvStatus.CellFormatting, AddressOf DgvStatus_CellFormatting
+        ConfigureGridColumns()
+        SetupEventHandlers()
     End Sub
 
-    Private Sub OnFormShown(sender As Object, e As EventArgs)
-        LayoutPanels()
-        Try
-            DatabaseHelper.EnsureStudentsMiddleNameColumn()
-            LoadSports()
-            LoadRecentRegistrations()
-        Catch ex As Exception
-            UIHelper.ShowError("Failed to initialize registration data: " & ex.Message)
-        End Try
+    Private Sub SetupEventHandlers()
+        AddHandler Me.Load, AddressOf OnFormLoad
+        AddHandler Me.Resize, AddressOf OnFormResize
+
+        ' Toolbar actions
+        AddHandler btnRegisterStudent.Click, AddressOf BtnRegisterStudent_Click
+        AddHandler btnRefresh.Click, AddressOf BtnRefresh_Click
+        AddHandler txtSearch.TextChanged, AddressOf FilterChanged
+        AddHandler cmbFilterSport.SelectedIndexChanged, AddressOf FilterChanged
+        AddHandler cmbFilterStatus.SelectedIndexChanged, AddressOf FilterChanged
+
+        ' Grid events
+        AddHandler dgvRegistrations.CellContentClick, AddressOf DgvRegistrations_CellContentClick
+        AddHandler dgvRegistrations.CellClick, AddressOf DgvRegistrations_CellClick
+        AddHandler dgvRegistrations.CellDoubleClick, AddressOf DgvRegistrations_CellDoubleClick
+        AddHandler dgvRegistrations.CellPainting, AddressOf DgvRegistrations_CellPainting
+        AddHandler dgvRegistrations.CellFormatting, AddressOf DgvRegistrations_CellFormatting
+
+        ' Card border painting
+        AddHandler cardGrid.Paint, AddressOf DrawGridCardBorder
     End Sub
 
-    Private Sub OnFormResized(sender As Object, e As EventArgs)
-        LayoutPanels()
+    Private Sub OnFormLoad(sender As Object, e As EventArgs)
+        LoadSportsIntoFilter()
+        If cmbFilterStatus.Items.Count > 0 Then cmbFilterStatus.SelectedIndex = 0
+        LoadRegistrations()
     End Sub
 
-    ' ========================================================
-    '  DYNAMIC RESPONSIVE LAYOUT ENGINE (ZERO OVERLAPPING)
-    ' ========================================================
-
-    Private Sub LayoutPanels()
-        If Me.ClientSize.Width < 700 OrElse Me.ClientSize.Height < 450 Then Return
-
-        Me.SuspendLayout()
-
-        Dim topY As Integer = 72
-        Dim marginX As Integer = 24
-        Dim bottomMargin As Integer = 20
-        Dim totalW As Integer = Me.ClientSize.Width - (marginX * 2)
-
-        ' 1. Top Card: Registration Form (pnlRegCard) - Increased height for 3 clean rows
-        Dim regH As Integer = 320
-        pnlRegCard.Location = New Point(marginX, topY)
-        pnlRegCard.Size = New Size(totalW, regH)
-
-        LayoutRegistrationCard(totalW)
-
-        ' 2. Bottom Card: Status Verification & Recent Records (pnlStatusCard)
-        Dim statusY As Integer = topY + regH + 16
-        Dim statusH As Integer = Me.ClientSize.Height - statusY - bottomMargin
-        pnlStatusCard.Location = New Point(marginX, statusY)
-        pnlStatusCard.Size = New Size(totalW, Math.Max(180, statusH))
-
-        LayoutStatusCard(totalW, pnlStatusCard.Height)
-
-        Me.ResumeLayout(True)
+    Private Sub OnFormResize(sender As Object, e As EventArgs)
+        If pnlToolbar IsNot Nothing AndAlso lblRecordCount IsNot Nothing Then
+            lblRecordCount.Left = pnlToolbar.ClientSize.Width - lblRecordCount.Width - 24
+        End If
     End Sub
 
-    Private Sub LayoutRegistrationCard(cardW As Integer)
-        pnlRegCard.SuspendLayout()
-
-        cardAccent.Width = cardW
-
-        lblSection1.Location = New Point(20, 14)
-        lblRegSub.Location = New Point(22, 38)
-        lblRegBadge.Location = New Point(Math.Max(260, cardW - 200), 14)
-
-        ' 4 columns evenly distributed
-        Dim colGap As Integer = 20
-        Dim colW As Integer = CInt((cardW - 40 - (colGap * 3)) / 4)
-        If colW < 140 Then colW = 140
-
-        Dim col1X As Integer = 20
-        Dim col2X As Integer = 20 + colW + colGap
-        Dim col3X As Integer = 20 + (colW + colGap) * 2
-        Dim col4X As Integer = 20 + (colW + colGap) * 3
-
-        ' Row 1: Student ID, First Name, Middle Name, Last Name
-        lblStudentNo.Location = New Point(col1X, 62)
-        txtStudentNumber.Location = New Point(col1X, 82)
-        txtStudentNumber.Size = New Size(colW, 26)
-
-        lblFirst.Location = New Point(col2X, 62)
-        txtFirstName.Location = New Point(col2X, 82)
-        txtFirstName.Size = New Size(colW, 26)
-
-        lblMiddle.Location = New Point(col3X, 62)
-        txtMiddleName.Location = New Point(col3X, 82)
-        txtMiddleName.Size = New Size(colW, 26)
-
-        lblLast.Location = New Point(col4X, 62)
-        txtLastName.Location = New Point(col4X, 82)
-        txtLastName.Size = New Size(colW, 26)
-
-        ' Row 2: Course, Year Level, Gender, Preferred Sport
-        lblCourse.Location = New Point(col1X, 122)
-        cmbCourse.Location = New Point(col1X, 142)
-        cmbCourse.Size = New Size(colW, 26)
-
-        lblYear.Location = New Point(col2X, 122)
-        cmbYear.Location = New Point(col2X, 142)
-        cmbYear.Size = New Size(colW, 26)
-
-        lblGender.Location = New Point(col3X, 122)
-        cmbGender.Location = New Point(col3X, 142)
-        cmbGender.Size = New Size(colW, 26)
-
-        lblSport.Location = New Point(col4X, 122)
-        cmbSport.Location = New Point(col4X, 142)
-        cmbSport.Size = New Size(colW, 26)
-
-        ' Row 3: Contact Number, Email Address (span 2 columns each for generous typing room)
-        Dim wideColW As Integer = (colW * 2) + colGap
-        lblContact.Location = New Point(col1X, 182)
-        txtContact.Location = New Point(col1X, 202)
-        txtContact.Size = New Size(wideColW, 26)
-
-        lblEmail.Location = New Point(col3X, 182)
-        txtEmail.Location = New Point(col3X, 202)
-        txtEmail.Size = New Size(wideColW, 26)
-
-        ' Separator & Action Buttons
-        div1.Location = New Point(20, 246)
-        div1.Size = New Size(cardW - 40, 1)
-
-        btnRegister.Location = New Point(20, 258)
-        btnRegister.Size = New Size(220, 42)
-
-        btnClear.Location = New Point(252, 258)
-        btnClear.Size = New Size(140, 42)
-
-        lblNoteHint.Location = New Point(408, 266)
-        lblNoteHint.Size = New Size(Math.Max(200, cardW - 428), 26)
-
-        pnlRegCard.ResumeLayout(True)
+    Private Sub DrawGridCardBorder(sender As Object, e As PaintEventArgs)
+        Dim pnl = TryCast(sender, Panel)
+        If pnl Is Nothing Then Return
+        Using pen As New Pen(Color.FromArgb(226, 232, 240), 1)
+            e.Graphics.DrawRectangle(pen, 0, 0, pnl.Width - 1, pnl.Height - 1)
+        End Using
     End Sub
 
-    Private Sub LayoutStatusCard(cardW As Integer, cardH As Integer)
-        pnlStatusCard.SuspendLayout()
+    ' ═══════════════════════════════════════════════════════════════
+    '  GRID COLUMN CONFIGURATION
+    ' ═══════════════════════════════════════════════════════════════
+    Private Sub ConfigureGridColumns()
+        dgvRegistrations.AutoGenerateColumns = False
+        dgvRegistrations.Columns.Clear()
 
-        statusAccent.Width = cardW
+        ' Hidden IDs
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "RegistrationID",
+            .DataPropertyName = "RegistrationID",
+            .Visible = False
+        })
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "StudentID",
+            .DataPropertyName = "StudentID",
+            .Visible = False
+        })
 
-        lblSection2.Location = New Point(20, 14)
-        lblStatusSub.Location = New Point(22, 38)
+        ' Student ID
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "StudentNumber",
+            .DataPropertyName = "StudentNumber",
+            .HeaderText = "Student ID",
+            .Width = 110,
+            .DefaultCellStyle = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter, .Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)},
+            .HeaderCell = New DataGridViewColumnHeaderCell() With {.Style = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter}}
+        })
 
-        ' Search bar right aligned
-        Dim searchBtnW As Integer = 160
-        Dim searchTxtW As Integer = 200
-        Dim searchGrpW As Integer = searchBtnW + searchTxtW + 85
+        ' Full Name
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "ApplicantName",
+            .DataPropertyName = "ApplicantName",
+            .HeaderText = "Applicant Name",
+            .Width = 175,
+            .DefaultCellStyle = New DataGridViewCellStyle() With {.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)}
+        })
 
-        Dim startSearchX As Integer = Math.Max(320, cardW - searchGrpW - 20)
-        lblSearchId.Location = New Point(startSearchX, 20)
-        txtSearchStudentNumber.Location = New Point(startSearchX + 75, 17)
-        txtSearchStudentNumber.Size = New Size(searchTxtW, 25)
+        ' Preferred Sport
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "Sport",
+            .DataPropertyName = "Sport",
+            .HeaderText = "Preferred Sport",
+            .Width = 135,
+            .DefaultCellStyle = New DataGridViewCellStyle() With {.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)}
+        })
 
-        btnCheckStatus.Location = New Point(startSearchX + 75 + searchTxtW + 10, 14)
-        btnCheckStatus.Size = New Size(searchBtnW, 32)
+        ' Course & Year
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "CourseYear",
+            .DataPropertyName = "CourseYear",
+            .HeaderText = "Course & Year Level",
+            .Width = 240
+        })
 
-        dgvStatus.Location = New Point(20, 62)
-        dgvStatus.Size = New Size(cardW - 40, Math.Max(80, cardH - 80))
+        ' Gender
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "Gender",
+            .DataPropertyName = "Gender",
+            .HeaderText = "Gender",
+            .Width = 80,
+            .DefaultCellStyle = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter},
+            .HeaderCell = New DataGridViewColumnHeaderCell() With {.Style = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter}}
+        })
 
-        pnlStatusCard.ResumeLayout(True)
+        ' Contact Number
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "Contact",
+            .DataPropertyName = "Contact",
+            .HeaderText = "Contact No.",
+            .Width = 115
+        })
+
+        ' Email Address
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "Email",
+            .DataPropertyName = "Email",
+            .HeaderText = "Email Address",
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+            .FillWeight = 115
+        })
+
+        ' Registration Date
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "RegistrationDate",
+            .DataPropertyName = "RegistrationDate",
+            .HeaderText = "Reg. Date",
+            .Width = 110,
+            .DefaultCellStyle = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter},
+            .HeaderCell = New DataGridViewColumnHeaderCell() With {.Style = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter}}
+        })
+
+        ' Status
+        dgvRegistrations.Columns.Add(New DataGridViewTextBoxColumn() With {
+            .Name = "Status",
+            .DataPropertyName = "Status",
+            .HeaderText = "Status",
+            .Width = 120,
+            .DefaultCellStyle = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter},
+            .HeaderCell = New DataGridViewColumnHeaderCell() With {.Style = New DataGridViewCellStyle() With {.Alignment = DataGridViewContentAlignment.MiddleCenter}}
+        })
+
+        ' ── 2 ACTION BUTTON COLUMNS (Edit & Delete) ──
+        Dim colEdit As New DataGridViewButtonColumn() With {
+            .Name = "colEdit",
+            .HeaderText = "Actions",
+            .Text = "✎ Edit",
+            .UseColumnTextForButtonValue = True,
+            .Width = 80,
+            .FlatStyle = FlatStyle.Flat
+        }
+        colEdit.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        dgvRegistrations.Columns.Add(colEdit)
+
+        Dim colDelete As New DataGridViewButtonColumn() With {
+            .Name = "colDelete",
+            .HeaderText = "",
+            .Text = "🗑 Delete",
+            .UseColumnTextForButtonValue = True,
+            .Width = 90,
+            .FlatStyle = FlatStyle.Flat
+        }
+        colDelete.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+        dgvRegistrations.Columns.Add(colDelete)
     End Sub
 
-    ' ========================================================
+    ' ═══════════════════════════════════════════════════════════════
     '  DATA ACCESS & BINDING
-    ' ========================================================
-
-    Private Sub LoadSports()
+    ' ═══════════════════════════════════════════════════════════════
+    Private Sub LoadSportsIntoFilter()
         Try
-            cmbSport.Items.Clear()
-            Dim dt As DataTable = DatabaseHelper.GetDataTable("SELECT SportID, SportName FROM Sports WHERE IsActive=1 ORDER BY SportName")
+            cmbFilterSport.Items.Clear()
+            cmbFilterSport.Items.Add("All Sports")
+            Dim dt As DataTable = DatabaseHelper.GetDataTable("SELECT SportID, SportName FROM Sports WHERE IsActive=1 ORDER BY SportName ASC")
             For Each row As DataRow In dt.Rows
-                cmbSport.Items.Add(New SportItem(CInt(row("SportID")), row("SportName").ToString()))
+                cmbFilterSport.Items.Add(New SportItem(Convert.ToInt32(row("SportID")), row("SportName").ToString()))
             Next
+            If cmbFilterSport.Items.Count > 0 Then cmbFilterSport.SelectedIndex = 0
         Catch ex As Exception
-            UIHelper.ShowError("Error loading sports: " & ex.Message)
+            UIHelper.ShowError("Error loading sports for filter: " & ex.Message)
         End Try
     End Sub
 
-    Private Sub LoadRecentRegistrations()
+    Public Sub LoadRegistrations()
         Try
-            Dim dt As DataTable = DatabaseHelper.GetDataTable(
-                "SELECT r.RegistrationID, sp.SportName AS Sport, r.RegistrationDate, s.FirstName, s.MiddleName, s.LastName " &
-                "FROM Registrations r " &
-                "INNER JOIN Students s ON s.StudentID = r.StudentID " &
-                "INNER JOIN Sports sp ON sp.SportID = r.SportID " &
-                "ORDER BY r.RegistrationID DESC LIMIT 15")
+            Dim sql As String = "SELECT r.RegistrationID, r.StudentID, s.StudentNumber, " &
+                                "s.FirstName, s.MiddleName, s.LastName, " &
+                                "COALESCE(s.CourseYear, '') AS CourseYear, COALESCE(s.Gender, '') AS Gender, " &
+                                "COALESCE(s.ContactNumber, '') AS Contact, COALESCE(s.Email, '') AS Email, " &
+                                "sp.SportName AS Sport, r.RegistrationDate, r.SelectionStatus AS Status " &
+                                "FROM Registrations r " &
+                                "INNER JOIN Students s ON s.StudentID = r.StudentID " &
+                                "INNER JOIN Sports sp ON sp.SportID = r.SportID " &
+                                "WHERE 1=1 "
+            Dim params As New List(Of SQLiteParameter)
 
-            Dim display As New DataTable()
-            display.Columns.Add("Applicant")
-            display.Columns.Add("Sport")
-            display.Columns.Add("Registration Date")
-            display.Columns.Add("Current Status")
+            ' Sport filter
+            If cmbFilterSport.SelectedItem IsNot Nothing AndAlso TypeOf cmbFilterSport.SelectedItem Is SportItem Then
+                sql &= " AND r.SportID=@sid "
+                params.Add(New SQLiteParameter("@sid", CType(cmbFilterSport.SelectedItem, SportItem).SportID))
+            End If
 
-            For Each row As DataRow In dt.Rows
-                Dim status As String = AppLogic.GetRegistrationStatusText(CInt(row("RegistrationID")))
+            ' Status filter
+            If cmbFilterStatus.SelectedIndex > 0 Then
+                Dim selectedStatus As String = cmbFilterStatus.SelectedItem.ToString()
+                sql &= " AND r.SelectionStatus=@status "
+                params.Add(New SQLiteParameter("@status", selectedStatus))
+            End If
+
+            ' Search filter (Name, Student Number, Course, Email)
+            Dim term As String = txtSearch.Text.Trim()
+            If Not String.IsNullOrEmpty(term) Then
+                sql &= " AND (s.StudentNumber LIKE @term OR s.FirstName LIKE @term OR s.LastName LIKE @term OR s.CourseYear LIKE @term OR s.Email LIKE @term OR sp.SportName LIKE @term) "
+                params.Add(New SQLiteParameter("@term", "%" & term & "%"))
+            End If
+
+            sql &= " ORDER BY r.RegistrationID DESC"
+
+            Dim dtRaw As DataTable = DatabaseHelper.GetDataTable(sql, params.ToArray())
+
+            ' Build display table with composite full name
+            Dim dtDisplay As New DataTable()
+            dtDisplay.Columns.Add("RegistrationID", GetType(Integer))
+            dtDisplay.Columns.Add("StudentID", GetType(Integer))
+            dtDisplay.Columns.Add("StudentNumber", GetType(String))
+            dtDisplay.Columns.Add("ApplicantName", GetType(String))
+            dtDisplay.Columns.Add("Sport", GetType(String))
+            dtDisplay.Columns.Add("CourseYear", GetType(String))
+            dtDisplay.Columns.Add("Gender", GetType(String))
+            dtDisplay.Columns.Add("Contact", GetType(String))
+            dtDisplay.Columns.Add("Email", GetType(String))
+            dtDisplay.Columns.Add("RegistrationDate", GetType(String))
+            dtDisplay.Columns.Add("Status", GetType(String))
+
+            For Each row As DataRow In dtRaw.Rows
                 Dim mName As String = If(IsDBNull(row("MiddleName")), "", row("MiddleName").ToString().Trim())
                 Dim fullName As String = row("FirstName").ToString().Trim() &
                     If(mName <> "", " " & mName, "") & " " &
                     row("LastName").ToString().Trim()
 
-                display.Rows.Add(fullName,
-                                  row("Sport").ToString(),
-                                  row("RegistrationDate").ToString(), status)
+                dtDisplay.Rows.Add(
+                    Convert.ToInt32(row("RegistrationID")),
+                    Convert.ToInt32(row("StudentID")),
+                    row("StudentNumber").ToString(),
+                    fullName,
+                    row("Sport").ToString(),
+                    row("CourseYear").ToString(),
+                    row("Gender").ToString(),
+                    row("Contact").ToString(),
+                    row("Email").ToString(),
+                    row("RegistrationDate").ToString(),
+                    row("Status").ToString())
             Next
 
-            dgvStatus.DataSource = display
-            FormatStatusGridColumns()
-        Catch
-            dgvStatus.DataSource = Nothing
-        End Try
-    End Sub
-
-    Private Sub FormatStatusGridColumns()
-        If dgvStatus.Columns.Contains("Applicant") Then dgvStatus.Columns("Applicant").FillWeight = 28
-        If dgvStatus.Columns.Contains("Sport") Then dgvStatus.Columns("Sport").FillWeight = 22
-        If dgvStatus.Columns.Contains("Registration Date") Then
-            dgvStatus.Columns("Registration Date").FillWeight = 25
-            dgvStatus.Columns("Registration Date").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-            dgvStatus.Columns("Registration Date").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
-        End If
-        If dgvStatus.Columns.Contains("Current Status") Then
-            dgvStatus.Columns("Current Status").FillWeight = 25
-            dgvStatus.Columns("Current Status").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-            dgvStatus.Columns("Current Status").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
-        End If
-    End Sub
-
-    Private Sub DgvStatus_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
-        Try
-            If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Return
-            If dgvStatus.Columns Is Nothing OrElse e.ColumnIndex >= dgvStatus.Columns.Count Then Return
-            Dim col = dgvStatus.Columns(e.ColumnIndex)
-            If col Is Nothing OrElse col.Name <> "Current Status" OrElse e.Value Is Nothing Then Return
-
-            Dim st As String = e.Value.ToString()
-            If st.Contains("Selected") AndAlso Not st.Contains("Not Selected") Then
-                e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74)
-                e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
-            ElseIf st.Contains("Not Selected") Then
-                e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38)
-            ElseIf st.Contains("For Further Evaluation") Then
-                e.CellStyle.ForeColor = Color.FromArgb(37, 99, 235)
-            Else
-                e.CellStyle.ForeColor = Color.FromArgb(202, 138, 4)
-            End If
-        Catch
-        End Try
-    End Sub
-
-    ' ========================================================
-    '  ACTION BUTTONS & REGISTRATION LOGIC
-    ' ========================================================
-
-    Private Sub BtnRegister_Click(sender As Object, e As EventArgs) Handles btnRegister.Click
-        If txtStudentNumber.Text.Trim() = "" OrElse txtFirstName.Text.Trim() = "" OrElse txtLastName.Text.Trim() = "" Then
-            UIHelper.ShowError("Student ID, first name, and last name are required.")
-            Return
-        End If
-        If cmbSport.SelectedItem Is Nothing OrElse Not TypeOf cmbSport.SelectedItem Is SportItem Then
-            UIHelper.ShowError("Please select a preferred sport.")
-            Return
-        End If
-
-        Try
-            Dim studentNumber As String = txtStudentNumber.Text.Trim()
-            Dim firstName As String = txtFirstName.Text.Trim()
-            Dim middleName As String = txtMiddleName.Text.Trim()
-            Dim lastName As String = txtLastName.Text.Trim()
-            Dim course As String = cmbCourse.Text.Trim()
-            Dim yearLvl As String = cmbYear.Text.Trim()
-            Dim courseYear As String = ""
-
-            If course <> "" AndAlso yearLvl <> "" Then
-                courseYear = course & " - " & yearLvl
-            ElseIf course <> "" Then
-                courseYear = course
-            Else
-                courseYear = yearLvl
-            End If
-
-            Dim gender As String = cmbGender.Text.Trim()
-            Dim contact As String = txtContact.Text.Trim()
-            Dim email As String = txtEmail.Text.Trim()
-            Dim sportId As Integer = CType(cmbSport.SelectedItem, SportItem).SportID
-
-            Dim existingStudent As DataTable = DatabaseHelper.GetDataTable(
-                "SELECT StudentID FROM Students WHERE StudentNumber=@sn", New SQLiteParameter("@sn", studentNumber))
-
-            Dim studentId As Integer
-
-            If existingStudent.Rows.Count > 0 Then
-                studentId = CInt(existingStudent.Rows(0)("StudentID"))
-                DatabaseHelper.ExecuteNonQuery(
-                    "UPDATE Students SET FirstName=@f, MiddleName=@m, LastName=@l, CourseYear=@c, Gender=@g, ContactNumber=@ct, Email=@e WHERE StudentID=@id",
-                    New SQLiteParameter("@f", firstName),
-                    New SQLiteParameter("@m", middleName),
-                    New SQLiteParameter("@l", lastName),
-                    New SQLiteParameter("@c", courseYear),
-                    New SQLiteParameter("@g", gender),
-                    New SQLiteParameter("@ct", contact),
-                    New SQLiteParameter("@e", email),
-                    New SQLiteParameter("@id", studentId))
-            Else
-                Using conn As SQLiteConnection = DatabaseHelper.GetConnection()
-                    DatabaseHelper.ExecuteNonQuery(
-                        "INSERT INTO Students (StudentNumber, FirstName, MiddleName, LastName, CourseYear, Gender, ContactNumber, Email, DateRegistered) " &
-                        "VALUES (@sn,@f,@m,@l,@c,@g,@ct,@e,@d)", conn,
-                        New SQLiteParameter("@sn", studentNumber),
-                        New SQLiteParameter("@f", firstName),
-                        New SQLiteParameter("@m", middleName),
-                        New SQLiteParameter("@l", lastName),
-                        New SQLiteParameter("@c", courseYear),
-                        New SQLiteParameter("@g", gender),
-                        New SQLiteParameter("@ct", contact),
-                        New SQLiteParameter("@e", email),
-                        New SQLiteParameter("@d", Now.ToString("s")))
-                    studentId = CInt(DatabaseHelper.GetLastInsertId(conn))
-                End Using
-            End If
-
-            Dim duplicateCheck As Object = DatabaseHelper.ExecuteScalar(
-                "SELECT COUNT(*) FROM Registrations WHERE StudentID=@sid AND SportID=@spid",
-                New SQLiteParameter("@sid", studentId), New SQLiteParameter("@spid", sportId))
-
-            If CInt(duplicateCheck) > 0 Then
-                UIHelper.ShowError("This student is already registered for the selected sport. Duplicate registrations are not allowed.")
-                Return
-            End If
-
-            DatabaseHelper.ExecuteNonQuery(
-                "INSERT INTO Registrations (StudentID, SportID, RegistrationDate, SelectionStatus) VALUES (@sid,@spid,@d,'Pending')",
-                New SQLiteParameter("@sid", studentId),
-                New SQLiteParameter("@spid", sportId),
-                New SQLiteParameter("@d", Now.ToString("s")))
-
-            Dim displayFullName As String = firstName & If(middleName <> "", " " & middleName, "") & " " & lastName
-            UIHelper.ShowInfo("Applicant '" & displayFullName & "' registered successfully!")
-
-            ' Clear input fields and show newly registered record in tracker
-            BtnClear_Click(sender, e)
-            txtSearchStudentNumber.Text = studentNumber
-            BtnCheckStatus_Click(sender, e)
+            dgvRegistrations.DataSource = dtDisplay
+            lblRecordCount.Text = String.Format("Showing {0} Registered Applicant{1}", dtDisplay.Rows.Count, If(dtDisplay.Rows.Count = 1, "", "s"))
 
         Catch ex As Exception
-            UIHelper.ShowError("Registration failed: " & ex.Message)
+            UIHelper.ShowError("Error loading registrations: " & ex.Message)
         End Try
     End Sub
 
-    Private Sub BtnCheckStatus_Click(sender As Object, e As EventArgs) Handles btnCheckStatus.Click
-        Dim searchId As String = txtSearchStudentNumber.Text.Trim()
-        If searchId = "" Then
-            LoadRecentRegistrations()
-            Return
-        End If
-
-        Dim dt As DataTable = DatabaseHelper.GetDataTable(
-            "SELECT r.RegistrationID, sp.SportName AS Sport, r.RegistrationDate, s.FirstName, s.MiddleName, s.LastName " &
-            "FROM Registrations r " &
-            "INNER JOIN Students s ON s.StudentID = r.StudentID " &
-            "INNER JOIN Sports sp ON sp.SportID = r.SportID " &
-            "WHERE s.StudentNumber=@sn ORDER BY r.RegistrationDate",
-            New SQLiteParameter("@sn", searchId))
-
-        If dt.Rows.Count = 0 Then
-            UIHelper.ShowInfo("No registration records found for Student ID: " & searchId)
-            dgvStatus.DataSource = Nothing
-            Return
-        End If
-
-        Dim display As New DataTable()
-        display.Columns.Add("Applicant")
-        display.Columns.Add("Sport")
-        display.Columns.Add("Registration Date")
-        display.Columns.Add("Current Status")
-
-        For Each row As DataRow In dt.Rows
-            Dim status As String = AppLogic.GetRegistrationStatusText(CInt(row("RegistrationID")))
-            Dim mName As String = If(IsDBNull(row("MiddleName")), "", row("MiddleName").ToString().Trim())
-            Dim fullName As String = row("FirstName").ToString().Trim() &
-                If(mName <> "", " " & mName, "") & " " &
-                row("LastName").ToString().Trim()
-
-            display.Rows.Add(fullName, row("Sport").ToString(),
-                              row("RegistrationDate").ToString(), status)
-        Next
-
-        dgvStatus.DataSource = display
-        FormatStatusGridColumns()
+    Private Sub FilterChanged(sender As Object, e As EventArgs)
+        LoadRegistrations()
     End Sub
 
-    Private Sub BtnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        txtStudentNumber.Text = ""
-        txtFirstName.Text = ""
-        txtMiddleName.Text = ""
-        txtLastName.Text = ""
-        cmbCourse.SelectedIndex = -1
-        cmbYear.SelectedIndex = -1
-        cmbGender.SelectedIndex = -1
-        txtContact.Text = ""
-        txtEmail.Text = ""
-        If cmbSport.Items.Count > 0 Then cmbSport.SelectedIndex = -1
+    Private Sub BtnRefresh_Click(sender As Object, e As EventArgs)
+        txtSearch.Clear()
+        If cmbFilterSport.Items.Count > 0 Then cmbFilterSport.SelectedIndex = 0
+        If cmbFilterStatus.Items.Count > 0 Then cmbFilterStatus.SelectedIndex = 0
+        LoadRegistrations()
+    End Sub
+
+    ' ═══════════════════════════════════════════════════════════════
+    '  POP-UP ACTIONS (Register, Edit, Delete)
+    ' ═══════════════════════════════════════════════════════════════
+    Private Sub BtnRegisterStudent_Click(sender As Object, e As EventArgs)
+        Using dlg As New frmStudentRegistrationDialog(0)
+            If dlg.ShowDialog(Me) = DialogResult.OK Then
+                LoadRegistrations()
+                Try
+                    CType(Me.MdiParent, frmMain)?.RefreshNavMetrics()
+                Catch
+                End Try
+            End If
+        End Using
+    End Sub
+
+    Private Sub DgvRegistrations_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
+        If e.RowIndex < 0 Then Return
+        Dim colName As String = dgvRegistrations.Columns(e.ColumnIndex).Name
+        If colName = "colEdit" Then
+            EditRegistration(e.RowIndex)
+        ElseIf colName = "colDelete" Then
+            DeleteRegistration(e.RowIndex)
+        End If
+    End Sub
+
+    Private Sub DgvRegistrations_CellClick(sender As Object, e As DataGridViewCellEventArgs)
+        If e.RowIndex < 0 Then Return
+        Dim colName As String = dgvRegistrations.Columns(e.ColumnIndex).Name
+        If colName = "colEdit" Then
+            EditRegistration(e.RowIndex)
+        ElseIf colName = "colDelete" Then
+            DeleteRegistration(e.RowIndex)
+        End If
+    End Sub
+
+    Private Sub DgvRegistrations_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
+        If e.RowIndex >= 0 Then
+            EditRegistration(e.RowIndex)
+        End If
+    End Sub
+
+    Private Sub EditRegistration(rowIndex As Integer)
+        If rowIndex < 0 OrElse rowIndex >= dgvRegistrations.Rows.Count Then Return
+        Try
+            Dim regId As Integer = Convert.ToInt32(dgvRegistrations.Rows(rowIndex).Cells("RegistrationID").Value)
+            Using dlg As New frmStudentRegistrationDialog(regId)
+                If dlg.ShowDialog(Me) = DialogResult.OK Then
+                    LoadRegistrations()
+                    Try
+                        CType(Me.MdiParent, frmMain)?.RefreshNavMetrics()
+                    Catch
+                    End Try
+                End If
+            End Using
+        Catch ex As Exception
+            UIHelper.ShowError("Could not open edit dialog: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub DeleteRegistration(rowIndex As Integer)
+        If rowIndex < 0 OrElse rowIndex >= dgvRegistrations.Rows.Count Then Return
+
+        Try
+            Dim row = dgvRegistrations.Rows(rowIndex)
+            Dim regId As Integer = Convert.ToInt32(row.Cells("RegistrationID").Value)
+            Dim applicantName As String = row.Cells("ApplicantName").Value.ToString()
+            Dim sportName As String = row.Cells("Sport").Value.ToString()
+
+            ' Check if evaluation scores exist for this registration
+            Dim evalCountObj As Object = DatabaseHelper.ExecuteScalar(
+                "SELECT COUNT(*) FROM Evaluations WHERE RegistrationID=@rid",
+                New SQLiteParameter("@rid", regId))
+            Dim evalCount As Integer = If(evalCountObj IsNot Nothing AndAlso Not IsDBNull(evalCountObj), Convert.ToInt32(evalCountObj), 0)
+
+            Dim confirmPrompt As String
+            If evalCount > 0 Then
+                confirmPrompt = String.Format(
+                    "Applicant '{0}' has {1} evaluation score(s) on record for {2}.{3}{3}Deleting this registration will permanently delete the registration and all associated evaluation scores.{3}{3}Are you sure you want to proceed?",
+                    applicantName, evalCount, sportName, Environment.NewLine)
+            Else
+                confirmPrompt = String.Format(
+                    "Are you sure you want to permanently delete the registration record for '{0}' in {1}?",
+                    applicantName, sportName)
+            End If
+
+            If UIHelper.Confirm(confirmPrompt, "Confirm Delete Registration") Then
+                ' Delete evaluation scores first
+                DatabaseHelper.ExecuteNonQuery(
+                    "DELETE FROM Evaluations WHERE RegistrationID=@rid",
+                    New SQLiteParameter("@rid", regId))
+
+                ' Delete registration
+                DatabaseHelper.ExecuteNonQuery(
+                    "DELETE FROM Registrations WHERE RegistrationID=@rid",
+                    New SQLiteParameter("@rid", regId))
+
+                UIHelper.ShowInfo(String.Format("Registration for '{0}' in {1} was deleted successfully.", applicantName, sportName), "Registration Deleted")
+                LoadRegistrations()
+
+                Try
+                    CType(Me.MdiParent, frmMain)?.RefreshNavMetrics()
+                Catch
+                End Try
+            End If
+
+        Catch ex As Exception
+            UIHelper.ShowError("Failed to delete registration record: " & ex.Message)
+        End Try
+    End Sub
+
+    ' ═══════════════════════════════════════════════════════════════
+    '  STYLING & CELL PAINTING
+    ' ═══════════════════════════════════════════════════════════════
+    Private Sub DgvRegistrations_CellPainting(sender As Object, e As DataGridViewCellPaintingEventArgs)
+        If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Return
+
+        Dim colName As String = dgvRegistrations.Columns(e.ColumnIndex).Name
+
+        If colName = "colEdit" Then
+            e.PaintBackground(e.CellBounds, True)
+            Dim btnRect As New Rectangle(e.CellBounds.X + 6, e.CellBounds.Y + 6, e.CellBounds.Width - 12, e.CellBounds.Height - 12)
+            Using b As New SolidBrush(Color.FromArgb(22, 55, 100))
+                e.Graphics.FillRectangle(b, btnRect)
+            End Using
+            Using pen As New Pen(Color.FromArgb(14, 38, 72))
+                e.Graphics.DrawRectangle(pen, btnRect)
+            End Using
+            Using sf As New StringFormat() With {.Alignment = StringAlignment.Center, .LineAlignment = StringAlignment.Center}
+                Using f As New Font("Segoe UI Semibold", 8.5!, FontStyle.Bold)
+                    e.Graphics.DrawString("✎ Edit", f, Brushes.White, btnRect, sf)
+                End Using
+            End Using
+            e.Handled = True
+
+        ElseIf colName = "colDelete" Then
+            e.PaintBackground(e.CellBounds, True)
+            Dim btnRect As New Rectangle(e.CellBounds.X + 6, e.CellBounds.Y + 6, e.CellBounds.Width - 12, e.CellBounds.Height - 12)
+            Using b As New SolidBrush(Color.FromArgb(220, 38, 38))
+                e.Graphics.FillRectangle(b, btnRect)
+            End Using
+            Using pen As New Pen(Color.FromArgb(185, 28, 28))
+                e.Graphics.DrawRectangle(pen, btnRect)
+            End Using
+            Using sf As New StringFormat() With {.Alignment = StringAlignment.Center, .LineAlignment = StringAlignment.Center}
+                Using f As New Font("Segoe UI Semibold", 8.5!, FontStyle.Bold)
+                    e.Graphics.DrawString("🗑 Delete", f, Brushes.White, btnRect, sf)
+                End Using
+            End Using
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub DgvRegistrations_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
+        Try
+            If e.RowIndex < 0 OrElse e.ColumnIndex < 0 Then Return
+            If dgvRegistrations.Columns Is Nothing OrElse e.ColumnIndex >= dgvRegistrations.Columns.Count Then Return
+            Dim col = dgvRegistrations.Columns(e.ColumnIndex)
+            If col Is Nothing OrElse e.Value Is Nothing Then Return
+
+            ' Format RegistrationDate
+            If col.Name = "RegistrationDate" AndAlso Not IsDBNull(e.Value) Then
+                Dim d As Date
+                If Date.TryParse(e.Value.ToString(), d) Then
+                    e.Value = d.ToString("MMM dd, yyyy")
+                    e.FormattingApplied = True
+                End If
+            End If
+
+            ' Format Status with badge colors
+            If col.Name = "Status" AndAlso Not IsDBNull(e.Value) Then
+                Dim statusText As String = e.Value.ToString().Trim()
+                e.CellStyle.Font = New Font("Segoe UI Semibold", 9.5!, FontStyle.Bold)
+                Select Case statusText.ToLower()
+                    Case "selected"
+                        e.CellStyle.ForeColor = Color.FromArgb(22, 101, 52)
+                        e.CellStyle.BackColor = Color.FromArgb(240, 253, 244)
+                    Case "not selected"
+                        e.CellStyle.ForeColor = Color.FromArgb(185, 28, 28)
+                        e.CellStyle.BackColor = Color.FromArgb(254, 242, 242)
+                    Case "for further evaluation"
+                        e.CellStyle.ForeColor = Color.FromArgb(29, 78, 216)
+                        e.CellStyle.BackColor = Color.FromArgb(239, 246, 255)
+                    Case "pending"
+                        e.CellStyle.ForeColor = Color.FromArgb(161, 98, 7)
+                        e.CellStyle.BackColor = Color.FromArgb(254, 252, 232)
+                End Select
+            End If
+
+        Catch
+        End Try
     End Sub
 
 End Class

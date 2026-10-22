@@ -203,6 +203,12 @@
     <Compile Include="Forms\frmScheduleDialog.Designer.vb">
       <DependentUpon>frmScheduleDialog.vb</DependentUpon>
     </Compile>
+    <Compile Include="Forms\frmStudentRegistrationDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmStudentRegistrationDialog.Designer.vb">
+      <DependentUpon>frmStudentRegistrationDialog.vb</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

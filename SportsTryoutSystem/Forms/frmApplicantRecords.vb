@@ -11,6 +11,14 @@ Public Class frmApplicantRecords
     End Sub
 
     Private Sub OnFormShown(sender As Object, e As EventArgs)
+        ' Redirect to the unified Student Registration & Records form if hosted in main MDI
+        Dim main = TryCast(Me.MdiParent, frmMain)
+        If main IsNot Nothing Then
+            Me.BeginInvoke(New Action(Sub()
+                                          main.OpenChild(New frmStudentRegistration())
+                                      End Sub))
+            Return
+        End If
         Try
             LoadSportsFilter()
             LoadApplicants()
@@ -33,7 +41,7 @@ Public Class frmApplicantRecords
         Try
             Dim sql As String = "SELECT r.RegistrationID, s.StudentNumber, " &
                                  "CONCAT(s.FirstName, ' ', s.LastName) AS [Full Name], " &
-                                 "s.CourseYear AS [Course/Grade], s.Gender, s.ContactNumber AS [Contact], " &
+                                 "s.CourseYear AS [Course/Year], s.Gender, s.ContactNumber AS [Contact], " &
                                  "sp.SportName AS [Sport], r.RegistrationDate AS [Reg Date], " &
                                  "r.SelectionStatus AS [Status] " &
                                  "FROM Registrations r " &
