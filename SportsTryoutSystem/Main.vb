@@ -23,8 +23,30 @@ Module MainModule
 
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException)
 
+        Dim cliArgs As String() = Environment.GetCommandLineArgs()
+        Dim wantsDemo As Boolean = Array.Exists(cliArgs, Function(a) String.Equals(a, "--demo", StringComparison.OrdinalIgnoreCase))
+        Dim wantsDemoReset As Boolean = Array.Exists(cliArgs, Function(a) String.Equals(a, "--demo-reset", StringComparison.OrdinalIgnoreCase))
+
         Try
             DatabaseHelper.InitializeDatabase()
+
+            If wantsDemoReset Then
+                Dim answer As DialogResult = MessageBox.Show(
+                    "This replaces all demo student, registration, and evaluation records " & vbCrLf &
+                    "with a fresh presentation data set." & vbCrLf & vbCrLf &
+                    "Continue?",
+                    "Reset Demo Data", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                If answer = DialogResult.Yes Then
+                    MessageBox.Show(DemoData.SeedDemoData(True), "Demo Data Ready",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
+            ElseIf wantsDemo Then
+                MessageBox.Show(DemoData.SeedDemoData(False), "Demo Data Ready",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Else
+                ' First-run experience: fill an empty database with demo records.
+                DemoData.SeedForPresentation()
+            End If
         Catch ex As Exception
             MessageBox.Show(
                 "Failed to initialize the local database." & vbCrLf & vbCrLf & ex.Message,

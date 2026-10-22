@@ -103,6 +103,7 @@
   <ItemGroup>
     <Compile Include="Main.vb" />
     <Compile Include="Data\DatabaseHelper.vb" />
+    <Compile Include="Data\DemoData.vb" />
     <Compile Include="Helpers\SecurityHelper.vb" />
     <Compile Include="Helpers\SessionManager.vb" />
     <Compile Include="Helpers\Permissions.vb" />
